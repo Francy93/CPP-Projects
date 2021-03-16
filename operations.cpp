@@ -48,6 +48,7 @@ unsigned int Books::getQty(){
     return qty;
 }
 
+
 // -----------------   class Operations   ------------------
 
 //the strings splitter
@@ -108,13 +109,14 @@ int Operations::reader(std::string fileName){
                     file2.close();
                     file2.open(fileName, std::ios::in);
                     if (file2.is_open()) { 
-                        std::cout << "\"" << fileName << "\"" << " has been successfully created!\r\n\r\n\r\n"; newOpen = true; 
+                        std::cout << "\"" << fileName << "\"" << " has been successfully created!\r\n\r\n\r\n";
+                        newOpen = true; 
                     }else{ std::cout << "Something went wrong while creating the new file.\r\n" << std::endl; }
                     break;
                 } else if(choice == "0"){
                     return 0;
                 }else{
-                    std::cout << "Wrong selection!" << std::endl;
+                    std::cout << "\r\nWrong selection!\r\n" << std::endl;
                 }
             }
         }
