@@ -14,34 +14,45 @@ class Books {
     private:
         std::string title  = "";
         std::string author = "";
-        std::string isbn   = "";
-        int qty            = 0 ;
+        unsigned long isbn = 0 ;
+        unsigned int qty   = 0 ;
 
     public:
         std::string getTitle();
         std::string getAuthor();
-        std::string getId();
-        int getQty();
+        unsigned long getId();
+        unsigned int getQty();
 
-        Books(std::string t, std::string a, std::string i, int q);
+        Books(std::string t, std::string a, unsigned long i, unsigned int q);
         ~Books();
 };
         
 
 
-class Operations {
+class Collection {
 
-    private:
-        
+    protected:  
+        std::vector<Books> data;
 
     public:
-       
+        void removeBook(int index);
+        void addBook(Books book);
+        Books getBook(int index);
+};
+
+
+
+class Operations: public Collection{
+
+    public:  
         //the holly strings splitter
-        std::vector<std::string> Operations::split(std::string s, std::string delim);
+        std::vector<std::string> split(std::string s, std::string delim);
+        std::vector<Books> collections;
 
         //file reader
-        void reader(std::string fileName);
+        int reader(std::string fileName);
 
 };
+
 
 #endif
