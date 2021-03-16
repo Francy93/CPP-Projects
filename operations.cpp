@@ -77,20 +77,30 @@ int Operations::reader(std::string fileName){
     while(true){
         if (file.is_open() || newOpen) {
             std::string line;
+            int corruptedCounter = 0;
             while (std::getline(file, line)) {
                 line.c_str();
 
                 if(line != "" && line != "1" && line != "0"){
                     //splitting the string by delimiter "tab" (ascii code 9)
-                    std::vector<std::string> data = split(line, std::string(1, 9));
-                    //vreating the book object
-                    Books book(data[0], data[1], std::stoull(data[2]), std::stoul(data[3]));
-                    addBook(book);
-
-                    std::cout << "Title: " << data[0] << std::endl;
+                    std::vector<std::string> elements = split(line, std::string(1, 9));
+                    if(elements.size() > 3 && elements.size() < 6){
+                        //Making the book object
+                        Books book(elements[0], elements[1], std::stoull(elements[2]), std::stoul(elements[3]));
+                        if(stoi(elements[3]) != 0){
+                            //storing the book object
+                            addBook(book);
+                            //std::cout << "Added! Title: " << elements[0] << std::endl;
+                        }
+                    }else{ corruptedCounter++; }
                 }
             }
+            //closing the file scanner
             file.close();
+            // displaying amount of corrupted data if any
+            if(corruptedCounter != 0){
+                std::cout << "\r\n" << corruptedCounter << " book(s) data was corrupted!\r\n" << std::endl;
+            }
             return 1;
         }else if(file.fail()){
             std::cout << "\r\nDump file missing! Do you want to create one?" << std::endl;

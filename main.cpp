@@ -14,11 +14,12 @@ int main(){
         std::cout << "\r\nEnter a choice here :> ";
         std::string fileName; std::cin >> fileName;
         
-        std::ifstream library(fileName);
+        //std::ifstream library(fileName);
 
         if (fileName == "0"){
             std::cout << "Successfully Exited!\r\n" << std::endl;
             std::exit(1);
+            return 0;
         }else{
             if(ope.reader(fileName) == 1){
                 break;
@@ -30,5 +31,5 @@ int main(){
 
     std::cout << "\r\nNext operation is about working in progress!\r\n" << std::endl;
 
-    //return 0;
+    return 0;
 }

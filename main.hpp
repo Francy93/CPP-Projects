@@ -12,10 +12,10 @@
 class Books {
 
     private:
-        std::string title  = "";
-        std::string author = "";
-        unsigned long isbn = 0 ;
-        unsigned int qty   = 0 ;
+        std::string title;
+        std::string author;
+        unsigned long isbn;
+        unsigned int qty;
 
     public:
         std::string getTitle();
@@ -44,7 +44,9 @@ class Collection {
 
 class Operations: public Collection{
 
-    public:  
+    public:
+        Operations(){};
+        ~Operations(){};
         //the holly strings splitter
         std::vector<std::string> split(std::string s, std::string delim);
         std::vector<Books> collections;
