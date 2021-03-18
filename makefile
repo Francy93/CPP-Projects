@@ -2,24 +2,39 @@
 CXX = g++ -std=c++17
 #creating the -c -Wall variable containing compilation parameters
 CXXFLAGS = -c -Wall
-#variable containing the .exe file name
-FINAL = librarySystem
+#variable containing the final.exe file name
+TARGET = librarySystem
+#variable containing the testing.exe file name
+TESTS = tests
+#header varable
+HEADER = library.hpp
 
+#Making all executable
+all: tests final
 #compiling the two files to get the final one which would be main.cpp and components.cpp
-final: operations.o main.o
-	$(CXX) main.o operations.o -o $(FINAL)
+final: operations.o library.o
+	$(CXX) operations.o library.o -o $(TARGET)
+#compiling the testing unit
+tests: testing.o
+	$(CXX) testing.o -o $(TESTS)
+
 
 #compiling just the main.cpp file even though main,h is not compulsory, it is just for precaution
-main.o: main.cpp main.hpp
-	$(CXX) $(CXXFLAGS) main.cpp
+library.o: library.cpp $(HEADER)
+	$(CXX) $(CXXFLAGS) library.cpp
 
 #compiling just the operations.cpp file
-operations.o: operations.cpp main.hpp
+operations.o: operations.cpp $(HEADER)
 	$(CXX) $(CXXFLAGS) operations.cpp
+
+#compiling just the testing.cpp file
+testing.o: testing.cpp catch.hpp $(HEADER)
+	$(CXX) $(CXXFLAGS) testing.cpp
+
 
 #clearing all copild files
 clean:
-	rm *.o $(FINAL)
+	rm *.o $(TARGET) $(TESTS)
 
 
-#mingw32-make -f makefile clear
+#following instruction was used previously used for minGW: mingw32-make -f makefile clear

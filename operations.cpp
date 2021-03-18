@@ -1,4 +1,31 @@
-#include "main.hpp"
+#include "library.hpp"
+
+// -----------------   global functions   ------------------
+std::string Global::toLower(std::string s){
+    #include <algorithm>
+    #include <cctype>
+    
+    std::transform(s.begin(), s.end(), s.begin(),
+        [](unsigned char c){ return std::tolower(c); });
+    
+    return s;
+}
+
+//the strings splitter
+std::vector<std::string> Global::split(std::string s, std::string delim){
+    std::vector<std::string> vec;
+    
+    size_t pos = 0;
+    std::string token;
+    while ((pos = s.find(delim)) != std::string::npos) {
+        token = s.substr(0, pos);
+        vec.push_back(token);
+        s.erase(0, pos + delim.length());
+    }
+    vec.push_back(s);
+    return vec;
+}
+
 
 
 // -----------------   class Collection   ------------------
@@ -7,7 +34,7 @@ Books Collection::getBook(int index){
     if((unsigned int)index < data.size()){
         return data[index];
     }else{
-        std::cout << "\r\nOut of Bonds! Returned last index element.\r\n" << std::endl;
+        println("\r\nOut of Bonds! Returned last index element.\r\n", "red");
         return data[data.size()-1];
     }
     
@@ -19,7 +46,7 @@ void Collection::removeBook(int index){
     if((unsigned int)index < data.size()){
         data.erase(data.begin() + index);
     }else{
-        std::cout << "\r\nOut of Bonds! No book removed.\r\n" << std::endl;
+        println("\r\nOut of Bonds! No book removed.\r\n", "yellow");
     }
 }
 
@@ -47,27 +74,30 @@ unsigned long Books::getId(){
 unsigned int Books::getQty(){
     return qty;
 }
+unsigned int Books::modifyQty(int qty, bool mode){
 
-
-// -----------------   class Operations   ------------------
-
-//the strings splitter
-std::vector<std::string> Operations::split(std::string s, std::string delim){
-    std::vector<std::string> vec;
-    
-    size_t pos = 0;
-    std::string token;
-    while ((pos = s.find(delim)) != std::string::npos) {
-        token = s.substr(0, pos);
-        vec.push_back(token);
-        s.erase(0, pos + delim.length());
+    if(mode){
+        Books::qty = Books::qty+qty; 
+    }else{
+        
+        if(Books::qty-qty == 0){
+            delete this;
+        }else if(Books::qty-qty < 0){
+            println("\r\nERROR! Not so many copies to be deleted.", "red");
+            std::cout << "Try again..\r\n" << std::endl;
+        }else{
+            Books::qty = Books::qty-qty;
+        }
     }
-    vec.push_back(s);
-    return vec;
+    return getQty();
 }
 
 
+// -----------------   class Operations   ------------------
+//contructor
+Operations::Operations(){
 
+}
 //file reader
 int Operations::reader(std::string fileName){
     
@@ -99,11 +129,11 @@ int Operations::reader(std::string fileName){
             file.close();
             // displaying amount of corrupted data if any
             if(corruptedCounter != 0){
-                std::cout << "\r\n" << corruptedCounter << " book(s) data was corrupted!\r\n" << std::endl;
+                println("\r\n" +std::to_string(corruptedCounter)+ " book(s) data was corrupted!\r\n", "yellow");
             }
             return 1;
         }else if(file.fail()){
-            std::cout << "\r\nDump file missing! Do you want to create one?" << std::endl;
+            println("\r\nDummy file missing! Do you want to create one?", "cyan");
 
             while(true){
                 
@@ -112,6 +142,8 @@ int Operations::reader(std::string fileName){
 
                 std::cout << "\r\nEnter a choice herer :> ";
                 std::string choice; std::cin >> choice;
+                std::cout << std::endl;
+
                 if (choice == "1"){
                     std::fstream file2;
                     file2.open(fileName, std::ios::out);
@@ -119,14 +151,14 @@ int Operations::reader(std::string fileName){
                     file2.close();
                     file2.open(fileName, std::ios::in);
                     if (file2.is_open()) { 
-                        std::cout << "\"" << fileName << "\"" << " has been successfully created!\r\n\r\n\r\n";
+                        println("\"" + fileName + "\"" + " has been successfully created!\r\n\r\n\r\n", "green");
                         newOpen = true; 
-                    }else{ std::cout << "Something went wrong while creating the new file.\r\n" << std::endl; }
+                    }else{ println("Something went wrong while creating the new file.\r\n", "red"); }
                     break;
                 } else if(choice == "0"){
                     return 0;
                 }else{
-                    std::cout << "\r\nWrong selection!\r\n" << std::endl;
+                    println("\r\nWrong selection!\r\n", "yellow");
                 }
             }
         }
