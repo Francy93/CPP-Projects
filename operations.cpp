@@ -1,6 +1,15 @@
 #include "library.hpp"
 
 // -----------------   global functions   ------------------
+//to string
+unsigned long Global::sToll(std::string s){
+    //checking if string is a digit
+    if(std::regex_match (s, std::regex("[0-9]+") )){
+        return stoull(s);
+    }
+    return 0;
+}
+
 std::string Global::toLower(std::string s){
     #include <algorithm>
     #include <cctype>
@@ -49,16 +58,18 @@ void Collection::removeBook(int index){
         println("\r\nOut of Bonds! No book removed.\r\n", "yellow");
     }
 }
-
+void Collection::collectionClear(){
+    data.clear();
+}
 
 
 // -----------------   class Book   ------------------
 
-Books::Books(std::string t, std::string a, unsigned long i, unsigned int q){
+Books::Books(std::string t, std::string a, std::string i, std::string q){
     title  = t;
     author = a;
-    isbn   = i;
-    qty    = q;
+    isbn   = stoull(i);
+    qty    = stoul(q);
 };
 Books::~Books(){};
 
@@ -94,16 +105,14 @@ unsigned int Books::modifyQty(int qty, bool mode){
 
 
 // -----------------   class Operations   ------------------
-//contructor
-Operations::Operations(){
 
-}
 //file reader
 int Operations::reader(std::string fileName){
     
     std::ifstream file(fileName);
-    
     bool newOpen = false;
+    collectionClear();
+
     while(true){
         if (file.is_open() || newOpen) {
             std::string line;
@@ -115,12 +124,11 @@ int Operations::reader(std::string fileName){
                     //splitting the string by delimiter "tab" (ascii code 9)
                     std::vector<std::string> elements = split(line, std::string(1, 9));
                     if(elements.size() > 3 && elements.size() < 6){
+                        if(sToll(elements[3]) != 0 && sToll(elements[2]) != 0){
                         //Making the book object
-                        Books book(elements[0], elements[1], std::stoull(elements[2]), std::stoul(elements[3]));
-                        if(stoi(elements[3]) != 0){
+                        Books book(elements[0], elements[1], elements[2], elements[3]);
                             //storing the book object
                             addBook(book);
-                            //std::cout << "Added! Title: " << elements[0] << std::endl;
                         }
                     }else{ corruptedCounter++; }
                 }
@@ -137,8 +145,8 @@ int Operations::reader(std::string fileName){
 
             while(true){
                 
-                std::cout << "Create a new one....1" << std::endl;
-                std::cout << "Try again...........0" << std::endl;
+                std::cout << "Create a new one........1" << std::endl;
+                std::cout << "Go back and Try again...0" << std::endl;
 
                 std::cout << "\r\nEnter a choice herer :> ";
                 std::string choice; std::cin >> choice;
@@ -163,4 +171,69 @@ int Operations::reader(std::string fileName){
             }
         }
     }
+}
+
+int Operations::options(){
+    
+    std::string *border = new std::string("----------------------");
+    println("\r\n", *border, "blue");
+    std::cout << "| Add a new Book...1 |" << std::endl;
+    std::cout << "| Find a Book......2 |" << std::endl;
+    std::cout << "| Go back..........3 |" << std::endl;
+    std::cout << "| Exit.............0 |" << std::endl;
+    println(*border,"\r\n", "blue");
+    delete border;
+
+    std::cout << "\r\nEnter a choice here :> ";
+    std::string choice; std::cin >> choice;
+    std::cout << std::endl;
+
+    if(choice == "1"){
+        int nav = addNewBook();
+        if(nav == 0){
+            return 0;
+        } else {  return options(); }
+    }else if(choice == "2"){
+
+    }else if(choice == "3"){
+        return 1;
+    }else if(choice == "0"){
+        return 0;
+    }else{
+        println("\r\nWrong selection!\r\n", "yellow");
+        return options();
+    }
+
+    return 0;
+}
+
+int Operations::addNewBook(){
+
+    std::vector<std::string> wizard = {"Enter here the title","Now enter the author","Include an ISBN","Specify a quantity"};
+    std::vector<std::string> bookData;
+    
+    std::cin.ignore();
+    for(unsigned int i=0; i< wizard.size(); i++){
+        println("\r\n",wizard[i],"magenta");
+        //getting user input
+        std::cout << "\r\nEnter data here :> ";
+        std::string choice;
+        std::getline(std::cin, choice);
+        std::cout << std::endl;
+
+        if(i > 1){
+            if(sToll(choice) == 0){
+                println("\r\nInput has to be numeric! Try again.","yellow");
+                --i;
+            }else{ bookData.push_back(choice); }
+        }else{ bookData.push_back(choice); }
+    }
+    
+    //creating book
+    Books book(bookData[0], bookData[1], bookData[2], bookData[3]);
+    //adding the book
+    addBook(book);
+
+    println("\r\nBook successfully added!","green");
+    return 1;
 }

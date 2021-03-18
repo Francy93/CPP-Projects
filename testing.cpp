@@ -2,6 +2,7 @@
 #define CATCH_CONFIG_MAIN // let Catch.hpp supply main() and handle configuring itself from the command line.
 #include "catch.hpp"
 #include "operations.cpp"
+#include <sstream>
 
 Operations ope;
 
@@ -11,6 +12,15 @@ TEST_CASE("Global functions", "[bool]"){
     // function to get string to lower case
     SECTION("string to lower case"){
         CHECK(ope.toLower("TeSt") == "test");
+    }
+    
+    SECTION("Testing the tring splitter"){
+        //the function tested returns a string value
+        std::vector<std::string> vec = ope.split("hello world", " "); 
+        for(unsigned int i=0; i<vec.size() ;i++){
+            //checking the splitting efficiency
+            CHECK_FALSE(vec[i] == "");
+        }
     }
 }
 
@@ -22,7 +32,6 @@ TEST_CASE("Operations class", "[bool]"){
     
     //the function tested returns an int
     SECTION("Testing the File reader"){
-        #include <sstream>
         //simulating user entering input    
         std::istringstream iss("0 1");
         std::cin.rdbuf(iss.rdbuf());
@@ -39,13 +48,17 @@ TEST_CASE("Operations class", "[bool]"){
             std::cout << ( "\""+testFile+"\" File successfully deleted\r\n" ) << std::endl;
         }
     }
-    SECTION("Testing the tring splitter"){
-        //the function tested returns a string value
-        std::vector<std::string> vec = ope.split("hello world", " "); 
-        for(unsigned int i=0; i<vec.size() ;i++){
-            //checking the splitting efficiency
-            CHECK_FALSE(vec[i] == "");
-        }
+    SECTION("Testing the main menu"){
+        //simulating user entering input  
+        std::istringstream iss("0 3");
+        std::cin.rdbuf(iss.rdbuf());
+
+        //checking if the manu manage to successfully exits
+        CHECK(ope.options() == 0);
+        //checking if the manu manage to successfully goes back
+        CHECK(ope.options() == 1);
+
+        std::cin.clear();
     }
 }
 
