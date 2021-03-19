@@ -15,7 +15,7 @@ class Global{
         //string to lower case
         std::string toLower(std::string s);
         //to string
-        unsigned long sToll(std::string s);
+        long sToll(std::string s);
 
         //this is a string printer printer
         template <typename... Ts>
@@ -48,6 +48,10 @@ class Global{
 
         //the holly strings splitter
         std::vector<std::string> split(std::string s, std::string delim);
+        //an enanched and actually workin cin
+        std::string cinln();
+        //table generator
+        std::string tableMaker(std::deque<std::deque<std::string>> allData, std::vector<unsigned int> longest);
 };
 
 
@@ -56,18 +60,26 @@ class Books: public Global {
     private:
         std::string title;
         std::string author;
-        unsigned long isbn;
+        unsigned long long isbn;
         unsigned int qty;
 
     public:
+        //Books constructor
         Books(std::string t, std::string a, std::string i, std::string q);
         ~Books();
 
         std::string getTitle();
         std::string getAuthor();
-        unsigned long getId();
+        unsigned long long getId();
         unsigned int getQty();
+        // modifing book quantity attribute
         unsigned int modifyQty(int qty, bool mode);
+        //checking wether a book is empty or not
+        bool emptyCheck();
+        //printing book values
+        std::string bookPrint();
+        //book dashboard
+        int bookManager();
 };
         
 
@@ -86,7 +98,21 @@ class Collection: public Global {
         void addBook(Books book);
         //get a book
         Books getBook(int index);
-
+                
+        //seartching algorithm
+        std::deque<Books> searchEngine(std::string title);
+        //find a book
+        int findBook();
+        //adding a new book
+        int addNewBook();
+        //building booksTable
+        std::string booksTable(std::deque<Books> books);
+        //print all books
+        void printCollection();
+        //select book from table
+        int booksChoice(std::deque<Books> books);
+        //quick-sort
+        void quicksort(std::deque<Books>& arr, int left, int right);
 };
 
 
@@ -101,10 +127,6 @@ class Operations: public Collection{
         int reader(std::string fileName);
         //main menu
         int options();
-        //find a book
-        int findBook();
-        //adding a new book
-        int addNewBook();
 };
 
 

@@ -1,7 +1,9 @@
 #include "library.hpp"
 Operations ope;
 
+
 int main(){
+    
     while(true){
         std::string *border = new std::string("----------------------------------");
         
@@ -20,9 +22,10 @@ int main(){
                     break;
                 }
             }
-        }
+        }else{ break; }
     }
 
+ 
     ope.println("\r\nSuccessfully Exited!\r\n", "green");
     std::exit(1);
     return 0;
