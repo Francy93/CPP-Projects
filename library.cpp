@@ -3,7 +3,8 @@ Operations ope;
 
 
 int main(){
-    
+    ope.println("\r\n\r\n", "WELCOME TO THE LIBRARY SYSTEM", "magenta");
+
     while(true){
         std::string *border = new std::string("----------------------------------");
         

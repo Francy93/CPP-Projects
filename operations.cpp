@@ -2,7 +2,7 @@
 
 // -----------------   global functions   ------------------
 //to string
-long Global::sToll(std::string s){
+long long Global::sToll(std::string s){
     //checking if string is a digit
     if(std::regex_match (s, std::regex("[-|+]{0,1}[0-9]+") )){
         return stoull(s);
@@ -52,27 +52,36 @@ std::string Global::tableMaker(std::deque<std::deque<std::string>> allData, std:
         
     std::string table = "";
     std::string border = "";
-    for(unsigned long i=0; i<allData[0].size(); i++){
+    for(unsigned long long i=0; i<allData[0].size(); i++){
         //creating the row
-        std::string delimiter ="\033[1;35m|\033[0m";
+        std::string symbol = "|";
+        std::string delimiter ="\033[1;35m"+symbol+"\033[0m";
         std::string row = "";
         for(unsigned int j=0; j<allData.size(); j++){
             int leng = longest[j] - allData[j][i].size() < 1? 0: longest[j] - allData[j][i].size();
             std::string elem ="";
             std::string spaces = leng > 0? std::string(leng, ' '): "";
-            if(j == 0){
-                
-                elem += "\033[1;33m"+allData[j][i] + spaces + "\033[0m";
-            }else{
-                elem += allData[j][i] + spaces;
+
+            std::string color = "";
+            std::string start = "";
+            std::string end   = "";
+            if(i == 0 || j == 0){
+                color = "3";
+                if(i == 0){
+                    color = "6";
+                }
+                start = "\033[1;3"+color+"m";
+                end   = "\033[0m";
             }
+            elem += start+allData[j][i] + spaces + end;
             row += delimiter+" " + elem + " ";
         }
         row += delimiter;
 
         if(i == 0){
             //creating the border
-            border += "\033[1;35m"+std::string(row.size()-(delimiter.size()-1)*4, '-')+"\033[0m";
+            int spaces = row.size()-((delimiter.size()-symbol.size())*2*allData.size()+delimiter.size()-symbol.size());
+            border += "\033[1;35m"+std::string(spaces, '-')+"\033[0m";
             table += border+"\r\n"+row+"\r\n"+border+"\r\n";
         }else{
             table += row+"\r\n";
@@ -107,12 +116,23 @@ Books Collection::getBook(int index){
 void Collection::addBook(Books book){
     data.push_back(book);
 }
-void Collection::removeBook(int index){
-    if((unsigned int)index < data.size()){
+bool Collection::removeBook(double index){
+    if(index < data.size() && index >=0){
         data.erase(data.begin() + index);
+        return true;
     }else{
-        println("\r\nOut of Bonds! No book removed.\r\n", "yellow");
+        println("\r\nERROR! Out of Bonds. No book removed.\r\n", "yellow");
     }
+    return false;
+}
+//get book index
+double Collection::bookIndex(Books book){
+    for(unsigned long long i=0; i< data.size(); i++){
+        if(book.getId() == data[i].getId()){
+            return i;
+        }
+    }
+    return -1;
 }
 void Collection::collectionClear(){
     data.clear();
@@ -168,7 +188,7 @@ std::string Collection::booksTable(std::deque<Books> books){
     std::vector<unsigned int> longest = {allData[0][0].size(), allData[1][0].size()};
 
     //longest detector
-    for(unsigned long i=0; i<books.size(); i++){
+    for(unsigned long long i=0; i<books.size(); i++){
         std::string title = books[i].getTitle();
         //adding data
         allData[0].push_back(std::to_string(i+1));
@@ -223,27 +243,42 @@ int Collection::findBook(){
 }
 //select a book from a given list
 int Collection::booksChoice(std::deque<Books> books){
-    std::cout << booksTable(books) << std::endl;
+    //if the books list is not empty
+    if(books.size() > 0){
+        std::cout << booksTable(books) << std::endl;
 
-    while(true){
-        std::cout << "Enter here below the number of the book to show" << std::endl;
-        std::cout << "Go back...........0 " << std::endl;
-        std::cout << "Exit.............00 " << std::endl;
+        while(true){
+            std::cout << "Enter here below the number of the book to show" << std::endl;
+            std::cout << "Go back...........0 " << std::endl;
+            std::cout << "Exit.............00 " << std::endl;
 
-        //getting user input
-        std::cout << "\r\nEnter number here :> ";
-        std::string choice; std::cin >> choice;
-        std::cout << std::endl;
+            //getting user input
+            std::cout << "\r\nEnter number here :> ";
+            std::string choice; std::cin >> choice;
+            std::cout << std::endl;
 
-        if(choice == "0"){
-            return 1;
-        }else if(choice == "00"){
-            return 0;
-        }else if(sToll(choice) != 0 && (unsigned long)sToll(choice) <= books.size()){
-            if(books[(sToll(choice)-1)].bookManager() == 0){
+            if(choice == "0"){
+                return 1;
+            }else if(choice == "00"){
                 return 0;
-            }else{ return booksChoice(books); }
-        }else{ println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow"); }
+            }else if(sToll(choice) != 0 && sToll(choice) <= books.size()){
+                
+                int result = books[(sToll(choice)-1)].bookManager();
+                if( result == 0){
+                    return 0;
+                }else if(result == 2){
+                    //book removing
+                    if(removeBook(bookIndex(books[(sToll(choice)-1)]))){
+                        println("\r\n", "Book successfully removed!.", "\r\n", "green");
+                        books.erase(books.begin() + sToll(choice)-1);
+                    }
+                    return booksChoice(books);
+                }else{ return booksChoice(books); }
+            }else{ println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow"); }
+        }
+    }else{ 
+        println("\r\n", "No more Books to show!", "\r\n", "\r\n", "yellow");
+        return 1;
     }
     return 0;
 }
@@ -311,23 +346,39 @@ unsigned int Books::getQty(){
     return qty;
 }
 // modifing book quantity
-unsigned int Books::modifyQty(int qty, bool mode){
+unsigned int Books::setQty(int qty, bool mode){
 
     if(mode && qty > 0){
-        Books::qty = Books::qty+qty; 
+        Books::qty = getQty()+qty;
     }else{
         //inverting sign
-        qty = qty*-1;
+        qty = qty<0? qty*-1: qty;
         if(Books::qty-qty == 0){
-            delete this; //----------------------------------------------------------------------(function to delete TO DO)
-        }else if(Books::qty-qty < 0){
+            println("\r\nWARNING! Are you sure you wanna remove this book from library\r\n?", "yellow");
+            std::cout << "Confirm.............2" << std::endl;
+            std::cout << "Abort...............1" << std::endl;
+            std::cout << "Exit................0" << std::endl;
+            std::cout << "\r\nEnter a choice here :> ";
+            //getting user input
+            std::string choice; std::cin >> choice;
+            if(choice == "2"){
+                return 2;
+            }else if(choice == "1"){
+                return 1;
+            }else if(choice == "0"){
+                return 0;
+            }else{
+                println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow");
+                return setQty(qty, mode);
+            }
+            
+
+        }else if((int)Books::qty-qty < 0){
             println("\r\nERROR! Not so many copies to be decreased.", "red");
             std::cout << "Try again..\r\n" << std::endl;
-        }else{
-            Books::qty = Books::qty-qty;
         }
     }
-    return getQty();
+    return 1;
 }
 //checking wether a book is empty or not
 bool Books::emptyCheck(){
@@ -359,7 +410,7 @@ std::string Books::bookPrint(){
 }
 //book dashboard
 int Books::bookManager(){
-    std::cout << bookPrint() << "\r\n" <<std::endl;
+    std::cout << bookPrint() <<std::endl;
 
     while(true){
         std::cout << "\r\nEdit the quantity...2" << std::endl;
@@ -378,16 +429,25 @@ int Books::bookManager(){
         }else if(choice == "2"){
             while(true){
                 std::cout << "\r\nNow enter a quantity to be summed (e.g 1, -1, 5, -18)" << std::endl;
-                std::cout << "Go back.............00" << std::endl;
+                std::cout << "Go back.............0" << std::endl;
 
                 //getting user input
                 std::cout << "\r\nEnter a choice here :> ";
                 std::string choice; std::cin >> choice;
                 std::cout << std::endl;
 
-                if(sToll(choice) != 0){
+                if(choice == "0"){
+                    return bookManager();
+                }else if(sToll(choice) != 0){
                     long *q = new long(sToll(choice));
-                    modifyQty(*q, *q>0);
+                    int result = setQty(*q, *q>0);
+                    if(result == 0){
+                        return 0;
+                    }else if(result == 1){
+                        return bookManager();
+                    }else{
+                        return 2;
+                    }
                     delete q;
                     break; //----------------------------------------------------------book remouving if decrese to 0 (TO DO)
                 }else { println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow"); }

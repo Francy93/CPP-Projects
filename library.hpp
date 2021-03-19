@@ -15,7 +15,7 @@ class Global{
         //string to lower case
         std::string toLower(std::string s);
         //to string
-        long sToll(std::string s);
+        long long sToll(std::string s);
 
         //this is a string printer printer
         template <typename... Ts>
@@ -73,7 +73,7 @@ class Books: public Global {
         unsigned long long getId();
         unsigned int getQty();
         // modifing book quantity attribute
-        unsigned int modifyQty(int qty, bool mode);
+        unsigned int setQty(int qty, bool mode);
         //checking wether a book is empty or not
         bool emptyCheck();
         //printing book values
@@ -93,7 +93,9 @@ class Collection: public Global {
         //erasing book collection
         void collectionClear();
         //remove a book
-        void removeBook(int index);
+        bool removeBook(double index);
+        //get book index
+        double bookIndex(Books book);
         //add a book
         void addBook(Books book);
         //get a book
