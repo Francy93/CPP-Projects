@@ -261,7 +261,7 @@ int Collection::booksChoice(std::deque<Books> books){
                 return 1;
             }else if(choice == "00"){
                 return 0;
-            }else if(sToll(choice) != 0 && sToll(choice) <= books.size()){
+            }else if(sToll(choice) > 0 && sToll(choice) <= books.size()){
                 
                 int result = books[(sToll(choice)-1)].bookManager();
                 if( result == 0){
@@ -354,7 +354,7 @@ unsigned int Books::setQty(int qty, bool mode){
         //inverting sign
         qty = qty<0? qty*-1: qty;
         if(Books::qty-qty == 0){
-            println("\r\nWARNING! Are you sure you wanna remove this book from library\r\n?", "yellow");
+            println("\r\nWARNING! Are you sure you wanna remove this book from the library?\r\n", "yellow");
             std::cout << "Confirm.............2" << std::endl;
             std::cout << "Abort...............1" << std::endl;
             std::cout << "Exit................0" << std::endl;
