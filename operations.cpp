@@ -105,8 +105,8 @@ std::string Global::tableMaker(std::deque<std::deque<std::string>> &allData, std
 
 // -----------------   class Collection   ------------------
 
-Books Collection::getBook(int index){
-    if((unsigned int)index < data.size()){
+Books Collection::getBook(unsigned long long index){
+    if(index < data.size()){
         return data[index];
     }else{
         println("\r\nOut of Bonds! Returned last index element.\r\n", "red");
@@ -126,7 +126,7 @@ bool Collection::removeBook(double index){
     }
     return false;
 }
-//get book index
+//get book index  (THIS SHOULD BE IMPROVED WITH a BINARY SEARCH)
 double Collection::bookIndex(Books book){
         long long i = 0;
         for (auto it = data.cbegin(); it != data.cend(); ++it){
@@ -197,7 +197,7 @@ std::string Collection::booksTable(std::deque<Books> &books){
 
     return tableMaker(allData, longest);
 }
-
+//printing the whole collection is O(n*2) time complexity
 void Collection::printCollection(){
     std::cout << booksTable(data) << std::endl;
 }
@@ -206,17 +206,17 @@ void Collection::printCollection(){
 int Collection::findBook(){
     
     std::cout << "Enter here below a book title to search" << std::endl;
-    std::cout << "Go back..........1 " << std::endl;
-    std::cout << "Exit.............0 " << std::endl;
+    std::cout << "Go back..........0 " << std::endl;
+    std::cout << "Exit............00 " << std::endl;
 
     //getting user input
     std::cout << "\r\nEnter data here :> ";
     std::string choice = cinln();
     std::cout << std::endl;
 
-    if(choice == "0"){
+    if(choice == "00"){
         return 0;
-    }else if(choice == "1"){
+    }else if(choice == "0"){
         return 1;
     }else if(choice == "" || choice == " "){
         println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow");
@@ -281,8 +281,7 @@ int Collection::booksChoice(std::deque<Books> books){
 
 //data shuffle
 void Collection::shuffle(std::deque<Books> &data){
-    #include <algorithm>
-    //performin a shuffle to prevent cases of quadratic time scenario
+    //this function requires: #include <algorithm> and #include <regex>
     std::random_shuffle(data.begin(), data.end());
 }
 /* //quick-sort
@@ -358,17 +357,17 @@ unsigned int Books::setQty(int qty, bool mode){
         qty = qty<0? qty*-1: qty;
         if(Books::qty-qty == 0){
             println("\r\nWARNING! Are you sure you wanna remove this book from the library?\r\n", "yellow");
-            std::cout << "Confirm.............2" << std::endl;
-            std::cout << "Abort...............1" << std::endl;
-            std::cout << "Exit................0" << std::endl;
+            std::cout << "Confirm.............1" << std::endl;
+            std::cout << "Abort...............0" << std::endl;
+            std::cout << "Exit...............00" << std::endl;
             std::cout << "\r\nEnter a choice here :> ";
             //getting user input
             std::string choice; std::cin >> choice;
-            if(choice == "2"){
+            if(choice == "1"){
                 return 2;
-            }else if(choice == "1"){
-                return 1;
             }else if(choice == "0"){
+                return 1;
+            }else if(choice == "00"){
                 return 0;
             }else{
                 println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow");
@@ -416,20 +415,20 @@ int Books::bookManager(){
     std::cout << bookPrint() <<std::endl;
 
     while(true){
-        std::cout << "\r\nEdit the quantity...2" << std::endl;
-        std::cout << "Go back.............1" << std::endl;
-        std::cout << "Exit................0" << std::endl;
+        std::cout << "\r\nEdit the quantity...1" << std::endl;
+        std::cout << "Go back.............0" << std::endl;
+        std::cout << "Exit...............00" << std::endl;
 
         //getting user input
         std::cout << "\r\nEnter a choice here :> ";
         std::string choice; std::cin >> choice;
         std::cout << std::endl;
         
-        if(choice == "0"){
+        if(choice == "00"){
             return 0;
-        }else if(choice == "1"){
+        }else if(choice == "0"){
             return 1;
-        }else if(choice == "2"){
+        }else if(choice == "1"){
             while(true){
                 std::cout << "\r\nNow enter a quantity to be summed (e.g 1, -1, 5, -18)" << std::endl;
                 std::cout << "Go back.............0" << std::endl;
@@ -547,12 +546,14 @@ int Operations::options(){
     
     std::string *border = new std::string("----------------------");
     println("\r\n", *border, "blue");
-    std::cout << "| Add a new Book...2 |" << std::endl;
-    std::cout << "| Find a Book......3 |" << std::endl;
-    std::cout << "| Show collection..4 |" << std::endl;
+    println("|        MAIN MENU        |", "cyan");
     println(*border, "blue");
-    std::cout << "| Go BACK..........1 |" << std::endl;
-    std::cout << "| EXIT.............0 |" << std::endl;
+    std::cout << "| Add a new Book........1 |" << std::endl;
+    std::cout << "| Find a Book...........2 |" << std::endl;
+    std::cout << "| Show collection.......3 |" << std::endl;
+    println(*border, "blue");
+    std::cout << "| Go BACK...............0 |" << std::endl;
+    std::cout << "| EXIT.................00 |" << std::endl;
     println(*border,"\r\n", "blue");
     delete border;
 
@@ -561,24 +562,24 @@ int Operations::options(){
     std::string choice; std::cin >> choice;
     std::cout << std::endl;
 
-    if(choice == "2"){
+    if(choice == "1"){
         int nav = addNewBook();
         if(nav == 0){
             return 0;
         } else {  return options(); }
-    }else if(choice == "3"){
+    }else if(choice == "2"){
         int nav = findBook();
         if(nav == 0){
             return 0;
         } else {  return options(); }
-    }else if(choice == "4"){
+    }else if(choice == "3"){
         if(booksChoice(data) == 0){
             return 0;
         }
         return options();
-    }else if(choice == "1"){
-        return 1;
     }else if(choice == "0"){
+        return 1;
+    }else if(choice == "00"){
         return 0;
     }else{
         println("\r\nWrong selection!\r\n", "yellow");

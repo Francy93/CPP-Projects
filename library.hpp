@@ -19,7 +19,7 @@ class Global{
         //to string
         long long sToll(std::string s);
 
-        //this is a string printer printer
+        //this is a string printer
         template <typename... Ts>
         void println(Ts const & ... vals){
             using unused = int[];
@@ -102,7 +102,7 @@ class Collection: public Global {
         //add a book
         void addBook(Books book);
         //get a book
-        Books getBook(int index);
+        Books getBook(unsigned long long index);
                 
 
         //find a book
