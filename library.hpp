@@ -2,11 +2,13 @@
 #define _LIBRARY_HXX_
 
 #include <iostream>
-#include <string>   //library for string variables
+#include <string>   // library for string variables
 #include <regex>    // regular expressions
 #include <fstream>  // file text scanner
 #include <vector>   // vectors library
 #include <deque>    // deque library
+#include <unordered_map> // unordered hash table read/write: O(1)
+#include <algorithm>     // for toLower() and the shuffle()
 
 
 class Global{
@@ -30,16 +32,16 @@ class Global{
             if(args.size() > 1){
                 std::string colors [] = {"black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"};
                 for (unsigned int i=0; i< sizeof(colors)/sizeof(*colors); i++){
-                    if(toLower(args[args.size()-1]) == colors[i]){
+                    if(toLower(args.back()) == colors[i]){
                         start = "\033[1;3"+std::to_string(i)+"m";
                         end = "\033[0m";
+                        args.erase(args.end());
                     }
                 }
             }
-
+            
             std::string print = "";
-            unsigned int size = start == ""? args.size(): args.size()-1;
-            for(unsigned int i=0; i< size; i++){
+            for(unsigned int i=0; i< args.size(); i++){
                 print +=args[i];
             }
             
@@ -51,7 +53,7 @@ class Global{
         //an enanched and actually workin cin
         std::string cinln();
         //table generator
-        std::string tableMaker(std::deque<std::deque<std::string>> allData, std::vector<unsigned int> longest);
+        std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned int> longest);
 };
 
 
@@ -65,6 +67,7 @@ class Books: public Global {
 
     public:
         //Books constructor
+        Books(){}
         Books(std::string t, std::string a, std::string i, std::string q);
         ~Books();
 
@@ -101,20 +104,24 @@ class Collection: public Global {
         //get a book
         Books getBook(int index);
                 
-        //seartching algorithm
-        std::deque<Books> searchEngine(std::string title);
+
         //find a book
         int findBook();
         //adding a new book
         int addNewBook();
         //building booksTable
-        std::string booksTable(std::deque<Books> books);
+        std::string booksTable(std::deque<Books> &books);
         //print all books
         void printCollection();
         //select book from table
         int booksChoice(std::deque<Books> books);
         //quick-sort
-        void quicksort(std::deque<Books>& arr, int left, int right);
+        void quicksort(std::deque<Books>& a, long long l, long long r, unsigned int titleIndex);
+        //binary-search
+        std::deque<Books> binarySearch(std::deque<Books> &arr,std::string word);
+        //data shuffle       
+        void shuffle(std::deque<Books> &data);
+
 };
 
 

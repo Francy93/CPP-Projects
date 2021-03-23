@@ -1,7 +1,10 @@
 //To Configure catch to use your main, and not its own: #define CATCH_CONFIG_RUNNER
 #define CATCH_CONFIG_MAIN // let Catch.hpp supply main() and handle configuring itself from the command line.
 #include "catch.hpp"
+#include "algo.cpp"
 #include "operations.cpp"
+
+//#include "operations.cpp"
 #include <sstream>
 
 Operations ope;

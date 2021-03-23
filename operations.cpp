@@ -11,7 +11,6 @@ long long Global::sToll(std::string s){
 }
 
 std::string Global::toLower(std::string s){
-    #include <algorithm>
     #include <cctype>
     
     std::transform(s.begin(), s.end(), s.begin(),
@@ -48,7 +47,7 @@ std::string Global::cinln(){
     return input;
 }
 // table generator
-std::string Global::tableMaker(std::deque<std::deque<std::string>> allData, std::vector<unsigned int> longest){
+std::string Global::tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned int> longest){
         
     std::string table = "";
     std::string border = "";
@@ -58,7 +57,9 @@ std::string Global::tableMaker(std::deque<std::deque<std::string>> allData, std:
         std::string delimiter ="\033[1;35m"+symbol+"\033[0m";
         std::string row = "";
         for(unsigned int j=0; j<allData.size(); j++){
-            int leng = longest[j] - allData[j][i].size() < 1? 0: longest[j] - allData[j][i].size();
+            auto allD = allData[j][i];
+            unsigned long long allDsize = allD.size();
+            int leng = longest[j] - allDsize < 1? 0: longest[j] - allDsize;
             std::string elem ="";
             std::string spaces = leng > 0? std::string(leng, ' '): "";
 
@@ -73,7 +74,7 @@ std::string Global::tableMaker(std::deque<std::deque<std::string>> allData, std:
                 start = "\033[1;3"+color+"m";
                 end   = "\033[0m";
             }
-            elem += start+allData[j][i] + spaces + end;
+            elem += start+ allD + spaces + end;
             row += delimiter+" " + elem + " ";
         }
         row += delimiter;
@@ -127,11 +128,14 @@ bool Collection::removeBook(double index){
 }
 //get book index
 double Collection::bookIndex(Books book){
-    for(unsigned long long i=0; i< data.size(); i++){
-        if(book.getId() == data[i].getId()){
-            return i;
+        long long i = 0;
+        for (auto it = data.cbegin(); it != data.cend(); ++it){
+            i++;
+            Books current = *it;
+            if(book.getId() == current.getId()){
+                return i;
+            }
         }
-    }
     return -1;
 }
 void Collection::collectionClear(){
@@ -170,33 +174,25 @@ int Collection::addNewBook(){
     return 1;
 }
 
-//seartching algorithm
-std::deque<Books> Collection::searchEngine(std::string title){
-    std::deque<Books> found;
-    //just testing
-    if(title == "2"){
-        found.push_back(getBook(0));
-        return found;
-    }else{
-        return found;
-    }
-}
+
 //building booksTable
-std::string Collection::booksTable(std::deque<Books> books){
+std::string Collection::booksTable(std::deque<Books> &books){
     //the instruction to append at the begining would be like: a.insert(a.begin(), b.begin(), b.end());
     std::deque<std::deque<std::string>> allData = {{"No."}, {"Title(s)"}};
     std::vector<unsigned int> longest = {allData[0][0].size(), allData[1][0].size()};
 
     //longest detector
-    for(unsigned long long i=0; i<books.size(); i++){
-        std::string title = books[i].getTitle();
+    unsigned long long i=0;
+    for (auto it = books.begin(); it != books.end(); it++){
+        std::string title = (*it).getTitle();
         //adding data
-        allData[0].push_back(std::to_string(i+1));
+        allData[0].push_back(std::to_string(++i));
         allData[1].push_back(title);
         
         //calculating longest
-        longest[0] = longest[0] < std::to_string(i+1).size()? std::to_string(i+1).size(): longest[0];
-        longest[1] = longest[1] < title.size()? title.size(): longest[1];
+        unsigned int iSize = std::to_string(i).size(), titleSize = title.size();
+        longest[0] = longest[0] < iSize? iSize: longest[0];
+        longest[1] = longest[1] < titleSize? titleSize: longest[1];
     }
 
     return tableMaker(allData, longest);
@@ -226,7 +222,7 @@ int Collection::findBook(){
         println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow");
         return findBook();
     }else{
-        std::deque<Books> books = searchEngine(choice);
+        std::deque<Books> books =  binarySearch(data, choice);
         //if any book was found than do..
         if(books.size() != 0){
             if(booksChoice(books) == 0){
@@ -282,7 +278,14 @@ int Collection::booksChoice(std::deque<Books> books){
     }
     return 0;
 }
-//quick-sort
+
+//data shuffle
+void Collection::shuffle(std::deque<Books> &data){
+    #include <algorithm>
+    //performin a shuffle to prevent cases of quadratic time scenario
+    std::random_shuffle(data.begin(), data.end());
+}
+/* //quick-sort
 void Collection::quicksort(std::deque<Books>& a, int l, int r){
     #include <algorithm>
     std::random_shuffle(a.begin(), a.end());
@@ -292,7 +295,7 @@ void Collection::quicksort(std::deque<Books>& a, int l, int r){
         int i = left, j = right;
         Books pivot = arr[(left + right) / 2];
 
-        /* partition */
+        // partition
         while (i <= j) {
             while (arr[i].getTitle() < pivot.getTitle()) { i++; }
             while (arr[j].getTitle() > pivot.getTitle()) { j--; }
@@ -304,12 +307,12 @@ void Collection::quicksort(std::deque<Books>& a, int l, int r){
                 j--;
             }
         }
-        /* recursion */
+        // recursion 
         if (left < j){ recur(arr, left, j); }
         if (i < right){ recur(arr, i, right); }
     };
     recur(a,l,r);
-}
+} */
 
 
 
@@ -504,7 +507,8 @@ int Operations::reader(std::string fileName){
                 println("\r\n" +std::to_string(corruptedCounter)+ " book(s) data was corrupted!\r\n", "yellow");
             }
             //sorting elements
-            quicksort(data, 0, data.size() - 1);
+            shuffle(data);
+            quicksort(data, 0, data.size() - 1, 0);
             return 1;
         }else if(file.fail()){
             println("\r\nDummy file missing! Do you want to create one?", "cyan");

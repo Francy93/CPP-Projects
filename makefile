@@ -1,5 +1,5 @@
 #creating the g++ variable containing the compiler instruction
-CXX = g++ -std=c++17
+CXX = g++ -std=c++2a
 #creating the -c -Wall variable containing compilation parameters
 CXXFLAGS = -c -Wall
 #variable containing the final.exe file name
@@ -12,8 +12,8 @@ HEADER = library.hpp
 #Making all executable
 all: tests final
 #compiling the two files to get the final one which would be main.cpp and components.cpp
-final: operations.o library.o
-	$(CXX) operations.o library.o -o $(TARGET)
+final: algo.o operations.o library.o
+	$(CXX) algo.o operations.o library.o -o $(TARGET)
 #compiling the testing unit
 tests: testing.o
 	$(CXX) testing.o -o $(TESTS)
@@ -26,6 +26,10 @@ library.o: library.cpp $(HEADER)
 #compiling just the operations.cpp file
 operations.o: operations.cpp $(HEADER)
 	$(CXX) $(CXXFLAGS) operations.cpp
+
+#compiling just the algo.cpp file
+algo.o: algo.cpp $(HEADER)
+	$(CXX) $(CXXFLAGS) algo.cpp
 
 #compiling just the testing.cpp file
 testing.o: testing.cpp catch.hpp $(HEADER)
