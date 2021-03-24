@@ -577,7 +577,7 @@ bool Operations::reader(std::string fileName){
                     }else{ println("Something went wrong while creating the new file.\r\n", "red"); }
                     break;
                 } else if(choice == "0"){
-                    return fasle;
+                    return false;
                 }else{
                     println("\r\nWrong selection!\r\n", "yellow");
                 }
