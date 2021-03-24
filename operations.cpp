@@ -1,6 +1,38 @@
 #include "library.hpp"
 
 // -----------------   global functions   ------------------
+
+//returns a string of numerate options
+std::string Global::navOptions(std::vector<std::string> options, int minimum){
+    std::string list="";
+
+    int oSize = options.size();
+    int iSize = 2;
+
+    int i = 0;
+    int longest = 0;
+    for(auto o: options){
+        int strSize = o.size();
+        longest = strSize > longest? strSize: longest;
+        if(++i == oSize){
+
+        iSize = (int)std::to_string(i).size() > iSize? std::to_string(i).size(): iSize;
+        }
+    }
+
+    longest += minimum > 3? minimum: 3;
+    i = 0;
+    for(auto o: options){
+        int currenISize = iSize - std::to_string(i).size();
+        int dotSize = longest - o.size();
+        list += o + std::string(dotSize+currenISize,'.') + std::to_string(++i) + "\r\n";
+    }
+
+    list += "Go back" + std::string(longest-7+iSize-1,'.') + "0"  + "\r\n";
+    list += "Exit"    + std::string(longest-4+iSize-2,'.') + "00" + "\r\n";
+    return list;
+}
+
 //to string
 long long Global::sToll(std::string s){
     //checking if string is a digit
@@ -128,14 +160,15 @@ bool Collection::removeBook(double index){
 }
 //get book index  (THIS SHOULD BE IMPROVED WITH a BINARY SEARCH)
 double Collection::bookIndex(Books book){
-        long long i = 0;
-        for (auto it = data.cbegin(); it != data.cend(); ++it){
-            i++;
-            Books current = *it;
-            if(book.getId() == current.getId()){
-                return i;
-            }
+    long long i = 0;
+    
+    for (auto it = data.cbegin(); it != data.cend(); ++it){
+        i++;
+        Books current = *it;
+        if(book.getId() == current.getId()){
+            return i;
         }
+    }
     return -1;
 }
 void Collection::collectionClear(){
@@ -222,23 +255,15 @@ int Collection::findBook(){
         println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow");
         return findBook();
     }else{
-        std::deque<Books> books =  binarySearch(data, choice);
         //if any book was found than do..
-        if(books.size() != 0){
-            if(booksChoice(books) == 0){
-                return 0;
-            }
-            return findBook();
-        }else{
-            println("\r\n", "No books found! Try again.", "\r\n", "cyan");
-            return findBook();
-        }
-
+        if(binarySearch(data, choice) == 0){
+            return 0;
+        }else{ return findBook(); }
     }
     return 0;
 }
 //select a book from a given list
-int Collection::booksChoice(std::deque<Books> books){
+int Collection::booksChoice(std::deque<Books> &books){
     //if the books list is not empty
     if(books.size() > 0){
         std::cout << booksTable(books) << std::endl;
@@ -371,13 +396,15 @@ unsigned int Books::setQty(int qty, bool mode){
                 return 0;
             }else{
                 println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow");
-                return setQty(qty, mode);
+                return setQty(qty, false);
             }
             
 
         }else if((int)Books::qty-qty < 0){
             println("\r\nERROR! Not so many copies to be decreased.", "red");
             std::cout << "Try again..\r\n" << std::endl;
+        }else{
+            Books::qty -= qty;
         }
     }
     return 1;
@@ -544,7 +571,7 @@ int Operations::reader(std::string fileName){
 
 int Operations::options(){
     
-    std::string *border = new std::string("----------------------");
+    std::string *border = new std::string("---------------------------");
     println("\r\n", *border, "blue");
     println("|        MAIN MENU        |", "cyan");
     println(*border, "blue");

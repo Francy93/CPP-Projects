@@ -68,13 +68,12 @@ void Collection::quicksort(std::deque<Books>& arr, long long l, long long r, uns
     recur(l,r);
 }
 
-std::deque<Books> Collection::binarySearch(std::deque<Books> &arr,std::string word){
+int Collection::binarySearch(std::deque<Books> &arr,std::string word){
     word = toLower(word);
     long long arrSize = arr.size(), left=0, right=arrSize-1, cyclesFound = 0;
     unsigned int index = -1;
     int end = (int)index;
     std::unordered_map<unsigned long long, Books> found;
-    /* std::deque<Books> found; */
 
     while(++index >= 0){
         
@@ -84,9 +83,9 @@ std::deque<Books> Collection::binarySearch(std::deque<Books> &arr,std::string wo
         shuffle(arr);
         //sorting the array
         quicksort(arr, left, right, index);
-
         long long mid;
-
+        
+        //recursive lambda function (searching core)
         std::function<bool()> recur = [&](){
 
             mid = l + (r - l) / 2;
@@ -129,12 +128,8 @@ std::deque<Books> Collection::binarySearch(std::deque<Books> &arr,std::string wo
                         }else{found.push_back(arr[i]); }
                     } */
                     for(unsigned long i= decreaseMid; i<=increaseMid; i++){
-                        //Books *b = &(arr[i]);
-                        unsigned long long id = arr[i].getId();
-                        if(found.find(id) == found.end()){
-                            found[id] = arr[i];
-                            //delete b;
-                        }
+
+                        found[arr[i].getId()] = arr[i];
                     }
                     //destroying pointers
                     delete splitted;
@@ -162,8 +157,7 @@ std::deque<Books> Collection::binarySearch(std::deque<Books> &arr,std::string wo
             return false;
         };
         
-        // We reach here when search terminates
-        //bool result = recur();
+        // We reach here right before the actual search starts (recur())
         if(!recur() && index == 0 && end == 0){
             println("NOT FOUND, AT A GLANCE! ", "yellow");
             println("Search better...1");
@@ -179,28 +173,50 @@ std::deque<Books> Collection::binarySearch(std::deque<Books> &arr,std::string wo
             }
             if(choice == "0"){ break; }
         }else if(found.size() > 0){
+
             if(index == 0){
-                println("YES, FOUND: ", std::to_string(cyclesFound), "green");
-            
-                println("\r\n", "NOT WHAT YOU WERE LOOKING FOR?");
-                println("Deep search.....1");
-                println("Exit............0");
-                
-                //user choice
-                std::string choice="";
-                while(choice != "1" && choice != "0"){
-                    choice = cinln();
-                    if(choice != "1" && choice != "0"){
-                        println("WRONG SELECTION! Try again.", "yellow"); 
-                    }
+                unsigned long long i = 0;
+                for (auto f = found.begin(); f != found.end(); f++){
+                    std::cout << " |" << ++i << " | "<< (f->second).getTitle() << std::endl;
                 }
-                if(choice == "0"){ break; }
+                
+                println("\r\n", "YES, FOUND: ", std::to_string(cyclesFound), "\r\n", "green");
+                std::cout << navOptions({"Select a book","Perform a DEEPER search"}, 10) << std::endl;
+
             }else if(end == -1){
                 if(found.size() > cyclesFound){
+                    unsigned long long i = 0;
+                    for (auto f = found.begin(); f != found.end(); f++){
+                        std::cout << " |" << ++i << " | "<< (f->second).getTitle() << std::endl;
+                    }
+                    
                     println("\r\n", "FOUND ", std::to_string(found.size()-cyclesFound), " MORE", "\r\n", "green");
-                }else{ println("\r\n", "NOT FURTHER MATCHING FOUND!"); }
-                break;
+                    std::cout << navOptions({"Select a book"}, 10) << std::endl;
+                }else{ println("\r\n", "NOT FURTHER MATCHING FOUND!"); break; }
             }
+
+            if(index == 0 || end == -1){
+                //user choice
+                std::string choice="";
+                while(true){
+                    std::cout << "Enter a choice here :> ";
+                    choice = cinln();
+                    if((choice != "1" && choice != "0" && choice != "00" && choice != "2") || (choice == "2" && end == -1)){
+                        println("WRONG SELECTION! Try again.", "yellow"); 
+                    }else{ break; }
+                }
+
+                if(choice == "00"){ return 0; }  //terminatign this function and close the program 
+                else if(choice == "0"){ return 1; } //exiting the main loop and terminate this function
+                else if(choice == "1"){ 
+                    std::deque<Books>HF;
+                    for (auto f = found.begin(); f != found.end(); f++){
+                        HF.push_back(f->second);
+                    }
+                    return booksChoice(HF);
+                }
+            }
+
         }else if(end == -1){
             println("DEFINITELY NOT FOUND! ","red");
             break;
@@ -208,10 +224,5 @@ std::deque<Books> Collection::binarySearch(std::deque<Books> &arr,std::string wo
     }
 
 
-    std::deque<Books>HF;
-     for (auto f = found.begin(); f != found.end(); f++){
-        HF.push_back(f->second);
-    }
-    return HF;
-    /* return found; */
+    return 0;
 } 

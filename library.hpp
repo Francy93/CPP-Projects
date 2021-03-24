@@ -14,6 +14,7 @@
 class Global{
 
     public:
+        std::string navOptions(std::vector<std::string> options, int minimum);
         //string to lower case
         std::string toLower(std::string s);
         //to string
@@ -114,11 +115,11 @@ class Collection: public Global {
         //print all books
         void printCollection();
         //select book from table
-        int booksChoice(std::deque<Books> books);
+        int booksChoice(std::deque<Books> &books);
         //quick-sort
         void quicksort(std::deque<Books>& a, long long l, long long r, unsigned int titleIndex);
         //binary-search
-        std::deque<Books> binarySearch(std::deque<Books> &arr,std::string word);
+        int binarySearch(std::deque<Books> &arr,std::string word);
         //data shuffle       
         void shuffle(std::deque<Books> &data);
 
