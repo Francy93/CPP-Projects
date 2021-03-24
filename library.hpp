@@ -91,7 +91,7 @@ class Books: public Global {
 class Collection: public Global {
 
     protected: 
-        std::deque<Books> data;
+        std::deque<Books*> data;
 
     public:
         //erasing book collection
@@ -99,29 +99,29 @@ class Collection: public Global {
         //remove a book
         bool removeBook(double index);
         //get book index
-        double bookIndex(Books book);
+        double bookIndex(Books *book);
         //add a book
-        void addBook(Books book);
+        void addBook(Books *book);
         //get a book
-        Books getBook(unsigned long long index);
+        Books* getBook(unsigned long long index);
                 
 
         //find a book
-        int findBook();
+        bool findBook();
         //adding a new book
-        int addNewBook();
+        void addNewBook();
         //building booksTable
-        std::string booksTable(std::deque<Books> &books);
+        std::string booksTable(std::deque<Books*> &books);
         //print all books
         void printCollection();
         //select book from table
-        int booksChoice(std::deque<Books> &books);
+        int booksChoice(std::deque<Books*> &books);
         //quick-sort
-        void quicksort(std::deque<Books>& a, long long l, long long r, unsigned int titleIndex);
+        void quicksort(std::deque<Books*>& a, long long l, long long r, unsigned int titleIndex);
         //binary-search
-        int binarySearch(std::deque<Books> &arr,std::string word);
+        bool binarySearch(std::deque<Books*> &arr,std::string word);
         //data shuffle       
-        void shuffle(std::deque<Books> &data);
+        void shuffle(std::deque<Books*> &data);
 
 };
 
@@ -134,9 +134,9 @@ class Operations: public Collection{
         ~Operations(){};
 
         //file reader
-        int reader(std::string fileName);
+        bool reader(std::string fileName);
         //main menu
-        int options();
+        bool options();
 };
 
 

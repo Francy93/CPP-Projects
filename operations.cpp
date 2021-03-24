@@ -10,7 +10,7 @@ std::string Global::navOptions(std::vector<std::string> options, int minimum){
     int iSize = 2;
 
     int i = 0;
-    int longest = 0;
+    int longest = 7;
     for(auto o: options){
         int strSize = o.size();
         longest = strSize > longest? strSize: longest;
@@ -20,16 +20,20 @@ std::string Global::navOptions(std::vector<std::string> options, int minimum){
         }
     }
 
+    std::string cStart = "\033[1;33m";
+    std::string cEnd = "\033[0m";
     longest += minimum > 3? minimum: 3;
     i = 0;
     for(auto o: options){
         int currenISize = iSize - std::to_string(i).size();
         int dotSize = longest - o.size();
-        list += o + std::string(dotSize+currenISize,'.') + std::to_string(++i) + "\r\n";
+        std::string index = cStart + std::to_string(++i) + cEnd;
+        
+        list += o + std::string(dotSize+currenISize,'.') + index + "\r\n";
     }
 
-    list += "Go back" + std::string(longest-7+iSize-1,'.') + "0"  + "\r\n";
-    list += "Exit"    + std::string(longest-4+iSize-2,'.') + "00" + "\r\n";
+    list += "Go back" + std::string(longest-7+iSize-1,'.') + cStart+"0"+cEnd  + "\r\n";
+    list += "Exit"    + std::string(longest-4+iSize-2,'.') + cStart+"00"+cEnd + "\r\n";
     return list;
 }
 
@@ -137,7 +141,7 @@ std::string Global::tableMaker(std::deque<std::deque<std::string>> &allData, std
 
 // -----------------   class Collection   ------------------
 
-Books Collection::getBook(unsigned long long index){
+Books* Collection::getBook(unsigned long long index){
     if(index < data.size()){
         return data[index];
     }else{
@@ -146,11 +150,14 @@ Books Collection::getBook(unsigned long long index){
     }
     
 }
-void Collection::addBook(Books book){
+void Collection::addBook(Books *book){
     data.push_back(book);
 }
+//book remover
 bool Collection::removeBook(double index){
     if(index < data.size() && index >=0){
+        delete data[index];
+        delete &data[index];
         data.erase(data.begin() + index);
         return true;
     }else{
@@ -159,16 +166,16 @@ bool Collection::removeBook(double index){
     return false;
 }
 //get book index  (THIS SHOULD BE IMPROVED WITH a BINARY SEARCH)
-double Collection::bookIndex(Books book){
+double Collection::bookIndex(Books *book){
     long long i = 0;
     
     for (auto it = data.cbegin(); it != data.cend(); ++it){
-        i++;
-        Books current = *it;
-        if(book.getId() == current.getId()){
+        if(book == *it){
             return i;
         }
+        i++;
     }
+    println("\r\nERROR! Out of Bonds. No book found.\r\n", "red");
     return -1;
 }
 void Collection::collectionClear(){
@@ -176,7 +183,7 @@ void Collection::collectionClear(){
 }
 
 //adding a new book
-int Collection::addNewBook(){
+void Collection::addNewBook(){
 
     std::vector<std::string> wizard = {"Enter here the title","Now enter the author","Include an ISBN","Specify a quantity"};
     std::vector<std::string> bookData;
@@ -199,17 +206,16 @@ int Collection::addNewBook(){
     }
     
     //creating book
-    Books book(bookData[0], bookData[1], bookData[2], bookData[3]);
+    Books *b = new Books(bookData[0], bookData[1], bookData[2], bookData[3]);
     //adding the book
-    addBook(book);
+    addBook( b );
 
     println("\r\nBook successfully added!","green");
-    return 1;
 }
 
 
 //building booksTable
-std::string Collection::booksTable(std::deque<Books> &books){
+std::string Collection::booksTable(std::deque<Books*> &books){
     //the instruction to append at the begining would be like: a.insert(a.begin(), b.begin(), b.end());
     std::deque<std::deque<std::string>> allData = {{"No."}, {"Title(s)"}};
     std::vector<unsigned int> longest = {allData[0][0].size(), allData[1][0].size()};
@@ -217,7 +223,7 @@ std::string Collection::booksTable(std::deque<Books> &books){
     //longest detector
     unsigned long long i=0;
     for (auto it = books.begin(); it != books.end(); it++){
-        std::string title = (*it).getTitle();
+        std::string title = (**it).getTitle();
         //adding data
         allData[0].push_back(std::to_string(++i));
         allData[1].push_back(title);
@@ -236,11 +242,11 @@ void Collection::printCollection(){
 }
 
 //find a book
-int Collection::findBook(){
+bool Collection::findBook(){
     
     std::cout << "Enter here below a book title to search" << std::endl;
-    std::cout << "Go back..........0 " << std::endl;
-    std::cout << "Exit............00 " << std::endl;
+    std::cout << navOptions({}, 10) << std::endl;
+
 
     //getting user input
     std::cout << "\r\nEnter data here :> ";
@@ -248,30 +254,29 @@ int Collection::findBook(){
     std::cout << std::endl;
 
     if(choice == "00"){
-        return 0;
+        return false;
     }else if(choice == "0"){
-        return 1;
+        return true;
     }else if(choice == "" || choice == " "){
         println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow");
         return findBook();
     }else{
         //if any book was found than do..
-        if(binarySearch(data, choice) == 0){
-            return 0;
+        if(!binarySearch(data, choice)){
+            return false;
         }else{ return findBook(); }
     }
-    return 0;
+    return false;
 }
 //select a book from a given list
-int Collection::booksChoice(std::deque<Books> &books){
+int Collection::booksChoice(std::deque<Books*> &books){
     //if the books list is not empty
     if(books.size() > 0){
         std::cout << booksTable(books) << std::endl;
 
         while(true){
             std::cout << "Enter here below the number of the book to show" << std::endl;
-            std::cout << "Go back...........0 " << std::endl;
-            std::cout << "Exit.............00 " << std::endl;
+            std::cout << navOptions({}, 10) << std::endl;
 
             //getting user input
             std::cout << "\r\nEnter number here :> ";
@@ -284,14 +289,23 @@ int Collection::booksChoice(std::deque<Books> &books){
                 return 0;
             }else if(sToll(choice) > 0 && sToll(choice) <= books.size()){
                 
-                int result = books[(sToll(choice)-1)].bookManager();
+                int result = (*books[(sToll(choice)-1)]).bookManager();
                 if( result == 0){
                     return 0;
                 }else if(result == 2){
                     //book removing
-                    if(removeBook(bookIndex(books[(sToll(choice)-1)]))){
-                        println("\r\n", "Book successfully removed!.", "\r\n", "green");
-                        books.erase(books.begin() + sToll(choice)-1);
+                    if(books == data){
+                        // if the deque "books" corispond to the main big deque "data"
+                        if(removeBook(sToll(choice)-1)){
+                            println("\r\n", "Book successfully removed!.", "\r\n", "green");
+                        } else{ println("\r\n", "ERROR removing the book! Try again.", "\r\n", "red"); }
+                        
+                    }else{
+                        if(removeBook(bookIndex(books[(sToll(choice)-1)]))){
+                            books.erase(books.begin() + sToll(choice)-1);
+                            println("\r\n", "Book successfully removed!.", "\r\n", "green");
+                        
+                        }else {println("\r\n", "ERROR removing the book! Try again.", "\r\n", "red"); }
                     }
                     return booksChoice(books);
                 }else{ return booksChoice(books); }
@@ -305,7 +319,7 @@ int Collection::booksChoice(std::deque<Books> &books){
 }
 
 //data shuffle
-void Collection::shuffle(std::deque<Books> &data){
+void Collection::shuffle(std::deque<Books*> &data){
     //this function requires: #include <algorithm> and #include <regex>
     std::random_shuffle(data.begin(), data.end());
 }
@@ -358,7 +372,9 @@ Books::Books(std::string t, std::string a, std::string i, std::string q){
     qty    = stoul(q);
 };
 //decontructor
-Books::~Books(){};
+Books::~Books(){
+    std::cout << "Deleted: " << isbn << std::endl;
+};
 
 std::string Books::getTitle(){
     return title;
@@ -381,10 +397,8 @@ unsigned int Books::setQty(int qty, bool mode){
         //inverting sign
         qty = qty<0? qty*-1: qty;
         if(Books::qty-qty == 0){
-            println("\r\nWARNING! Are you sure you wanna remove this book from the library?\r\n", "yellow");
-            std::cout << "Confirm.............1" << std::endl;
-            std::cout << "Abort...............0" << std::endl;
-            std::cout << "Exit...............00" << std::endl;
+            println("\r\nWARNING! Are you sure you wanna remove this title from the library?\r\n", "yellow");
+            std::cout << navOptions({"Confirm"}, 10) << std::endl;
             std::cout << "\r\nEnter a choice here :> ";
             //getting user input
             std::string choice; std::cin >> choice;
@@ -442,9 +456,8 @@ int Books::bookManager(){
     std::cout << bookPrint() <<std::endl;
 
     while(true){
-        std::cout << "\r\nEdit the quantity...1" << std::endl;
-        std::cout << "Go back.............0" << std::endl;
-        std::cout << "Exit...............00" << std::endl;
+        std::cout << std::endl;
+        std::cout << navOptions({"Edit the quantity"}, 10) << std::endl;
 
         //getting user input
         std::cout << "\r\nEnter a choice here :> ";
@@ -458,7 +471,7 @@ int Books::bookManager(){
         }else if(choice == "1"){
             while(true){
                 std::cout << "\r\nNow enter a quantity to be summed (e.g 1, -1, 5, -18)" << std::endl;
-                std::cout << "Go back.............0" << std::endl;
+                std::cout << navOptions({}, 10) << std::endl;
 
                 //getting user input
                 std::cout << "\r\nEnter a choice here :> ";
@@ -467,17 +480,22 @@ int Books::bookManager(){
 
                 if(choice == "0"){
                     return bookManager();
+                }else if(choice == "00"){
+                    return 0;
                 }else if(sToll(choice) != 0){
                     long *q = new long(sToll(choice));
-                    int result = setQty(*q, *q>0);
-                    if(result == 0){
+                    int *result = new int(setQty(*q, *q>0));
+                    delete q;
+
+                    if(*result == 0){
+                        delete result;
                         return 0;
-                    }else if(result == 1){
+                    }else if(*result == 1){
+                        delete result;
                         return bookManager();
                     }else{
                         return 2;
                     }
-                    delete q;
                     break; //----------------------------------------------------------book remouving if decrese to 0 (TO DO)
                 }else { println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow"); }
             }
@@ -500,7 +518,7 @@ int Books::bookManager(){
 // -----------------   class Operations   ------------------
 
 //file reader
-int Operations::reader(std::string fileName){
+bool Operations::reader(std::string fileName){
     
     std::ifstream file(fileName);
     bool newOpen = false;
@@ -518,10 +536,9 @@ int Operations::reader(std::string fileName){
                     std::vector<std::string> elements = split(line, std::string(1, 9));
                     if(elements.size() > 3 && elements.size() < 6){
                         if(sToll(elements[3]) != 0 && sToll(elements[2]) != 0){
-                        //Making the book object
-                        Books book(elements[0], elements[1], elements[2], elements[3]);
                             //storing the book object
-                            addBook(book);
+                            Books *b = new Books(elements[0], elements[1], elements[2], elements[3]);
+                            addBook( b );
                         }
                     }else{ corruptedCounter++; }
                 }
@@ -535,7 +552,7 @@ int Operations::reader(std::string fileName){
             //sorting elements
             shuffle(data);
             quicksort(data, 0, data.size() - 1, 0);
-            return 1;
+            return true;
         }else if(file.fail()){
             println("\r\nDummy file missing! Do you want to create one?", "cyan");
 
@@ -560,7 +577,7 @@ int Operations::reader(std::string fileName){
                     }else{ println("Something went wrong while creating the new file.\r\n", "red"); }
                     break;
                 } else if(choice == "0"){
-                    return 0;
+                    return fasle;
                 }else{
                     println("\r\nWrong selection!\r\n", "yellow");
                 }
@@ -569,7 +586,7 @@ int Operations::reader(std::string fileName){
     }
 }
 
-int Operations::options(){
+bool Operations::options(){
     
     std::string *border = new std::string("---------------------------");
     println("\r\n", *border, "blue");
@@ -590,28 +607,25 @@ int Operations::options(){
     std::cout << std::endl;
 
     if(choice == "1"){
-        int nav = addNewBook();
-        if(nav == 0){
-            return 0;
-        } else {  return options(); }
-    }else if(choice == "2"){
-        int nav = findBook();
-        if(nav == 0){
-            return 0;
+        addNewBook();
+        return options();
+    }else if(choice == "2"){ 
+        if(!findBook()){
+            return false;
         } else {  return options(); }
     }else if(choice == "3"){
         if(booksChoice(data) == 0){
-            return 0;
+            return false;
         }
         return options();
     }else if(choice == "0"){
-        return 1;
+        return true;
     }else if(choice == "00"){
-        return 0;
+        return false;
     }else{
         println("\r\nWrong selection!\r\n", "yellow");
         return options();
     }
 
-    return 0;
+    return false;
 }

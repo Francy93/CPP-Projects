@@ -2,9 +2,9 @@
 
 
 //quick-sort
-void Collection::quicksort(std::deque<Books>& arr, long long l, long long r, unsigned int titleIndex){
+void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, unsigned int titleIndex){
 
-    //higher scope variables
+    //higher scope variables not recursively defined
     std::string pivot="";
     long long newIndex = 0;
 
@@ -15,7 +15,7 @@ void Collection::quicksort(std::deque<Books>& arr, long long l, long long r, uns
         newIndex = (left + right) / 2 ;
         pivot="";
         //getting the pivot string
-        std::vector<std::string>arrWords = split((*(arr.begin()+newIndex)).getTitle(), " ");
+        std::vector<std::string>arrWords = split((**(arr.begin()+newIndex)).getTitle(), " ");
         if(titleIndex < arrWords.size()){
             for (std::vector<std::string>::const_iterator it = arrWords.begin()+titleIndex; it != arrWords.end(); ++it){
                 pivot += " "+*it;
@@ -30,7 +30,7 @@ void Collection::quicksort(std::deque<Books>& arr, long long l, long long r, uns
             do{
                 if(++i>= left){
                     leftElem = "";
-                    std::vector<std::string>arrLeft = split(arr[i].getTitle(), " ");
+                    std::vector<std::string>arrLeft = split((*arr[i]).getTitle(), " ");
                     if(titleIndex < arrLeft.size()){
                         for (std::vector<std::string>::const_iterator itL = arrLeft.begin()+titleIndex; itL != arrLeft.end(); ++itL){
                             leftElem += " "+*itL;
@@ -42,7 +42,7 @@ void Collection::quicksort(std::deque<Books>& arr, long long l, long long r, uns
             do{
                 if(--j <= right){
                     rightElem = "";
-                    std::vector<std::string>arrRight = split(arr[j].getTitle(), " ");
+                    std::vector<std::string>arrRight = split((*arr[j]).getTitle(), " ");
                     if(titleIndex < arrRight.size()){
                         for (std::vector<std::string>::const_iterator itR = arrRight.begin()+titleIndex; itR != arrRight.end(); ++itR){
                             rightElem += " "+*itR;
@@ -53,12 +53,11 @@ void Collection::quicksort(std::deque<Books>& arr, long long l, long long r, uns
             while (toLower(rightElem) > pivot);
 
             if (i <= j) {
-                Books *tmp = new Books(arr[i]);
-                //Books tmp = arr[i];
+                Books** tmp = new Books*(arr[i]);
                 arr[i] = arr[j];
                 arr[j] = *tmp;
                 i++; j--;
-                delete tmp;
+                delete tmp; //deleting the temp pointer pointing to another pinter (pointer of ponter **)
             }
         }
         // recursion 
@@ -68,17 +67,20 @@ void Collection::quicksort(std::deque<Books>& arr, long long l, long long r, uns
     recur(l,r);
 }
 
-int Collection::binarySearch(std::deque<Books> &arr,std::string word){
+bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
     word = toLower(word);
-    long long arrSize = arr.size(), left=0, right=arrSize-1, cyclesFound = 0;
+
+    long long arrSize = arr.size(), left=0, right=arrSize-1, firstMatches = 0;
     unsigned int index = -1;
-    int end = (int)index;
-    std::unordered_map<unsigned long long, Books> found;
+    bool end;
+    std::unordered_map<unsigned long long, Books*> found;
 
     while(++index >= 0){
         
+        //higher scope variables not recursively defined
         long long l=left, r= right;
-        end = -1;
+        //boolean witch determine the end of the DEEPER search
+        end = true;
         //performin a shuffle to prevent cases of quadratic time scenario
         shuffle(arr);
         //sorting the array
@@ -90,11 +92,12 @@ int Collection::binarySearch(std::deque<Books> &arr,std::string word){
 
             mid = l + (r - l) / 2;
             mid = mid < arrSize? mid: arrSize-1;
-            Books *book = new Books(arr[mid]);
-            std::vector<std::string> *splitted = new std::vector<std::string>{split((*book).getTitle(), " ")};
+            //Books** book = new Books*(arr[mid]);
+            //Books *book = arr[mid];
+            std::vector<std::string> *splitted = new std::vector<std::string>{split((*arr[mid]).getTitle(), " ")};
             std::string *titleWord = new std::string((*splitted).size() > index? (*splitted)[index]: "");
             *titleWord = toLower(*titleWord);
-            end = *titleWord != ""? index: end;
+            end = *titleWord != ""? false: end;
 
             if (r >= l) {
         
@@ -103,41 +106,28 @@ int Collection::binarySearch(std::deque<Books> &arr,std::string word){
                     long long increaseMid = mid, decreaseMid = mid;
 
                     while(right >= ++increaseMid){
-                        *splitted = split((*(arr.begin()+ increaseMid)).getTitle(), " ");
+                        *splitted = split((**(arr.begin()+ increaseMid)).getTitle(), " ");
                         std::string newWord = (*splitted).size() > index? (*splitted)[index]: "";
 
                         if(toLower(newWord) != word){ break; }
                     }
                     while(left <= --decreaseMid){
-                        *splitted = split((*(arr.begin()+ decreaseMid)).getTitle(), " ");
+                        *splitted = split((**(arr.begin()+ decreaseMid)).getTitle(), " ");
                         std::string newWord = (*splitted).size() > index? (*splitted)[index]: "";
 
-                        if(toLower(newWord) != word){ break; }
+                        if(toLower(newWord) != word){ break; decreaseMid++; }
                     }
-                    increaseMid--;
-                    decreaseMid++;
 
-
-                    /* long long i =0;
+                    //iterating ofer the found matches indexes
                     for (auto it = arr.begin()+decreaseMid; it != arr.begin()+increaseMid; it++){
-                        found.push_back(*it);
-                    } */
-                    /* for(unsigned long i= decreaseMid; i<=increaseMid; i++){
-                        if(i == mid){
-                            found.push_back(*book);
-                        }else{found.push_back(arr[i]); }
-                    } */
-                    for(unsigned long i= decreaseMid; i<=increaseMid; i++){
-
-                        found[arr[i].getId()] = arr[i];
+                        found[(**it).getId()] = *it;
                     }
                     //destroying pointers
                     delete splitted;
                     delete titleWord;
-                    delete book;
                     
                     //get quantity of books found in the first seach
-                    cyclesFound = index == 0? found.size(): cyclesFound;
+                    firstMatches = index == 0? found.size(): firstMatches;
                     return true;
                 }
                 // If element is smaller than mid, then it can only be present in left subarray 
@@ -152,64 +142,69 @@ int Collection::binarySearch(std::deque<Books> &arr,std::string word){
             //destroying pointers
             delete splitted;
             delete titleWord;
-            delete book;
 
             return false;
         };
         
         // We reach here right before the actual search starts (recur())
-        if(!recur() && index == 0 && end == 0){
-            println("NOT FOUND, AT A GLANCE! ", "yellow");
-            println("Search better...1");
-            println("Exit............0");
+        if(!recur() && index == 0 && !end){
+            println("NOTHING FOUND, AT A GLANCE! ", "yellow");
+            std::cout << navOptions({"Perform a DEEPER search?"}, 5) << std::endl;
 
-            //user choice
+            //checking the choice
             std::string choice="";
-            while(choice != "1" && choice != "0"){
+            while(true){
+                std::cout << "Enter a choice here :> ";
                 choice = cinln();
-                if(choice != "1" && choice != "0"){
+                if((choice != "1" && choice != "0" && choice != "00")){
                     println("WRONG SELECTION! Try again.", "yellow"); 
-                }
+                }else{ break; }
             }
-            if(choice == "0"){ break; }
+            //processing the choice
+            if(choice == "00"){ return false; }  //terminatign this function and close the program 
+            else if(choice == "0"){ return true; } //exiting the main loop and terminate this function
+  
         }else if(found.size() > 0){
 
             if(index == 0){
                 unsigned long long i = 0;
                 for (auto f = found.begin(); f != found.end(); f++){
-                    std::cout << " |" << ++i << " | "<< (f->second).getTitle() << std::endl;
+                    std::cout << " |" << ++i << " | "<< (*(f->second)).getTitle() << std::endl;
                 }
                 
-                println("\r\n", "YES, FOUND: ", std::to_string(cyclesFound), "\r\n", "green");
+                println("\r\n", "YES, FOUND: ", std::to_string(firstMatches), "\r\n", "green");
                 std::cout << navOptions({"Select a book","Perform a DEEPER search"}, 10) << std::endl;
 
-            }else if(end == -1){
-                if(found.size() > cyclesFound){
-                    unsigned long long i = 0;
+            }else if(end ){
+                if(found.size() > firstMatches){
+                    //printing the matches
                     for (auto f = found.begin(); f != found.end(); f++){
-                        std::cout << " |" << ++i << " | "<< (f->second).getTitle() << std::endl;
+                        std::cout << "FOUND: -----> " << (*(f->second)).getTitle() << std::endl;
                     }
-                    
-                    println("\r\n", "FOUND ", std::to_string(found.size()-cyclesFound), " MORE", "\r\n", "green");
+                    //printing the message
+                    std::string* lastMatches = new std::string("");
+                    if(firstMatches != 0){ *lastMatches += " MORE OUT OF " + std::to_string(found.size()); }
+                    println("\r\n", "FOUND ", std::to_string(found.size()-firstMatches), *lastMatches, "\r\n", "green");
+                    delete lastMatches;
                     std::cout << navOptions({"Select a book"}, 10) << std::endl;
                 }else{ println("\r\n", "NOT FURTHER MATCHING FOUND!"); break; }
             }
 
-            if(index == 0 || end == -1){
+            if(index == 0 || end ){
                 //user choice
                 std::string choice="";
                 while(true){
                     std::cout << "Enter a choice here :> ";
                     choice = cinln();
-                    if((choice != "1" && choice != "0" && choice != "00" && choice != "2") || (choice == "2" && end == -1)){
+                    if((choice != "1" && choice != "0" && choice != "00" && choice != "2") || (choice == "2" && end)){
                         println("WRONG SELECTION! Try again.", "yellow"); 
                     }else{ break; }
                 }
 
-                if(choice == "00"){ return 0; }  //terminatign this function and close the program 
-                else if(choice == "0"){ return 1; } //exiting the main loop and terminate this function
+                if(choice == "00"){ return false; }  //terminatign this function and close the program 
+                else if(choice == "0"){ return true; } //exiting the main loop and terminate this function
                 else if(choice == "1"){ 
-                    std::deque<Books>HF;
+                    std::deque<Books*>HF;
                     for (auto f = found.begin(); f != found.end(); f++){
                         HF.push_back(f->second);
                     }
@@ -217,12 +212,11 @@ int Collection::binarySearch(std::deque<Books> &arr,std::string word){
                 }
             }
 
-        }else if(end == -1){
-            println("DEFINITELY NOT FOUND! ","red");
-            break;
+        }else if(end){
+            println("DEFINITELY NOT FOUND!\r\n", "red");
+            return true;
         }
     }
 
-
-    return 0;
+    return false;
 } 

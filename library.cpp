@@ -20,10 +20,8 @@ int main(){
         std::string fileName; std::cin >> fileName;
 
         if (fileName != "00"){
-            if(ope.reader(fileName) == 1){
-                if(ope.options() == 0){
-                    break;
-                }
+            if(ope.reader(fileName)){
+                if(!ope.options()){  break; }
             }
         }else{ break; }
     }
