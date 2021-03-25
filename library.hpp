@@ -55,6 +55,10 @@ class Global{
         std::string cinln();
         //table generator
         std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned int> longest);
+        //get user choice
+        int getChoice(int options);
+        // display options and get choice
+        int navChoice(std::vector<std::string> options, int minimum);
 };
 
 

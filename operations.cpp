@@ -133,9 +133,34 @@ std::string Global::tableMaker(std::deque<std::deque<std::string>> &allData, std
     return table+border+"\r\n";
 }
 
+//get user choice
+int Global::getChoice(int options){
 
+    //checking the choice
+    int choice=0;
+    std::string input ="";
+    while(true){
+        std::cout << "Enter a choice here :> ";
+        input = cinln();
+        if(input != "0" && input != "00"){
+            for(int i=1; i<=options; i++){
+                if(input == std::to_string(i)){
+                    return i;
+                }
+            }
+            println("WRONG SELECTION! Try again.", "yellow"); 
+        }else if(input == "0"){ return 0; }
+        else { return -1; }
+    }
+    return choice;
+}
 
-
+int Global::navChoice(std::vector<std::string> options, int minimum){
+    //displaying options
+    std::cout << navOptions(options, minimum) << std::endl;
+    //getting the choice
+    return getChoice(options.size());
+}
 
 
 
@@ -193,14 +218,12 @@ void Collection::addNewBook(){
     std::vector<std::string> wizard = {"Enter here the title","Now enter the author","Include an ISBN","Specify a quantity"};
     std::vector<std::string> bookData;
     
-    std::cin.ignore();
+    //std::cin.ignore();
     for(unsigned int i=0; i< wizard.size(); i++){
         println("\r\n",wizard[i],"magenta");
         //getting user input
         std::cout << "\r\nEnter data here :> ";
-        std::string choice;
-        std::getline(std::cin, choice);
-        std::cout << std::endl;
+        std::string choice = cinln();
 
         if(i > 1){
             if(sToll(choice) == 0){
@@ -328,34 +351,6 @@ void Collection::shuffle(std::deque<Books*> &data){
     //this function requires: #include <algorithm> and #include <regex>
     std::random_shuffle(data.begin(), data.end());
 }
-/* //quick-sort
-void Collection::quicksort(std::deque<Books>& a, int l, int r){
-    #include <algorithm>
-    std::random_shuffle(a.begin(), a.end());
-    //recursive lambda function
-    std::function<void(std::deque<Books>& a, int l, int r)> recur = [&](std::deque<Books>& arr, int left, int right){
-
-        int i = left, j = right;
-        Books pivot = arr[(left + right) / 2];
-
-        // partition
-        while (i <= j) {
-            while (arr[i].getTitle() < pivot.getTitle()) { i++; }
-            while (arr[j].getTitle() > pivot.getTitle()) { j--; }
-            if (i <= j) {
-                Books tmp = arr[i];
-                arr[i] = arr[j];
-                arr[j] = tmp;
-                i++;
-                j--;
-            }
-        }
-        // recursion 
-        if (left < j){ recur(arr, left, j); }
-        if (i < right){ recur(arr, i, right); }
-    };
-    recur(a,l,r);
-} */
 
 
 
@@ -403,21 +398,12 @@ unsigned int Books::setQty(int qty, bool mode){
         qty = qty<0? qty*-1: qty;
         if(Books::qty-qty == 0){
             println("\r\nWARNING! Are you sure you wanna remove this title from the library?\r\n", "yellow");
-            std::cout << navOptions({"Confirm"}, 10) << std::endl;
-            std::cout << "\r\nEnter a choice here :> ";
-            //getting user input
-            std::string choice; std::cin >> choice;
-            if(choice == "1"){
-                return 2;
-            }else if(choice == "0"){
-                return 1;
-            }else if(choice == "00"){
-                return 0;
-            }else{
-                println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow");
-                return setQty(qty, false);
+            //processing the choice
+            switch(navChoice({"Confirm"}, 10)){
+                case -1: return 0; //terminatign this function and close the program
+                case  0: return 1; //exiting the main loop and terminate this function
+                case  1: return 2;
             }
-            
 
         }else if((int)Books::qty-qty < 0){
             println("\r\nERROR! Not so many copies to be decreased.", "red");
@@ -462,51 +448,45 @@ int Books::bookManager(){
 
     while(true){
         std::cout << std::endl;
-        std::cout << navOptions({"Edit the quantity"}, 10) << std::endl;
-
-        //getting user input
-        std::cout << "\r\nEnter a choice here :> ";
-        std::string choice; std::cin >> choice;
-        std::cout << std::endl;
+        //processing the choice
+        switch(navChoice({"Edit the quantity"}, 10)){
+            case -1: return 0; //terminatign this function and close the program 
+            case  0: return 1; //exiting the main loop and terminate this function
+            case  1:
         
-        if(choice == "00"){
-            return 0;
-        }else if(choice == "0"){
-            return 1;
-        }else if(choice == "1"){
-            while(true){
-                std::cout << "\r\nNow enter a quantity to be summed (e.g 1, -1, 5, -18)" << std::endl;
-                std::cout << navOptions({}, 10) << std::endl;
+                while(true){
+                    std::cout << "\r\nNow enter a quantity to be summed (e.g 1, -1, 5, -18)" << std::endl;
+                    std::cout << navOptions({}, 10) << std::endl;
 
-                //getting user input
-                std::cout << "\r\nEnter a choice here :> ";
-                std::string choice; std::cin >> choice;
-                std::cout << std::endl;
+                    //getting user input
+                    std::cout << "\r\nEnter a choice here :> ";
+                    std::string choice; std::cin >> choice;
+                    std::cout << std::endl;
 
-                if(choice == "0"){
-                    return bookManager();
-                }else if(choice == "00"){
-                    return 0;
-                }else if(sToll(choice) != 0){
-                    long *q = new long(sToll(choice));
-                    int *result = new int(setQty(*q, *q>0));
-                    delete q;
-
-                    if(*result == 0){
-                        delete result;
-                        return 0;
-                    }else if(*result == 1){
-                        delete result;
+                    if(choice == "0"){
                         return bookManager();
-                    }else{
-                        return 2;
-                    }
-                    break; //----------------------------------------------------------book remouving if decrese to 0 (TO DO)
-                }else { println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow"); }
-            }
+                    }else if(choice == "00"){
+                        return 0;
+                    }else if(sToll(choice) != 0){
+                        long *q = new long(sToll(choice));
+                        int *result = new int(setQty(*q, *q>0));
+                        delete q;
+
+                        if(*result == 0){
+                            delete result;
+                            return 0;
+                        }else if(*result == 1){
+                            delete result;
+                            return bookManager();
+                        }else{
+                            return 2;
+                        }
+                        break; //----------------------------------------------------------book remouving if decrese to 0 (TO DO)
+                    }else { println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow"); }
+                }
 
             return bookManager();
-        }else{ println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow"); }
+        }
     }
     return 0;
 }
@@ -607,30 +587,18 @@ bool Operations::options(){
     delete border;
 
     //user input
-    std::cout << "\r\nEnter a choice here :> ";
-    std::string choice; std::cin >> choice;
-    std::cout << std::endl;
-
-    if(choice == "1"){
-        addNewBook();
-        return options();
-    }else if(choice == "2"){ 
-        if(!findBook()){
-            return false;
-        } else {  return options(); }
-    }else if(choice == "3"){
-        if(booksChoice(data) == 0){
-            return false;
-        }
-        return options();
-    }else if(choice == "0"){
-        return true;
-    }else if(choice == "00"){
-        return false;
-    }else{
-        println("\r\nWrong selection!\r\n", "yellow");
-        return options();
+    switch(getChoice(3)){
+        case -1: return false;
+        case  0: return true;
+        case  1: addNewBook(); return options();
+        case  2:  
+            if(!findBook()){
+                return false;
+            } else {  return options(); }
+        case  3:
+            if(booksChoice(data) == 0){
+                return false;
+            }else{ return options(); }
     }
-
     return false;
 }

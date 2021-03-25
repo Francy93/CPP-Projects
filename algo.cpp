@@ -87,7 +87,7 @@ bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
     long long firstMatches = 0;
     unsigned int index = -1, splittedSize = 0;
     bool end;
-    std::string titleWord = "";
+    std::string titleWord = "", shrinkedTitle = "";
     std::unordered_map<unsigned long long, Books*> found;
 
     // lambda function to get the word at a specific index (this has to be very light and performing)
@@ -124,21 +124,20 @@ bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
 
             if (r >= l) {
                 std::vector<std::string> *splitted = new std::vector<std::string>{split((*arr[mid]).getTitle(), " ")};
-                std::string *shrinkedTitle = new std::string("");
-                titleWord = "";
+                shrinkedTitle = titleWord = "";
                 splittedSize = (*splitted).size();
                 if(index < splittedSize){
                     for (std::vector<std::string>::const_iterator it = (*splitted).begin()+index; it != (*splitted).end(); ++it){
                         titleWord += (*it) + " ";
                     }
                     titleWord = toLower(titleWord);
-                    *shrinkedTitle = (titleWord).substr(0, word.size());
+                    shrinkedTitle = (titleWord).substr(0, word.size());
                 }
                 //condition to exit the "title index" while loop
                 end = index+1 < splittedSize? false: end;
 
 
-                if (*shrinkedTitle == word){
+                if (shrinkedTitle == word){
                     long long increaseMid = mid, decreaseMid = mid;
 
 
@@ -159,7 +158,6 @@ bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
                     }
                     //destroying pointers
                     delete splitted;
-                    delete shrinkedTitle;
 
                     //get quantity of books found in the first seach
                     firstMatches = index == 0? found.size(): firstMatches;
@@ -193,27 +191,18 @@ bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
         // We reach here right before the actual search starts (recur())
         if(!recur() && index == 0 && !end){
             println("NOTHING FOUND, AT A GLANCE! ", "yellow");
-            std::cout << navOptions({"Perform a DEEPER search?"}, 5) << std::endl;
-
-            //checking the choice
-            std::string choice="";
-            while(true){
-                std::cout << "Enter a choice here :> ";
-                choice = cinln();
-                if((choice != "1" && choice != "0" && choice != "00")){
-                    println("WRONG SELECTION! Try again.", "yellow"); 
-                }else{ break; }
-            }
+            
             //processing the choice
-            if(choice == "00"){ return false; }  //terminatign this function and close the program 
-            else if(choice == "0"){ return true; } //exiting the main loop and terminate this function
+            switch(navChoice({"Perform a DEEPER search?"}, 8)){
+                case -1: return false; //terminatign this function and close the program 
+                case  0: return true ; //exiting the main loop and terminate this function
+            }
   
         }else if(found.size() > 0){
 
             if(index == 0){
-                unsigned long long i = 0;
                 for (auto f = found.begin(); f != found.end(); f++){
-                    std::cout << " |" << ++i << " | "<< (*(f->second)).getTitle() << std::endl;
+                    std::cout << "FOUND: -----> " << (*(f->second)).getTitle() << std::endl;
                 }
                 
                 println("\r\n", "YES, FOUND: ", std::to_string(firstMatches), "\r\n", "green");
@@ -231,7 +220,7 @@ bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
                     println("\r\n", "FOUND ", std::to_string(found.size()-firstMatches), *lastMatches, "\r\n", "green");
                     delete lastMatches;
                     std::cout << navOptions({"Select a book"}, 10) << std::endl;
-                }else{ println("\r\n", "NOT FURTHER MATCHING FOUND!"); break; }
+                }else{ println("\r\n", "NOT FURTHER MATCHING FOUND!"); return true; }
             }
 
             if(index == 0 || end ){
