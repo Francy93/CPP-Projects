@@ -13,8 +13,9 @@
 
 class Global{
 
-    public:
+    private:
         inline static bool colorMode = true;
+    public:
 
         void setColor(bool b);
         bool getCstate();
