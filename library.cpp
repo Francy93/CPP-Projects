@@ -32,7 +32,7 @@ std::string *intro = new std::string(R"(
 
 int main(){
     //setting the color mode
-    ope.colorMode = false;
+    ope.setColor(false);
 
     //intro title
     ope.println(*intro, "\r\n", "yellow");
@@ -66,7 +66,7 @@ int main(){
 
         if(fileName != "00"){
             if(fileName == "1"){
-                ope.colorMode = !ope.colorMode;
+                ope.setColor(!ope.getCstate());
             }else if(ope.reader(fileName)){
                 if(!ope.options()){  break; }
             }

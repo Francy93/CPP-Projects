@@ -2,6 +2,14 @@
 
 // -----------------   global functions   ------------------
 
+
+void Global::setColor(bool b){
+    colorMode = b;
+}
+bool Global::getCstate(){
+    return colorMode;
+}
+
 //returns a string of numerate options
 std::string Global::navOptions(std::vector<std::string> options, int minimum){
     std::string list="";
@@ -22,7 +30,7 @@ std::string Global::navOptions(std::vector<std::string> options, int minimum){
     
     std::string cStart = "\033[1;33m";
     std::string cEnd = "\033[0m";
-    if(!colorMode){ cStart = cEnd = ""; }
+    if(!getCstate()){ cStart = ""; cEnd = ""; }
 
     longest += minimum > 3? minimum: 3;
     i = 0;
@@ -98,6 +106,8 @@ std::string Global::tableMaker(std::deque<std::deque<std::string>> &allData, std
         //creating the row
         std::string colorStart = "\033[1;35m";
         std::string colorEnd = "\033[0m";
+        if(!getCstate()){ colorStart =""; colorEnd=""; }
+
         std::string symbol = "|";
         std::string delimiter =colorStart+symbol+colorEnd;
         std::string row = "";
@@ -119,7 +129,7 @@ std::string Global::tableMaker(std::deque<std::deque<std::string>> &allData, std
                 start = "\033[1;3"+color+"m";
                 end   = colorEnd;
             }
-            if(!colorMode){ colorStart = start = colorEnd = end = ""; }
+            if(!getCstate()){ start =""; }
             elem += start+ allD + spaces + end;
             row += delimiter+" " + elem + " ";
         }
