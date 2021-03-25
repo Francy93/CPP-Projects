@@ -14,6 +14,8 @@
 class Global{
 
     public:
+        bool colorMode = true;
+
         std::string navOptions(std::vector<std::string> options, int minimum);
         //string to lower case
         std::string toLower(std::string s);
@@ -46,6 +48,9 @@ class Global{
                 print +=args[i];
             }
             
+            if(!colorMode){
+                start = end = "";
+            }
             std::cout << start+print+end << std::endl;
         }
 

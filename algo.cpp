@@ -130,6 +130,9 @@ bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
                     for (std::vector<std::string>::const_iterator it = (*splitted).begin()+index; it != (*splitted).end(); ++it){
                         titleWord += (*it) + " ";
                     }
+                    //destroying pointers
+                    delete splitted;
+
                     titleWord = toLower(titleWord);
                     shrinkedTitle = (titleWord).substr(0, word.size());
                 }
@@ -156,8 +159,6 @@ bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
                     for (auto it = arr.begin()+decreaseMid; it != arr.begin()+increaseMid; it++){
                         found[(**it).getId()] = *it;
                     }
-                    //destroying pointers
-                    delete splitted;
 
                     //get quantity of books found in the first seach
                     firstMatches = index == 0? found.size(): firstMatches;
@@ -206,7 +207,7 @@ bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
                 }
                 
                 println("\r\n", "YES, FOUND: ", std::to_string(firstMatches), "\r\n", "green");
-                std::cout << navOptions({"Select a book","Perform a DEEPER search"}, 10) << std::endl;
+                std::cout << navOptions({"Select a book","PERFORM A DEEPER SEARCH"}, 10) << std::endl;
 
             }else if(end ){
                 if(found.size() > firstMatches){
@@ -220,7 +221,7 @@ bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
                     println("\r\n", "FOUND ", std::to_string(found.size()-firstMatches), *lastMatches, "\r\n", "green");
                     delete lastMatches;
                     std::cout << navOptions({"Select a book"}, 10) << std::endl;
-                }else{ println("\r\n", "NOT FURTHER MATCHING FOUND!"); return true; }
+                }else{ println("\r\n", "NO FURTHER MATCHING FOUND!"); return true; }
             }
 
             if(index == 0 || end ){

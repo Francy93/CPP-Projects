@@ -19,9 +19,11 @@ std::string Global::navOptions(std::vector<std::string> options, int minimum){
         iSize = (int)std::to_string(i).size() > iSize? std::to_string(i).size(): iSize;
         }
     }
-
+    
     std::string cStart = "\033[1;33m";
     std::string cEnd = "\033[0m";
+    if(!colorMode){ cStart = cEnd = ""; }
+
     longest += minimum > 3? minimum: 3;
     i = 0;
     for(auto o: options){
@@ -94,8 +96,10 @@ std::string Global::tableMaker(std::deque<std::deque<std::string>> &allData, std
     std::string border = "";
     for(unsigned long long i=0; i<allData[0].size(); i++){
         //creating the row
+        std::string colorStart = "\033[1;35m";
+        std::string colorEnd = "\033[0m";
         std::string symbol = "|";
-        std::string delimiter ="\033[1;35m"+symbol+"\033[0m";
+        std::string delimiter =colorStart+symbol+colorEnd;
         std::string row = "";
         for(unsigned int j=0; j<allData.size(); j++){
             auto allD = allData[j][i];
@@ -113,8 +117,9 @@ std::string Global::tableMaker(std::deque<std::deque<std::string>> &allData, std
                     color = "6";
                 }
                 start = "\033[1;3"+color+"m";
-                end   = "\033[0m";
+                end   = colorEnd;
             }
+            if(!colorMode){ colorStart = start = colorEnd = end = ""; }
             elem += start+ allD + spaces + end;
             row += delimiter+" " + elem + " ";
         }
@@ -123,7 +128,7 @@ std::string Global::tableMaker(std::deque<std::deque<std::string>> &allData, std
         if(i == 0){
             //creating the border
             int spaces = row.size()-((delimiter.size()-symbol.size())*2*allData.size()+delimiter.size()-symbol.size());
-            border += "\033[1;35m"+std::string(spaces, '-')+"\033[0m";
+            border += colorStart+std::string(spaces, '-')+colorEnd;
             table += border+"\r\n"+row+"\r\n"+border+"\r\n";
         }else{
             table += row+"\r\n";
