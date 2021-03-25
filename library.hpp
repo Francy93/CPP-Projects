@@ -72,17 +72,21 @@ class Books: public Global {
         Books(std::string t, std::string a, std::string i, std::string q);
         ~Books();
 
+        // book title getter
         std::string getTitle();
+        // book author getter
         std::string getAuthor();
+        // book id getter
         unsigned long long getId();
+        // to get the book quantity
         unsigned int getQty();
         // modifing book quantity attribute
         unsigned int setQty(int qty, bool mode);
         //checking wether a book is empty or not
         bool emptyCheck();
-        //printing book values
+        // printing book values
         std::string bookPrint();
-        //book dashboard
+        // book dashboard
         int bookManager();
 };
         

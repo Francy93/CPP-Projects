@@ -21,7 +21,7 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
                 pivot += " "+*it;
             } 
             pivot = toLower(pivot);
-        } 
+        }
         
         // partition 
         while (i <= j) {
@@ -67,84 +67,126 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
     recur(l,r);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+//the binary search algorithm
 bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
     word = toLower(word);
 
     long long arrSize = arr.size(), left=0, right=arrSize-1, firstMatches = 0;
-    unsigned int index = -1;
+    unsigned int index = -1, splittedSize = 0;
     bool end;
+    std::string titleWord = "";
     std::unordered_map<unsigned long long, Books*> found;
+
+    // lambda function to get the word at a specific index (this has to be very light and performing)
+    std::function<std::string(long long mid, unsigned int index)> getWord = [&](long long mid, unsigned int index){
+        std::vector<std::string> splitted = split((*arr[mid]).getTitle(), " ");
+        std::string titleWord = "";
+        if(index < (splitted).size()){
+            for (std::vector<std::string>::const_iterator it = (splitted).begin()+index; it != (splitted).end(); ++it){
+                titleWord += (*it) + " ";
+            }
+        }
+        return toLower(titleWord.substr(0, word.size()));;
+    };
+
 
     while(++index >= 0){
         
         //higher scope variables not recursively defined
-        long long l=left, r= right;
+        long long l=left, r= right, mid;
         //boolean witch determine the end of the DEEPER search
         end = true;
         //performin a shuffle to prevent cases of quadratic time scenario
         shuffle(arr);
         //sorting the array
         quicksort(arr, left, right, index);
-        long long mid;
         
-        //recursive lambda function (searching core)
+        //recursive lambda function (!! SEARCHING CORE RECURSION !!)
         std::function<bool()> recur = [&](){
-
+            
             mid = l + (r - l) / 2;
             mid = mid < arrSize? mid: arrSize-1;
-            //Books** book = new Books*(arr[mid]);
-            //Books *book = arr[mid];
-            std::vector<std::string> *splitted = new std::vector<std::string>{split((*arr[mid]).getTitle(), " ")};
-            std::string *titleWord = new std::string((*splitted).size() > index? (*splitted)[index]: "");
-            *titleWord = toLower(*titleWord);
-            end = *titleWord != ""? false: end;
+            
+ 
 
             if (r >= l) {
-        
-                // If the element is present at the middle itself 
-                if (*titleWord == word){
+                std::vector<std::string> *splitted = new std::vector<std::string>{split((*arr[mid]).getTitle(), " ")};
+                std::string *shrinkedTitle = new std::string("");
+                titleWord = "";
+                splittedSize = (*splitted).size();
+                if(index < splittedSize){
+                    for (std::vector<std::string>::const_iterator it = (*splitted).begin()+index; it != (*splitted).end(); ++it){
+                        titleWord += (*it) + " ";
+                    }
+                    titleWord = toLower(titleWord);
+                    *shrinkedTitle = (titleWord).substr(0, word.size());
+                }
+                //condition to exit the "title index" while loop
+                end = index+1 < splittedSize? false: end;
+
+
+                if (*shrinkedTitle == word){
                     long long increaseMid = mid, decreaseMid = mid;
 
-                    while(right >= ++increaseMid){
-                        *splitted = split((**(arr.begin()+ increaseMid)).getTitle(), " ");
-                        std::string newWord = (*splitted).size() > index? (*splitted)[index]: "";
 
-                        if(toLower(newWord) != word){ break; }
+                    while(right >= ++increaseMid){
+                        // checking if the next title matches
+                        if(getWord(increaseMid, index) != word){ break; }
                     }
                     while(left <= --decreaseMid){
-                        *splitted = split((**(arr.begin()+ decreaseMid)).getTitle(), " ");
-                        std::string newWord = (*splitted).size() > index? (*splitted)[index]: "";
-
-                        if(toLower(newWord) != word){ break; decreaseMid++; }
+                        // checking if the previous title matches
+                        if(getWord(decreaseMid, index) != word){ decreaseMid++; break; }
                     }
 
-                    //iterating ofer the found matches indexes
+
+                    //iterating over the found matches indexes
                     for (auto it = arr.begin()+decreaseMid; it != arr.begin()+increaseMid; it++){
                         found[(**it).getId()] = *it;
                     }
                     //destroying pointers
                     delete splitted;
-                    delete titleWord;
-                    
+                    delete shrinkedTitle;
+
                     //get quantity of books found in the first seach
                     firstMatches = index == 0? found.size(): firstMatches;
                     return true;
                 }
+                //end of "found" condition
+
+
+
                 // If element is smaller than mid, then it can only be present in left subarray 
-                if (*titleWord > word){
+                if (titleWord > word){
                     r = mid -1;
                     return recur(); 
                 }
                 // Else the element can only be present in right subarray
                 l = mid +1;
+
+                
                 return recur(); 
             }
-            //destroying pointers
-            delete splitted;
-            delete titleWord;
 
+
+            // end of searching recursion
             return false;
         };
+
+
+
+
         
         // We reach here right before the actual search starts (recur())
         if(!recur() && index == 0 && !end){

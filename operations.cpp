@@ -58,15 +58,20 @@ std::string Global::toLower(std::string s){
 //the strings splitter
 std::vector<std::string> Global::split(std::string s, std::string delim){
     std::vector<std::string> vec;
-    
+
     size_t pos = 0;
     std::string token;
     while ((pos = s.find(delim)) != std::string::npos) {
-        token = s.substr(0, pos);
-        vec.push_back(token);
+        
+        if(pos != 0){
+            token = s.substr(0, pos);
+            vec.push_back(token);
+        }
         s.erase(0, pos + delim.length());
     }
-    vec.push_back(s);
+    if(s.size() > 0){
+        vec.push_back(s);
+    }
     return vec;
 }
 //an enanched and actually workin cin
