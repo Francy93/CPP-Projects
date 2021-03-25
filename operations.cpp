@@ -536,8 +536,10 @@ int Books::bookManager(){
 // -----------------   class Operations   ------------------
 
 Operations::Operations(){ 
+    //getting console in fullScreen mode
+    ShowWindow(GetConsoleWindow(), SW_MAXIMIZE); 
     //setting system base color;
-    system("Color 0F"); 
+    system("Color 0F"); // white text mode
 };
 
 //file reader
