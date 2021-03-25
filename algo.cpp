@@ -83,7 +83,8 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
 bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
     word = toLower(word);
 
-    long long arrSize = arr.size(), left=0, right=arrSize-1, firstMatches = 0;
+    const long long arrSize = arr.size(), left=0, right=arrSize-1;
+    long long firstMatches = 0;
     unsigned int index = -1, splittedSize = 0;
     bool end;
     std::string titleWord = "";
@@ -147,8 +148,9 @@ bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
                     }
                     while(left <= --decreaseMid){
                         // checking if the previous title matches
-                        if(getWord(decreaseMid, index) != word){ decreaseMid++; break; }
+                        if(getWord(decreaseMid, index) != word){ break; }
                     }
+                    decreaseMid++;
 
 
                     //iterating over the found matches indexes
