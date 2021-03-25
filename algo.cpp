@@ -130,12 +130,11 @@ bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
                     for (std::vector<std::string>::const_iterator it = (*splitted).begin()+index; it != (*splitted).end(); ++it){
                         titleWord += (*it) + " ";
                     }
-                    //destroying pointers
-                    delete splitted;
-
                     titleWord = toLower(titleWord);
                     shrinkedTitle = (titleWord).substr(0, word.size());
                 }
+                //destroying pointer
+                delete splitted;
                 //condition to exit the "title index" while loop
                 end = index+1 < splittedSize? false: end;
 

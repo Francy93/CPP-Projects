@@ -10,6 +10,37 @@ bool Global::getCstate(){
     return colorMode;
 }
 
+
+//making strings lower case
+std::string Global::toLower(std::string s){
+    #include <cctype>
+    
+    std::transform(s.begin(), s.end(), s.begin(),
+        [](unsigned char c){ return std::tolower(c); });
+    
+    return s;
+}
+
+std::string Global::color(std::string c){
+    std::string colors [] = {"black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"};
+    std::string color = "";
+    if(getCstate()){
+        for (unsigned int i=0; i< sizeof(colors)/sizeof(*colors); i++){
+            if(toLower(c) == colors[i]){
+                color = "\033[1;3"+std::to_string(i)+"m";
+            }
+        }
+    }
+    return color;
+}
+std::string Global::colorReset(){
+    std::string reset = "";
+    if(getCstate()){
+        reset = "\033[0m";
+    }
+    return reset;
+}
+
 //returns a string of numerate options
 std::string Global::navOptions(std::vector<std::string> options, int minimum){
     std::string list="";
@@ -28,9 +59,8 @@ std::string Global::navOptions(std::vector<std::string> options, int minimum){
         }
     }
     
-    std::string cStart = "\033[1;33m";
-    std::string cEnd = "\033[0m";
-    if(!getCstate()){ cStart = ""; cEnd = ""; }
+    std::string cStart = color("yellow"); //yellow corresponds to: "\033[1;35m"
+    std::string cEnd = colorReset();      //reset  corresponds to: "\033[0m"
 
     longest += minimum > 3? minimum: 3;
     i = 0;
@@ -47,22 +77,13 @@ std::string Global::navOptions(std::vector<std::string> options, int minimum){
     return list;
 }
 
-//to string
+//string to long long
 long long Global::sToll(std::string s){
     //checking if string is a digit
     if(std::regex_match (s, std::regex("[-|+]{0,1}[0-9]+") )){
         return stoull(s);
     }
     return 0;
-}
-
-std::string Global::toLower(std::string s){
-    #include <cctype>
-    
-    std::transform(s.begin(), s.end(), s.begin(),
-        [](unsigned char c){ return std::tolower(c); });
-    
-    return s;
 }
 
 //the strings splitter
@@ -104,9 +125,8 @@ std::string Global::tableMaker(std::deque<std::deque<std::string>> &allData, std
     std::string border = "";
     for(unsigned long long i=0; i<allData[0].size(); i++){
         //creating the row
-        std::string colorStart = "\033[1;35m";
-        std::string colorEnd = "\033[0m";
-        if(!getCstate()){ colorStart =""; colorEnd=""; }
+        std::string colorStart = color("magenta");
+        std::string colorEnd = colorReset();
 
         std::string symbol = "|";
         std::string delimiter =colorStart+symbol+colorEnd;
@@ -438,8 +458,6 @@ bool Books::emptyCheck(){
 }
 //printing book values
 std::string Books::bookPrint(){
-    
-    //println(getTitle(),"_", getAuthor(),"_", std::to_string(getId()),"_", std::to_string(getQty()),"red");
 
     std::deque<std::deque<std::string>> allData =   {{ "ATTRIBUTES", "Title", "Authors", "ISBN", "Quantity" },
                     { "VALUES", getTitle(), getAuthor(), std::to_string(getId()), std::to_string(getQty()) }};
@@ -516,6 +534,11 @@ int Books::bookManager(){
 
 
 // -----------------   class Operations   ------------------
+
+Operations::Operations(){ 
+    //setting system base color;
+    system("Color 0F"); 
+};
 
 //file reader
 bool Operations::reader(std::string fileName){

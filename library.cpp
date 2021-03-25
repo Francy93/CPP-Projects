@@ -1,4 +1,5 @@
 #include "library.hpp"
+
 Operations ope;
 
 
@@ -32,11 +33,12 @@ std::string *intro = new std::string(R"(
 
 int main(){
     //setting the color mode
-    ope.setColor(false);
-
-    //intro title
-    ope.println(*intro, "\r\n", "yellow");
+    ope.setColor(true);
+    
+    //colored intro title
+    ope.println(*intro, "\r\n", "green");
     delete intro;
+
     //printing the welcome
     std::string *title = new std::string("  WELCOME TO THE LIBRARY SYSTEM  ");
     std::string *titleColor = new std::string("\033[1;43m "+std::string((*title).size(), '.')+" \033[0m");
@@ -44,8 +46,12 @@ int main(){
     ope.println("\033[1;43m ", *title," \033[0m", "black");
     ope.println(*titleColor, "\r\n", "yellow");
 
+    //setting color bock to gray scale
+    ope.setColor(false);
+
     delete titleColor;
     delete title;
+
 
 
     //starting the main while loop

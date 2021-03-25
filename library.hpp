@@ -19,11 +19,15 @@ class Global{
 
         void setColor(bool b);
         bool getCstate();
-
-        std::string navOptions(std::vector<std::string> options, int minimum);
-        //string to lower case
+                //string to lower case
         std::string toLower(std::string s);
-        //to string
+        //get color
+        std::string color(std::string);
+        //get color reset
+        std::string colorReset();
+        //print vavigation and get choice
+        std::string navOptions(std::vector<std::string> options, int minimum);
+        //string to long long
         long long sToll(std::string s);
 
         //this is a string printer
@@ -147,7 +151,7 @@ class Collection: public Global {
 class Operations: public Collection{
 
     public:
-        Operations(){};
+        Operations();
         ~Operations(){};
 
         //file reader
