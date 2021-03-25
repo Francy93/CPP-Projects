@@ -220,9 +220,9 @@ void Collection::addBook(Books *book){
 }
 //book remover
 bool Collection::removeBook(double index){
+    
     if(index < data.size() && index >=0){
         delete data[index];
-        delete &data[index];
         data.erase(data.begin() + index);
         return true;
     }else{
@@ -334,6 +334,7 @@ bool Collection::findBook(){
 //select a book from a given list
 int Collection::booksChoice(std::deque<Books*> &books){
     //if the books list is not empty
+    
     if(books.size() > 0){
         std::cout << booksTable(books) << std::endl;
 
@@ -353,6 +354,7 @@ int Collection::booksChoice(std::deque<Books*> &books){
             }else if(sToll(choice) > 0 && sToll(choice) <= books.size()){
                 
                 int result = (*books[(sToll(choice)-1)]).bookManager();
+                
                 if( result == 0){
                     return 0;
                 }else if(result == 2){
@@ -537,7 +539,7 @@ int Books::bookManager(){
 
 Operations::Operations(){ 
     //getting console in fullScreen mode
-    ShowWindow(GetConsoleWindow(), SW_MAXIMIZE); 
+    ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
     //setting system base color;
     system("Color 0F"); // white text mode
 };
