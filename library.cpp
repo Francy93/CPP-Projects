@@ -46,8 +46,6 @@ int main(){
     ope.println("\033[1;43m ", *title," \033[0m", "black");
     ope.println(*titleColor, "\r\n", "yellow");
 
-    //setting color bock to gray scale
-    ope.setColor(false);
 
     delete titleColor;
     delete title;

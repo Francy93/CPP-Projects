@@ -225,20 +225,15 @@ bool Collection::removeBook(double index){
         delete data[index];
         data.erase(data.begin() + index);
         return true;
-    }else{
-        println("\r\nERROR! Out of Bonds. No book removed.\r\n", "yellow");
     }
+    println("\r\nERROR! Out of Bonds. No book removed.\r\n", "yellow");
     return false;
 }
-//get book index  (THIS SHOULD BE IMPROVED WITH a BINARY SEARCH)
+//get book index  (THIS MIGHT BE IMPROVED WITH a BINARY SEARCH)
 double Collection::bookIndex(Books *book){
-    long long i = 0;
-    
-    for (auto it = data.cbegin(); it != data.cend(); ++it){
-        if(book == *it){
-            return i;
-        }
-        i++;
+    auto it = find(begin(data), end(data), book);
+    if(it != data.end()){
+        return it - data.begin();
     }
     println("\r\nERROR! Out of Bonds. No book found.\r\n", "red");
     return -1;

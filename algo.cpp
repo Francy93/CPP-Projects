@@ -99,7 +99,7 @@ bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
                 titleWord += (*it) + " ";
             }
         }
-        return toLower(titleWord.substr(0, word.size()));;
+        return toLower(titleWord.substr(0, word.size()));
     };
 
 
