@@ -116,6 +116,7 @@ class Collection: public Global {
         std::deque<Books*> data;
 
     public:
+        bool booksSorted = false;
         //erasing book collection
         void collectionClear();
         //remove a book

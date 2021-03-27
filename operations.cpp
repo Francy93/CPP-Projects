@@ -382,6 +382,9 @@ int Collection::booksChoice(std::deque<Books*> &books){
 void Collection::shuffle(std::deque<Books*> &data){
     //this function requires: #include <algorithm> and #include <regex>
     std::random_shuffle(data.begin(), data.end());
+    if(data == Collection::data){
+        booksSorted = false;
+    }
 }
 
 
@@ -573,7 +576,6 @@ bool Operations::reader(std::string fileName){
             }
             //sorting elements
             shuffle(data);
-            quicksort(data, 0, data.size() - 1, 0);
             return true;
         }else if(file.fail()){
             println("\r\nDummy file missing! Do you want to create one?", "cyan");
@@ -622,6 +624,9 @@ bool Operations::options(){
     std::cout << "| EXIT.................00 |" << std::endl;
     println(*border,"\r\n", "blue");
     delete border;
+
+    //sorting the big data deque
+    if(!booksSorted){ shuffle(data); quicksort(data, 0, data.size()-1, 0); booksSorted = true; }
 
     //user input
     switch(getChoice(3)){

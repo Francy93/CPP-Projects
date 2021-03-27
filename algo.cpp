@@ -7,6 +7,8 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
     //higher scope variables not recursively defined
     std::string pivot="";
     long long newIndex = 0;
+    //prevent possible out-of-bonds
+    r = arr.size() > r? r: arr.size()-1;
 
     //recursive lambda function
     std::function<void(long long l, long long r)> recur = [&](long long left, long long right){
@@ -64,7 +66,17 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
         if (left < j ){ recur(left, j ); }
         if (i < right){ recur(i, right); }
     };
-    recur(l,r);
+
+    //if the array entered is the big dummy data
+    if(arr == data){ 
+        //if books are sorted, do not further sort them
+        if(!booksSorted){
+            recur(l,r);
+            if(titleIndex == 0){
+                booksSorted = true;
+            }else{ booksSorted = false; }
+        }
+    }else{ recur(l,r); }
 }
 
 
@@ -109,10 +121,13 @@ bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
         long long l=left, r= right, mid;
         //boolean witch determine the end of the DEEPER search
         end = true;
-        //performin a shuffle to prevent cases of quadratic time scenario
-        shuffle(arr);
-        //sorting the array
-        quicksort(arr, left, right, index);
+        //sorting the arr
+        if(!(index == 0 && booksSorted)){ 
+            //performin a shuffle to prevent cases of quadratic time scenario
+            shuffle(arr);
+            //sorting the array
+            quicksort(arr, left, right, index);
+        }
         
         //recursive lambda function (!! SEARCHING CORE RECURSION !!)
         std::function<bool()> recur = [&](){
@@ -220,7 +235,10 @@ bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
                     println("\r\n", "FOUND ", std::to_string(found.size()-firstMatches), *lastMatches, "\r\n", "green");
                     delete lastMatches;
                     std::cout << navOptions({"Select a book"}, 10) << std::endl;
-                }else{ println("\r\n", "NO FURTHER MATCHING FOUND!"); return true; }
+                }else{ 
+                    println("\r\n", "NO FURTHER MATCHING FOUND!"); 
+                    quicksort(arr, left, right, 0);
+                return true; }
             }
 
             if(index == 0 || end ){
