@@ -626,7 +626,7 @@ bool Operations::options(){
     delete border;
 
     //sorting the big data deque
-    if(!booksSorted){ shuffle(data); quicksort(data, 0, data.size()-1, 0); booksSorted = true; }
+    if(!booksSorted){ shuffle(data); quicksort(data, 0, data.size()-1, 0); }
 
     //user input
     switch(getChoice(3)){

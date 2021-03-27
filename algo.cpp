@@ -8,7 +8,9 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
     std::string pivot="";
     long long newIndex = 0;
     //prevent possible out-of-bonds
-    r = arr.size() > r? r: arr.size()-1;
+    long long aSize = arr.size();
+    r = aSize > r? r: aSize-1;
+    titleIndex = titleIndex < 0? 0: titleIndex;
 
     //recursive lambda function
     std::function<void(long long l, long long r)> recur = [&](long long left, long long right){
@@ -70,11 +72,12 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
     //if the array entered is the big dummy data
     if(arr == data){ 
         //if books are sorted, do not further sort them
-        if(!booksSorted){
+        if(titleIndex > 0 || l > 0 || r != aSize-1){
             recur(l,r);
-            if(titleIndex == 0){
-                booksSorted = true;
-            }else{ booksSorted = false; }
+            booksSorted = false;
+        }else if(!booksSorted){
+            recur(l,r);
+            booksSorted = true;
         }
     }else{ recur(l,r); }
 }
