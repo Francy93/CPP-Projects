@@ -1,15 +1,15 @@
 #ifndef _LIBRARY_HXX_
 #define _LIBRARY_HXX_
 
-#include <iostream>
-#include <string>   // library for string variables
-#include <regex>    // regular expressions
-#include <fstream>  // file text scanner
-#include <vector>   // vectors library
-#include <deque>    // deque library
+#include <iostream>      // input output
+#include <string>        // library for string variables
+#include <regex>         // regular expressions
+#include <fstream>       // file text scanner
+#include <vector>        // vectors library
+#include <deque>         // deque library
 #include <unordered_map> // unordered hash table read/write: O(1)
 #include <algorithm>     // for toLower() and the shuffle()
-#include<windows.h>      //FullScreen mode
+#include <windows.h>     // FullScreen mode (Operations constructor)
 
 
 class Global{
@@ -112,11 +112,13 @@ class Books: public Global {
 
 class Collection: public Global {
 
-    protected: 
+    protected:
+        //great dummy data
         std::deque<Books*> data;
+        //mark if data is sorted
+        bool booksSorted = false;
 
     public:
-        bool booksSorted = false;
         //erasing book collection
         void collectionClear();
         //remove a book

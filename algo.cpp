@@ -136,7 +136,6 @@ bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
         std::function<bool()> recur = [&](){
             
             mid = l + (r - l) / 2;
-            mid = mid < arrSize? mid: arrSize-1;
             
  
 
@@ -150,11 +149,12 @@ bool Collection::binarySearch(std::deque<Books*> &arr,std::string word){
                     }
                     titleWord = toLower(titleWord);
                     shrinkedTitle = (titleWord).substr(0, word.size());
+                    //condition to exit the "title index" while loop
+                    if(index+1 < splittedSize){ end = false; }
                 }
                 //destroying pointer
                 delete splitted;
-                //condition to exit the "title index" while loop
-                end = index+1 < splittedSize? false: end;
+               
 
 
                 if (shrinkedTitle == word){

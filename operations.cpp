@@ -80,6 +80,7 @@ std::string Global::navOptions(std::vector<std::string> options, int minimum){
 //string to long long
 long long Global::sToll(std::string s){
     //checking if string is a digit
+    // sToll() method uses the regex library: #include <regex>
     if(std::regex_match (s, std::regex("[-|+]{0,1}[0-9]+") )){
         return stoull(s);
     }
@@ -536,7 +537,7 @@ int Books::bookManager(){
 // -----------------   class Operations   ------------------
 
 Operations::Operations(){ 
-    //getting console in fullScreen mode
+    //getting console in fullScreen mode uses the library: #include <windows.h>
     ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
     //setting system base color;
     system("Color 0F"); // white text mode

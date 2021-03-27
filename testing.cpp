@@ -10,7 +10,7 @@
 Operations ope;
 
 //testing Global methods
-TEST_CASE("Global functions", "[bool]"){
+TEST_CASE("Global methods", "[bool]"){
 
     // function to get string to lower case
     SECTION("string to lower case"){
