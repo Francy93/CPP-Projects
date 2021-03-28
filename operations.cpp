@@ -238,8 +238,10 @@ Books* Collection::getBook(unsigned long long index){
     
 }
 void Collection::addBook(Books *book){
+        
     data.push_back(book);
     shuffle(data);
+    
     unsigned int titleSize = split((*book).getTitle(), " ").size();
     unsigned int bigDataSize = sortedDataInMemory.size();
     unsigned int iterations = bigDataSize > titleSize? bigDataSize: titleSize;
@@ -248,34 +250,94 @@ void Collection::addBook(Books *book){
         if(i >= sortedDataInMemory.size()){
             sortedDataInMemory.push_back(data);
             quicksort(sortedDataInMemory[i], 0, data.size()-1, i);
+            shuffle(data);
         }else{
+            //insert the new book in the proper sorted index int the sortedDataInMemory
             sortedDataInMemory[i].insert(sortedDataInMemory[i].begin() + bookSearch(sortedDataInMemory[i], book, i)[1], book);
         }
         //printing the loading bar
         std::cout << loading(iterations, i+1);
     }
-    
+    //sorting the default data
+    if(!booksSorted){ quicksort(data, 0, data.size()-1, 0); }
 }
 //book remover
-bool Collection::removeBook(double index){
+bool Collection::removeBook(std::vector<double> indexes){
+    bool removed = true;
+    Books *b;
+
+    for(unsigned int i=0; i<indexes.size(); i++){
+        if(indexes[i] != -1){
+            if(i == 0){
+                if(indexes[i] < data.size() && indexes[i] >= 0){
+                    b = &(*data[indexes[i]]);
+                    data.erase(data.begin() + indexes[i]);
+                }else{ 
+                    println("\r\nERROR! Out of Bonds. No book removed at index ", std::to_string(indexes[i])," of default Data.", "\r\n", "yellow");
+                    removed = false;
+                }
+            }else{
+                if(i-1 <= sortedDataInMemory.size()){
+                    if(indexes[i] < sortedDataInMemory[i-1].size() && indexes[i] >= 0){
+                        sortedDataInMemory[i-1].erase(sortedDataInMemory[i-1].begin() + indexes[i]);
+                    }else{ 
+                        println("\r\nERROR! Out of Bonds at index ", std::to_string(i-1)," of sortedDataInMemory.", "\r\n", "yellow");
+                        removed = false;
+                    }
+                }else{ 
+                    println("\r\nERROR! Out of Bonds. No book removed at index ", std::to_string(i-1)," of sortedDataInMemory.", "\r\n", "yellow");
+                    removed = false;
+                }
+            }
+        }else{
+            std::string d = i<1? "default Data": "sortedDataInMemory";
+            println("\r\nERROR! No book found at ", d, "\r\n", "yellow");
+            removed = false;
+        }
+    }
+    if(removed){ delete b; }
+    return removed;
     
-    if(index < data.size() && index >=0){
+    /* if(index < data.size() && index >=0){
         delete data[index];
         data.erase(data.begin() + index);
         return true;
     }
     println("\r\nERROR! Out of Bonds. No book removed.\r\n", "yellow");
-    return false;
+    return false; */
 }
-//get book index  (THIS MIGHT BE IMPROVED WITH a BINARY SEARCH)
-double Collection::bookIndex(Books *book){
-    auto it = find(begin(data), end(data), book);
+
+//get book index
+std::vector<double> Collection::bookIndexes(Books *book){
+    std::vector<double> foundIndexes;
+
+    std::vector<unsigned long long> resultData = bookSearch(data, book, 0);
+    if(resultData[0] != 0){
+        foundIndexes.push_back(resultData[1]);
+    }else{
+         foundIndexes.push_back(-1);
+         println("No book found in standard data", "yellow"); 
+    }
+
+    unsigned long long index = 0;
+    for(auto dataB: sortedDataInMemory){
+        std::vector<unsigned long long> result = bookSearch(dataB, book, index++);
+        if(result[0] != 0){
+            foundIndexes.push_back(result[1]);
+        }else{
+            foundIndexes.push_back(-1);
+            println("ERROR occurred! No book found in sortedDataInMemory at index: ", std::to_string(index), "red");
+        }
+    }
+    /* auto it = find(begin(data), end(data), book);
     if(it != data.end()){
         return it - data.begin();
     }
     println("\r\nERROR! Out of Bonds. No book found.\r\n", "red");
-    return -1;
+    return -1; */
+    return foundIndexes;
 }
+//erase entire collection
 void Collection::collectionClear(){
     data.clear();
     sortedDataInMemory.clear();
@@ -393,14 +455,14 @@ int Collection::booksChoice(std::deque<Books*> &books){
                     return 0;
                 }else if(result == 2){
                     //book removing
-                    if(books == data){
+                    if(&books == &data){
                         // if the deque "books" corispond to the main big deque "data"
-                        if(removeBook(sToll(choice)-1)){
+                        if(removeBook(bookIndexes(books[sToll(choice)-1]))){
                             println("\r\n", "Book successfully removed!.", "\r\n", "green");
                         } else{ println("\r\n", "ERROR removing the book! Try again.", "\r\n", "red"); }
                         
                     }else{
-                        if(removeBook(bookIndex(books[(sToll(choice)-1)]))){
+                        if(removeBook(bookIndexes(books[(sToll(choice)-1)]))){
                             books.erase(books.begin() + sToll(choice)-1);
                             println("\r\n", "Book successfully removed!.", "\r\n", "green");
                         
@@ -418,13 +480,10 @@ int Collection::booksChoice(std::deque<Books*> &books){
 }
 
 //data shuffle
-void Collection::shuffle(std::deque<Books*> &data){
+void Collection::shuffle(std::deque<Books*> &d){
     //this function requires: #include <algorithm> and #include <regex>
-    std::random_shuffle(data.begin(), data.end());
-    if(data == Collection::data){
-        booksSorted = false;
-
-    }
+    std::random_shuffle(d.begin(), d.end());
+    if(&d == &data){  booksSorted = false; }
 }
 
 //coverting data to sortedDataInMemory data with time complexity: O(n+t+(n*2*t))
@@ -446,7 +505,7 @@ void Collection::sortDataInMemory(){
     unsigned int bigDataSize = sortedDataInMemory.size();
     unsigned int iterations = bigDataSize > longest? bigDataSize: longest;
     //loading bar title
-    println("Creating ", std::to_string(iterations), " copies of de dummy data", "green");
+    std::cout << "Creating " << iterations << " copies of de dummy data" << std::endl;
 
     //filling the sortedDataInMemory
     for(unsigned int i=0; i<iterations; i++){
@@ -457,8 +516,8 @@ void Collection::sortDataInMemory(){
         //printing the loading bar
         std::cout << loading(iterations, i+1);
     }
-    //removing loading bar title
-    std::cout << "\r\e[4K";
+    //printing a further space
+    std::cout << std::endl;
 }
 
 
@@ -707,6 +766,7 @@ bool Operations::options(){
     std::cout << "| EXIT.................00 |" << std::endl;
     println(*border,"\r\n", "blue");
     delete border;
+
 
     //sorting the big data deque
     if(!booksSorted){ shuffle(data); quicksort(data, 0, data.size()-1, 0); }

@@ -60,7 +60,7 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
     };
 
     //if the array entered is the big dummy data
-    if(arr == data){ 
+    if(&arr == &data){
         //if books are sorted, do not further sort them
         if(titleIndex > 0 || l > 0 || r != aSize-1){
             recur(l,r);
@@ -229,9 +229,10 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
                     std::cout << navOptions({"Select a book"}, 10) << std::endl;
                 }else{ 
                     println("\r\n", "NO FURTHER MATCHING FOUND!");
-                    if(sortedDataInMemory.size() > 0 && !booksSorted){
+                    if(&array == &data && sortedDataInMemory.size() > 0 && !booksSorted){
                         array = sortedDataInMemory[0];
-                    }else{ quicksort(array, left, right, 0); }
+                        booksSorted = true;
+                    }else if(&array == &data && !booksSorted){ quicksort(array, left, right, 0); }
                 return true; }
             }
 
@@ -305,7 +306,7 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
     //higher scope variables not recursively defined
     long long l=left, r= right, mid;
     //sorting the arr
-    if(arr == data && !booksSorted){ 
+    if(&arr == &data && !booksSorted){ 
         //performin a shuffle to prevent cases of quadratic time scenario
         shuffle(arr);
         //sorting the array
@@ -313,7 +314,7 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
     }
     
     //recursive lambda function (!! SEARCHING CORE RECURSION !!)
-    std::function<bool()> search = [&](){
+    std::function<unsigned int()> search = [&](){
         // calculating the mid point
         mid = l + (r - l) / 2;
         
@@ -326,7 +327,7 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
             //if a match has been found
             if (iterTitle == targetTitle){
                 result = mid;
-                return true;
+                return (unsigned int)1;
             }
 
             // If element is smaller than mid, then it can only be present in left subarray 
@@ -341,7 +342,7 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
         }
         result = mid;
         // end of searching recursion if nothig found
-        return  false;
+        return  (unsigned int)0;
     };
 
     // returning the result

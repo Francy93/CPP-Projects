@@ -127,9 +127,9 @@ class Collection: public Global {
         //erasing book collection
         void collectionClear();
         //remove a book
-        bool removeBook(double index);
+        bool removeBook(std::vector<double> indexes);
         //get book index
-        double bookIndex(Books *book);
+        std::vector<double> bookIndexes(Books *book);
         //add a book
         void addBook(Books *book);
         //get a book
