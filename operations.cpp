@@ -11,6 +11,7 @@ bool Global::getCstate(){
 }
 
 
+
 //making strings lower case
 std::string Global::toLower(std::string s){
     #include <cctype>
@@ -39,6 +40,25 @@ std::string Global::colorReset(){
         reset = "\033[0m";
     }
     return reset;
+}
+
+std::string Global::loading(unsigned long long size, unsigned long long index){
+    if (size > 0){
+        static int i = 0;
+        int percent = index * 100 / size;
+        int maxToken = percent/5;
+        
+        if(maxToken != i){
+            i = maxToken;
+        
+            if(percent != 100 && size > index){
+                std::string status = std::string(maxToken*2, (char)219);
+                return color("green")+status+" "+std::to_string(percent)+"%"+colorReset()+"\r";
+            }
+            return "\33[2K";
+        }
+    }
+    return "";
 }
 
 //returns a string of numerate options
@@ -84,6 +104,7 @@ long long Global::sToll(std::string s){
     if(std::regex_match (s, std::regex("[-|+]{0,1}[0-9]+") )){
         return stoull(s);
     }
+    println("WARNING! Prevented a crash at sToll(). (Non numeric value enterd).", "yellow");
     return 0;
 }
 
@@ -218,6 +239,22 @@ Books* Collection::getBook(unsigned long long index){
 }
 void Collection::addBook(Books *book){
     data.push_back(book);
+    shuffle(data);
+    unsigned int titleSize = split((*book).getTitle(), " ").size();
+    unsigned int bigDataSize = sortedDataInMemory.size();
+    unsigned int iterations = bigDataSize > titleSize? bigDataSize: titleSize;
+
+    for(unsigned int i=0; i<iterations; i++){
+        if(i >= sortedDataInMemory.size()){
+            sortedDataInMemory.push_back(data);
+            quicksort(sortedDataInMemory[i], 0, data.size()-1, i);
+        }else{
+            sortedDataInMemory[i].insert(sortedDataInMemory[i].begin() + bookSearch(sortedDataInMemory[i], book, i)[1], book);
+        }
+        //printing the loading bar
+        std::cout << loading(iterations, i+1);
+    }
+    
 }
 //book remover
 bool Collection::removeBook(double index){
@@ -241,6 +278,7 @@ double Collection::bookIndex(Books *book){
 }
 void Collection::collectionClear(){
     data.clear();
+    sortedDataInMemory.clear();
 }
 
 //adding a new book
@@ -385,7 +423,42 @@ void Collection::shuffle(std::deque<Books*> &data){
     std::random_shuffle(data.begin(), data.end());
     if(data == Collection::data){
         booksSorted = false;
+
     }
+}
+
+//coverting data to sortedDataInMemory data with time complexity: O(n+t+(n*2*t))
+void Collection::sortDataInMemory(){
+    unsigned int length = 0;
+    unsigned int longest = 0;
+    unsigned long long dataSize = data.size(), index = 0;
+
+    //getting the longest title
+
+    for (auto it = data.begin(); it != data.end(); it++){
+        length = split((**it).getTitle(), " ").size();
+        if(longest<length){ longest=length; }
+        
+        //printing the loading bar
+        std::cout << loading(dataSize, ++index);
+    }
+
+    unsigned int bigDataSize = sortedDataInMemory.size();
+    unsigned int iterations = bigDataSize > longest? bigDataSize: longest;
+    //loading bar title
+    println("Creating ", std::to_string(iterations), " copies of de dummy data", "green");
+
+    //filling the sortedDataInMemory
+    for(unsigned int i=0; i<iterations; i++){
+        if(i >= sortedDataInMemory.size()){
+            sortedDataInMemory.push_back(data);
+            quicksort(sortedDataInMemory[i], 0, data.size()-1, i);
+        }
+        //printing the loading bar
+        std::cout << loading(iterations, i+1);
+    }
+    //removing loading bar title
+    std::cout << "\r\e[4K";
 }
 
 
@@ -545,29 +618,38 @@ Operations::Operations(){
 
 //file reader
 bool Operations::reader(std::string fileName){
-    
+    //getting the file lines amount
+    std::ifstream count(fileName);
+    unsigned long long fileSize = std::count(std::istreambuf_iterator<char>(count),  std::istreambuf_iterator<char>(), '\n');
+    count.close();
+    //opening back the file
     std::ifstream file(fileName);
+
     bool newOpen = false;
     collectionClear();
 
     while(true){
         if (file.is_open() || newOpen) {
             std::string line;
-            int corruptedCounter = 0;
-            while (std::getline(file, line)) {
-                line.c_str();
+            unsigned long long corruptedCounter = 0, index = 0;
 
+            while (std::getline(file, line)) {
+                index++;
                 if(line != "" && line != "1" && line != "0"){
+                    line.c_str();
+
                     //splitting the string by delimiter "tab" (ascii code 9)
                     std::vector<std::string> elements = split(line, std::string(1, 9));
                     if(elements.size() > 3 && elements.size() < 6){
                         if(sToll(elements[3]) != 0 && sToll(elements[2]) != 0){
                             //storing the book object
                             Books *b = new Books(elements[0], elements[1], elements[2], elements[3]);
-                            addBook( b );
+                            data.push_back( b );
                         }
                     }else{ corruptedCounter++; }
                 }
+                //printing the loading bar
+                std::cout << loading(fileSize, index);
             }
             //closing the file scanner
             file.close();

@@ -66,3 +66,124 @@ TEST_CASE("Operations class", "[bool]"){
 }
 
 //this instruction was previously used for minGW: g++ -std=c++17 -o test testing.cpp
+
+
+/* 
+class Global{
+
+    private:
+        inline static bool colorMode = true;
+    public:
+
+        
+        //get color
+        std::string color(std::string);
+        //get color reset
+        std::string colorReset();
+        //print vavigation and get choice
+        std::string navOptions(std::vector<std::string> options, int minimum);
+        //string to long long
+        long long sToll(std::string s);
+
+       
+
+        //the holly strings splitter
+        std::vector<std::string> split(std::string s, std::string delim);
+        //an enanched and actually workin cin
+        std::string cinln();
+        //table generator
+        std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned int> longest);
+        //get user choice
+        int getChoice(int options);
+        // display options and get choice
+        int navChoice(std::vector<std::string> options, int minimum);
+};
+
+
+class Books: public Global {
+
+    private:
+        std::string title;
+        std::string author;
+        unsigned long long isbn;
+        unsigned int qty;
+
+    public:
+        //Books constructor
+        Books(){}
+        Books(std::string t, std::string a, std::string i, std::string q);
+        ~Books();
+
+        // book title getter
+        std::string getTitle();
+        // book author getter
+        std::string getAuthor();
+        // book id getter
+        unsigned long long getId();
+        // to get the book quantity
+        unsigned int getQty();
+        // modifing book quantity attribute
+        unsigned int setQty(int qty, bool mode);
+        //checking wether a book is empty or not
+        bool emptyCheck();
+        // printing book values
+        std::string bookPrint();
+        // book dashboard
+        int bookManager();
+};
+        
+
+
+class Collection: public Global {
+
+    protected:
+        //great dummy data
+        std::deque<Books*> data;
+        //mark if data is sorted
+        bool booksSorted = false;
+
+    public:
+        //erasing book collection
+        void collectionClear();
+        //remove a book
+        bool removeBook(double index);
+        //get book index
+        double bookIndex(Books *book);
+        //add a book
+        void addBook(Books *book);
+        //get a book
+        Books* getBook(unsigned long long index);
+                
+
+        //find a book
+        bool findBook();
+        //adding a new book
+        void addNewBook();
+        //building booksTable
+        std::string booksTable(std::deque<Books*> &books);
+        //print all books
+        void printCollection();
+        //select book from table
+        int booksChoice(std::deque<Books*> &books);
+        //quick-sort
+        void quicksort(std::deque<Books*>& a, long long l, long long r, unsigned int titleIndex);
+        //binary-search
+        bool binarySearch(std::deque<Books*> &arr,std::string word);
+        //data shuffle       
+        void shuffle(std::deque<Books*> &data);
+
+};
+
+
+
+class Operations: public Collection{
+
+    public:
+        Operations();
+        ~Operations(){};
+
+        //file reader
+        bool reader(std::string fileName);
+        //main menu
+        bool options();
+}; */

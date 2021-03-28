@@ -10,13 +10,13 @@ TESTS = tests
 HEADER = library.hpp
 
 #Making all executable
-all: tests final
+all: final #tests final
 #compiling the two files to get the final one which would be main.cpp and components.cpp
 final: algo.o operations.o library.o
 	$(CXX) algo.o operations.o library.o -o $(TARGET)
 #compiling the testing unit
-tests: testing.o
-	$(CXX) testing.o -o $(TESTS)
+#tests: testing.o
+#	$(CXX) testing.o -o $(TESTS)
 
 
 #compiling just the main.cpp file even though main,h is not compulsory, it is just for precaution

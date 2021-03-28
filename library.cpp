@@ -72,7 +72,13 @@ int main(){
             if(fileName == "1"){
                 ope.setColor(!ope.getCstate());
             }else if(ope.reader(fileName)){
-                if(!ope.options()){  break; }
+                ope.println("\r\nBefore starting! Would you like to sort data so as to experiance faster performances?", "yellow");
+                int nav = ope.navChoice({"Yes, get faster! (Recommended)", "No, go normal speed"}, 10);
+
+                if(nav == 2){ if(!ope.options()){  break; } }
+                else if(nav == 1){ ope.sortDataInMemory(); if(!ope.options()){  break; } }
+                else if(nav == -1){ break; }
+                
             }
         }else{ break; }
     }

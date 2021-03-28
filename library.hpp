@@ -20,12 +20,15 @@ class Global{
 
         void setColor(bool b);
         bool getCstate();
-                //string to lower case
+        
+        //string to lower case
         std::string toLower(std::string s);
         //get color
         std::string color(std::string);
         //get color reset
         std::string colorReset();
+        //getting loading status
+        std::string loading(unsigned long long size, unsigned long long index);
         //print vavigation and get choice
         std::string navOptions(std::vector<std::string> options, int minimum);
         //string to long long
@@ -115,6 +118,8 @@ class Collection: public Global {
     protected:
         //great dummy data
         std::deque<Books*> data;
+        //sorted data in memory
+        std::deque<std::deque<Books*>> sortedDataInMemory;
         //mark if data is sorted
         bool booksSorted = false;
 
@@ -147,6 +152,11 @@ class Collection: public Global {
         bool binarySearch(std::deque<Books*> &arr,std::string word);
         //data shuffle       
         void shuffle(std::deque<Books*> &data);
+        // entire books search
+        std::vector<unsigned long long> bookSearch(std::deque<Books*>& arr, Books* book, unsigned int index);
+        //improved performance sorting data in memory
+        void sortDataInMemory();
+
 
 };
 
