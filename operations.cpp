@@ -2,7 +2,7 @@
 
 // -----------------   global functions   ------------------
 
-
+/* 
 void Global::setColor(bool b){
     colorMode = b;
 }
@@ -217,14 +217,14 @@ int Global::navChoice(std::vector<std::string> options, int minimum){
     std::cout << navOptions(options, minimum) << std::endl;
     //getting the choice
     return getChoice(options.size());
-}
+} */
 
 
 
 
 
 
-
+/* 
 
 // -----------------   class Collection   ------------------
 
@@ -506,7 +506,7 @@ void Collection::sortDataInMemory(){
     }
     //printing a further space
     std::cout << std::endl;
-}
+} */
 
 
 
@@ -518,7 +518,7 @@ void Collection::sortDataInMemory(){
 
 
 
-
+/* 
 // -----------------   class Book   ------------------
 //constructor
 Books::Books(std::string t, std::string a, std::string i, std::string q){
@@ -643,7 +643,7 @@ int Books::bookManager(){
         }
     }
     return 0;
-}
+} */
 
 
 

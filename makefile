@@ -12,8 +12,8 @@ HEADER = library.hpp
 #Making all executable
 all: final #tests final
 #compiling the two files to get the final one which would be main.cpp and components.cpp
-final: algo.o operations.o library.o
-	$(CXX) algo.o operations.o library.o -o $(TARGET)
+final: global.o collection.o books.o algo.o operations.o library.o
+	$(CXX) global.o collection.o books.o algo.o operations.o library.o -o $(TARGET)
 #compiling the testing unit
 #tests: testing.o
 #	$(CXX) testing.o -o $(TESTS)
@@ -23,17 +23,31 @@ final: algo.o operations.o library.o
 library.o: library.cpp $(HEADER)
 	$(CXX) $(CXXFLAGS) library.cpp
 
-#compiling just the operations.cpp file
-operations.o: operations.cpp $(HEADER)
-	$(CXX) $(CXXFLAGS) operations.cpp
+#compiling just the global.cpp file
+global.o: global.cpp $(HEADER)
+	$(CXX) $(CXXFLAGS) global.cpp
+
+#compiling just the collection.cpp file
+collection.o: collection.cpp $(HEADER)
+	$(CXX) $(CXXFLAGS) collection.cpp
+
+#compiling just the books.cpp file
+books.o: books.cpp $(HEADER)
+	$(CXX) $(CXXFLAGS) books.cpp
 
 #compiling just the algo.cpp file
 algo.o: algo.cpp $(HEADER)
 	$(CXX) $(CXXFLAGS) algo.cpp
 
+#compiling just the operations.cpp file
+operations.o: operations.cpp $(HEADER)
+	$(CXX) $(CXXFLAGS) operations.cpp
+
+
 #compiling just the testing.cpp file
 testing.o: testing.cpp catch.hpp $(HEADER)
 	$(CXX) $(CXXFLAGS) testing.cpp
+
 
 
 #clearing all copild files
