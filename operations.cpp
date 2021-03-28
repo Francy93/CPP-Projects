@@ -237,8 +237,10 @@ Books* Collection::getBook(unsigned long long index){
     }
     
 }
+//adding the new book to the data structure
 void Collection::addBook(Books *book){
-        
+    
+    //adding the new book to the primary data structure
     data.push_back(book);
     shuffle(data);
     
@@ -297,14 +299,6 @@ bool Collection::removeBook(std::vector<double> indexes){
     }
     if(removed){ delete b; }
     return removed;
-    
-    /* if(index < data.size() && index >=0){
-        delete data[index];
-        data.erase(data.begin() + index);
-        return true;
-    }
-    println("\r\nERROR! Out of Bonds. No book removed.\r\n", "yellow");
-    return false; */
 }
 
 //get book index
@@ -329,12 +323,6 @@ std::vector<double> Collection::bookIndexes(Books *book){
             println("ERROR occurred! No book found in sortedDataInMemory at index: ", std::to_string(index), "red");
         }
     }
-    /* auto it = find(begin(data), end(data), book);
-    if(it != data.end()){
-        return it - data.begin();
-    }
-    println("\r\nERROR! Out of Bonds. No book found.\r\n", "red");
-    return -1; */
     return foundIndexes;
 }
 //erase entire collection

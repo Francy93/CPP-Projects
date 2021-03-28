@@ -129,7 +129,6 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
         
 
 
-
         
         //recursive lambda function (!! SEARCHING CORE RECURSION !!)
         std::function<bool(std::deque<Books*> &arr)> recur = [&](std::deque<Books*> &arr){
@@ -207,13 +206,13 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
   
         }else if(found.size() > 0){
 
-            if(index == 0){
+            if(index == 0 && !end){
                 for (auto f = found.begin(); f != found.end(); f++){
                     std::cout << "FOUND: -----> " << (*(f->second)).getTitle() << std::endl;
                 }
                 
                 println("\r\n", "YES, FOUND: ", std::to_string(firstMatches), "\r\n", "green");
-                std::cout << navOptions({"Select a book","PERFORM A DEEPER SEARCH"}, 10) << std::endl;
+                std::cout << navOptions({"Select one of these books","PERFORM A DEEPER SEARCH"}, 10) << std::endl;
 
             }else if(end ){
                 if(found.size() > firstMatches){
