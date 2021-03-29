@@ -761,10 +761,9 @@ bool Operations::options(){
         }
     }
 
-println("I AM HERE 1 !", "cyan");
     //sorting the default data deque
     if(!booksSorted){ shuffle(data); quicksort(data, 0, data.size()-1, 0); }
-println("I AM HERE 2 !", "cyan");
+
     //user input
     switch(getChoice(3)){
         case -1: return false;

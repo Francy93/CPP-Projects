@@ -280,9 +280,9 @@ void Collection::sortDataInMemory(){
     
         //filling the sortedDataInMemory from the index 1 on
         for(unsigned long long i=0; i<dataSize; i++){
-            unsigned int titleSisze = split((*data[i]).getTitle(), " ").size();
+            unsigned int titleSize = split((*data[i]).getTitle(), " ").size();
 
-            for(unsigned int j=1; j<titleSisze; j++){
+            for(unsigned int j=1; j<titleSize; j++){
                 if(j < sortedDataInMemory.size()){
                     sortedDataInMemory[j].push_back(data[i]);
                 }else{ sortedDataInMemory.push_back({data[i]}); }
