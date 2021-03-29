@@ -755,10 +755,16 @@ bool Operations::options(){
     println(*border,"\r\n", "blue");
     delete border;
 
+    if(sortedDataInMemory.size() > 0){
+        for(auto b: sortedDataInMemory.at(sortedDataInMemory.size()-1)){
+            println((*b).getTitle(), "magenta");
+        }
+    }
 
+println("I AM HERE 1 !", "cyan");
     //sorting the default data deque
     if(!booksSorted){ shuffle(data); quicksort(data, 0, data.size()-1, 0); }
-
+println("I AM HERE 2 !", "cyan");
     //user input
     switch(getChoice(3)){
         case -1: return false;

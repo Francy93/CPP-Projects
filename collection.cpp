@@ -71,7 +71,6 @@ bool Collection::removeBook(std::vector<double> indexes){
             }else{
                 if(i-1 <= sortedDataInMemory.size()){
                     if(indexes[i] < sortedDataInMemory[i-1].size() && indexes[i] >= 0){
-                        println("Removing from BIG: ", std::to_string(indexes[i]), " ", (*sortedDataInMemory[i-1][indexes[i]]).getTitle(), "magenta");
                         sortedDataInMemory[i-1].erase(sortedDataInMemory[i-1].begin() + indexes[i]);
                     }else{ 
                         println("\r\nERROR! Out of Bonds at index ", std::to_string(i-1)," of sortedDataInMemory.", "\r\n", "yellow");
@@ -110,7 +109,6 @@ std::vector<double> Collection::bookIndexes(Books *book){
         std::vector<unsigned long long> result = bookSearch(sortedDataInMemory[i], book, i);
         if(result[0] != 0){
             foundIndexes.push_back(result[1]);
-            println("Found in BIG: ", std::to_string(result[1]), " ", (*sortedDataInMemory[i][result[1]]).getTitle(), "red");
         }else{
             foundIndexes.push_back(-1);
             println("ERROR occurred! No book found in sortedDataInMemory at index: ", std::to_string(i), "red");
@@ -269,10 +267,9 @@ void Collection::shuffle(std::deque<Books*> &d){
     if(&d == &data){  booksSorted = false; }
 }
 
-//coverting data to sortedDataInMemory data with time complexity: O(n+t+(n*2*t))
+//coverting data to sortedDataInMemory data 
 void Collection::sortDataInMemory(){
-    /* unsigned int length = 0;
-    unsigned int longest = 0; */
+
     unsigned long long dataSize = data.size();//, index = 0;
     quicksort(data, 0, dataSize-1, 0);
 
@@ -304,30 +301,5 @@ void Collection::sortDataInMemory(){
             std::cout << loading(BIGsize, i+1);
         }
     }
-/* 
-    //getting the longest title
-    for (auto it = data.begin(); it != data.end(); it++){
-        length = split((**it).getTitle(), " ").size();
-        if(longest<length){ longest=length; }
-        
-        //printing the loading bar
-        std::cout << loading(dataSize, ++index);
-    }
-
-    unsigned int bigDataSize = sortedDataInMemory.size();
-    unsigned int iterations = bigDataSize > longest? bigDataSize: longest;
-    //loading bar title
-    std::cout << "Creating " << iterations << " copies of the dummy data" << std::endl;
-
-    //filling the sortedDataInMemory
-    for(unsigned int i=0; i<iterations; i++){
-        if(i >= sortedDataInMemory.size()){
-            sortedDataInMemory.push_back(data);
-            quicksort(sortedDataInMemory[i], 0, data.size()-1, i);
-        }
-        //printing the loading bar
-        std::cout << loading(iterations, i+1);
-    }
-    //printing a further space */
     std::cout << std::endl;
 }

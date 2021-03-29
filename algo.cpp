@@ -114,13 +114,16 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
     while(++index >= 0){
         //boolean witch determine the end of the DEEPER search
         end = true;
+        a = &array;
+
         //sorting the arr
         if(index < sortedDataInMemorySIZE){
             a = &sortedDataInMemory[index];
             arrSize = (*a).size();
             right =  arrSize > 0? arrSize-1: 0;
 
-        }else if(!(index == 0 && booksSorted)){ 
+        }else if(!(index == 0 && booksSorted)){
+            a = &array;
             //performin a shuffle to prevent cases of quadratic time scenario
             shuffle(*a);
             //sorting the array
@@ -200,7 +203,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
         // We reach here right before the actual search starts (recur())
         if(!recur(*a) && index == 0 && !end){
             println("NOTHING FOUND, AT A GLANCE! ", "yellow");
-            
+
             //processing the choice
             switch(navChoice({"Perform a DEEPER search?"}, 8)){
                 case -1: return false; //terminatign this function and close the program 
@@ -217,7 +220,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
                 println("\r\n", "YES, FOUND: ", std::to_string(firstMatches), "\r\n", "green");
                 std::cout << navOptions({"Select one of these books","PERFORM A DEEPER SEARCH"}, 10) << std::endl;
 
-            }else if(end ){
+            }else if(end){
                 if(found.size() > firstMatches){
                     //printing the matches
                     for (auto f = found.begin(); f != found.end(); f++){
@@ -235,7 +238,9 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
                         array = sortedDataInMemory[0];
                         booksSorted = true;
                     }else if(&array == &data && !booksSorted){ quicksort(array, left, right, 0); }
-                return true; }
+                    
+                    return true; 
+                }
             }
 
             if(index == 0 || end ){
