@@ -23,28 +23,27 @@ void Collection::addBook(Books *book){
     quicksort(data, 0, data.size()-1, 0);
     
     unsigned int titleSize = split((*book).getTitle(), " ").size();
-    /* unsigned int bigDataSize = sortedDataInMemory.size();
-    unsigned int iterations = bigDataSize > titleSize? bigDataSize: titleSize; */
 
+    //cicling over the title length of the new book
     for(unsigned int i=0; i<titleSize; i++){
         if(i >= sortedDataInMemory.size()){
             //if iterating the first index the basic ordered one
             if(i == 0){
+                //defining a nex index into sortedDataInMemory
                 sortedDataInMemory.push_back(data);
             }else{
+                //declaring a new empty index into sortedDataInMemory
+                sortedDataInMemory.push_back({});
+
+                //cicling over the whole data
                 for(unsigned long long j=0; j<data.size(); j++){
                     unsigned int iterTsize = split((*data[j]).getTitle(), " ").size();
-                    if(iterTsize > i){
-                        sortedDataInMemory[i].push_back(data[j]);
-                    }
+
+                    if(iterTsize > i){ sortedDataInMemory[i].push_back(data[j]); }
                 }
                 //sorting the deque just made at a specific index of the words (i)
                 quicksort(sortedDataInMemory[i], 0, sortedDataInMemory[i].size()-1, i);
-                /* sortedDataInMemory.push_back(data); */
             }
-            /* sortedDataInMemory.push_back({book}); */
-            /* quicksort(sortedDataInMemory[i], 0, data.size()-1, i);
-            shuffle(data); */
         }else{
             //insert the new book in the proper sorted index int the sortedDataInMemory
             sortedDataInMemory[i].insert(sortedDataInMemory[i].begin() + bookSearch(sortedDataInMemory[i], book, i)[1], book);

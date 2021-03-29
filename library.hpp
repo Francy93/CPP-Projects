@@ -29,7 +29,7 @@ class Global{
         std::string colorReset();
         //getting loading status
         std::string loading(unsigned long long size, unsigned long long index);
-        //print vavigation and get choice
+        //print navigation and get choice
         std::string navOptions(std::vector<std::string> options, int minimum);
         //string to long long
         long long sToll(std::string s);
