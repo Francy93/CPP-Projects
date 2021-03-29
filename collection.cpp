@@ -13,32 +13,47 @@ Books* Collection::getBook(unsigned long long index){
     }
     
 }
+
 //adding the new book to the data structure
 void Collection::addBook(Books *book){
     
     //adding the new book to the primary data structure
     data.push_back(book);
     shuffle(data);
+    quicksort(data, 0, data.size()-1, 0);
     
     unsigned int titleSize = split((*book).getTitle(), " ").size();
-    unsigned int bigDataSize = sortedDataInMemory.size();
-    unsigned int iterations = bigDataSize > titleSize? bigDataSize: titleSize;
+    /* unsigned int bigDataSize = sortedDataInMemory.size();
+    unsigned int iterations = bigDataSize > titleSize? bigDataSize: titleSize; */
 
-    for(unsigned int i=0; i<iterations; i++){
+    for(unsigned int i=0; i<titleSize; i++){
         if(i >= sortedDataInMemory.size()){
-            sortedDataInMemory.push_back(data);
-            quicksort(sortedDataInMemory[i], 0, data.size()-1, i);
-            shuffle(data);
+            //if iterating the first index the basic ordered one
+            if(i == 0){
+                sortedDataInMemory.push_back(data);
+            }else{
+                for(unsigned long long j=0; j<data.size(); j++){
+                    unsigned int iterTsize = split((*data[j]).getTitle(), " ").size();
+                    if(iterTsize > i){
+                        sortedDataInMemory[i].push_back(data[j]);
+                    }
+                }
+                //sorting the deque just made at a specific index of the words (i)
+                quicksort(sortedDataInMemory[i], 0, sortedDataInMemory[i].size()-1, i);
+                /* sortedDataInMemory.push_back(data); */
+            }
+            /* sortedDataInMemory.push_back({book}); */
+            /* quicksort(sortedDataInMemory[i], 0, data.size()-1, i);
+            shuffle(data); */
         }else{
             //insert the new book in the proper sorted index int the sortedDataInMemory
             sortedDataInMemory[i].insert(sortedDataInMemory[i].begin() + bookSearch(sortedDataInMemory[i], book, i)[1], book);
         }
         //printing the loading bar
-        std::cout << loading(iterations, i+1);
+        std::cout << loading(titleSize, i+1);
     }
-    //sorting the default data
-    if(!booksSorted){ quicksort(data, 0, data.size()-1, 0); }
 }
+
 //book remover
 bool Collection::removeBook(std::vector<double> indexes){
     bool removed = true;
@@ -57,6 +72,7 @@ bool Collection::removeBook(std::vector<double> indexes){
             }else{
                 if(i-1 <= sortedDataInMemory.size()){
                     if(indexes[i] < sortedDataInMemory[i-1].size() && indexes[i] >= 0){
+                        println("Removing from BIG: ", std::to_string(indexes[i]), " ", (*sortedDataInMemory[i-1][indexes[i]]).getTitle(), "magenta");
                         sortedDataInMemory[i-1].erase(sortedDataInMemory[i-1].begin() + indexes[i]);
                     }else{ 
                         println("\r\nERROR! Out of Bonds at index ", std::to_string(i-1)," of sortedDataInMemory.", "\r\n", "yellow");
@@ -89,18 +105,21 @@ std::vector<double> Collection::bookIndexes(Books *book){
          println("No book found in standard data", "yellow"); 
     }
 
-    unsigned long long index = 0;
-    for(auto dataB: sortedDataInMemory){
-        std::vector<unsigned long long> result = bookSearch(dataB, book, index++);
+    unsigned int tLength = split((*book).getTitle()," ").size();
+
+    for(unsigned int i=0; i<tLength; i++){
+        std::vector<unsigned long long> result = bookSearch(sortedDataInMemory[i], book, i);
         if(result[0] != 0){
             foundIndexes.push_back(result[1]);
+            println("Found in BIG: ", std::to_string(result[1]), " ", (*sortedDataInMemory[i][result[1]]).getTitle(), "red");
         }else{
             foundIndexes.push_back(-1);
-            println("ERROR occurred! No book found in sortedDataInMemory at index: ", std::to_string(index), "red");
+            println("ERROR occurred! No book found in sortedDataInMemory at index: ", std::to_string(i), "red");
         }
     }
     return foundIndexes;
 }
+
 //erase entire collection
 void Collection::collectionClear(){
     data.clear();
@@ -136,7 +155,6 @@ void Collection::addNewBook(){
     println("\r\nBook successfully added!","green");
 }
 
-
 //building booksTable
 std::string Collection::booksTable(std::deque<Books*> &books){
     //the instruction to append at the begining would be like: a.insert(a.begin(), b.begin(), b.end());
@@ -159,6 +177,7 @@ std::string Collection::booksTable(std::deque<Books*> &books){
 
     return tableMaker(allData, longest);
 }
+
 //printing the whole collection is O(n*2) time complexity
 void Collection::printCollection(){
     std::cout << booksTable(data) << std::endl;
@@ -191,6 +210,7 @@ bool Collection::findBook(){
     }
     return false;
 }
+
 //select a book from a given list
 int Collection::booksChoice(std::deque<Books*> &books){
     //if the books list is not empty
@@ -220,7 +240,7 @@ int Collection::booksChoice(std::deque<Books*> &books){
                 }else if(result == 2){
                     //book removing
                     if(&books == &data){
-                        // if the deque "books" corispond to the main big deque "data"
+                        // if the deque "books" corispond to the default "data"
                         if(removeBook(bookIndexes(books[sToll(choice)-1]))){
                             println("\r\n", "Book successfully removed!.", "\r\n", "green");
                         } else{ println("\r\n", "ERROR removing the book! Try again.", "\r\n", "red"); }
@@ -252,12 +272,41 @@ void Collection::shuffle(std::deque<Books*> &d){
 
 //coverting data to sortedDataInMemory data with time complexity: O(n+t+(n*2*t))
 void Collection::sortDataInMemory(){
-    unsigned int length = 0;
-    unsigned int longest = 0;
-    unsigned long long dataSize = data.size(), index = 0;
+    /* unsigned int length = 0;
+    unsigned int longest = 0; */
+    unsigned long long dataSize = data.size();//, index = 0;
+    quicksort(data, 0, dataSize-1, 0);
 
+    // if the sortedDataInMemory is empty then fill it
+    if(sortedDataInMemory.size() == 0){
+        //filing the index 0
+        sortedDataInMemory.push_back(data);
+    
+        //filling the sortedDataInMemory from the index 1 on
+        for(unsigned long long i=0; i<dataSize; i++){
+            unsigned int titleSisze = split((*data[i]).getTitle(), " ").size();
+
+            for(unsigned int j=1; j<titleSisze; j++){
+                if(j < sortedDataInMemory.size()){
+                    sortedDataInMemory[j].push_back(data[i]);
+                }else{ sortedDataInMemory.push_back({data[i]}); }
+            }
+            //printing the loading bar
+            std::cout << loading(dataSize, i+1);
+        }
+
+        //sorting data of "sortedDataInMemory" from index 1 on
+        unsigned int BIGsize = sortedDataInMemory.size();
+        for(unsigned int i=1; i<BIGsize; i++){
+            shuffle(sortedDataInMemory[i]);
+            quicksort(sortedDataInMemory[i], 0, sortedDataInMemory[i].size()-1, i);
+
+            //printing the loading bar
+            std::cout << loading(BIGsize, i+1);
+        }
+    }
+/* 
     //getting the longest title
-
     for (auto it = data.begin(); it != data.end(); it++){
         length = split((**it).getTitle(), " ").size();
         if(longest<length){ longest=length; }
@@ -269,7 +318,7 @@ void Collection::sortDataInMemory(){
     unsigned int bigDataSize = sortedDataInMemory.size();
     unsigned int iterations = bigDataSize > longest? bigDataSize: longest;
     //loading bar title
-    std::cout << "Creating " << iterations << " copies of de dummy data" << std::endl;
+    std::cout << "Creating " << iterations << " copies of the dummy data" << std::endl;
 
     //filling the sortedDataInMemory
     for(unsigned int i=0; i<iterations; i++){
@@ -280,6 +329,6 @@ void Collection::sortDataInMemory(){
         //printing the loading bar
         std::cout << loading(iterations, i+1);
     }
-    //printing a further space
+    //printing a further space */
     std::cout << std::endl;
 }

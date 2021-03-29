@@ -127,7 +127,7 @@ std::vector<std::string> Global::split(std::string s, std::string delim){
     }
     return vec;
 }
-//an enanched and actually workin cin
+//an enanched and actually working cin
 std::string Global::cinln(){
     std::string input;
 

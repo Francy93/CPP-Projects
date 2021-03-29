@@ -59,7 +59,7 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
         if (i < right){ recur(i, right); }
     };
 
-    //if the array entered is the big dummy data
+    //if the array entered is the default dummy data
     if(&arr == &data){
         //if books are sorted, do not further sort them
         if(titleIndex > 0 || l > 0 || r != aSize-1){
@@ -88,7 +88,7 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
 bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
     word = toLower(word);
 
-    const long long arrSize = array.size(), left=0, right=arrSize-1;
+    unsigned long long arrSize = array.size(), left=0, right= arrSize > 0? arrSize-1: 0;
     long long firstMatches = 0;
     unsigned int index = -1, splittedSize = 0;
     bool end;
@@ -112,20 +112,23 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
 
 
     while(++index >= 0){
-        
-        //higher scope variables not recursively defined
-        long long l=left, r= right, mid;
         //boolean witch determine the end of the DEEPER search
         end = true;
         //sorting the arr
         if(index < sortedDataInMemorySIZE){
             a = &sortedDataInMemory[index];
+            arrSize = (*a).size();
+            right =  arrSize > 0? arrSize-1: 0;
+
         }else if(!(index == 0 && booksSorted)){ 
             //performin a shuffle to prevent cases of quadratic time scenario
             shuffle(*a);
             //sorting the array
             quicksort(*a, left, right, index);
         }
+
+        //higher scope variables not recursively defined
+        long long l=left, r= right, mid;
         
 
 
@@ -153,7 +156,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
 
                 //if a match has been found
                 if (shrinkedTitle == word){
-                    long long increaseMid = mid, decreaseMid = mid;
+                    double increaseMid = mid, decreaseMid = mid;
 
                     // checking if the next title matches
                     while(right >= ++increaseMid){ if(getWord(arr, increaseMid, index) != word){ break; } }

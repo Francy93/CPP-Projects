@@ -756,7 +756,7 @@ bool Operations::options(){
     delete border;
 
 
-    //sorting the big data deque
+    //sorting the default data deque
     if(!booksSorted){ shuffle(data); quicksort(data, 0, data.size()-1, 0); }
 
     //user input
