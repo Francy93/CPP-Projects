@@ -333,8 +333,23 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
 
             //if a match has been found
             if (iterTitle == targetTitle){
-                result = mid;
-                return (unsigned int)1;
+
+                if(book != arr[mid]){
+                    unsigned long long i = mid;
+                    while(targetTitle == (*arr[++i]).getTitle()){
+                        if(arr[i] == book){ result = i; return (unsigned int)1; }
+                    }
+                    i = mid;
+                    while(targetTitle == (*arr[--i]).getTitle()){
+                        if(arr[i] == book){ result = i; return (unsigned int)1; }
+                    }
+                    result = mid;
+                    return (unsigned int)0;
+
+                }else{
+                    result = mid;
+                    return (unsigned int)1;
+                }
             }
 
             // If element is smaller than mid, then it can only be present in left subarray 
