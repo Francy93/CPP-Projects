@@ -82,14 +82,14 @@ class Global{
 class Books: public Global {
 
     private:
-        std::string title;
-        std::string author;
-        unsigned long long isbn;
+        const std::string title;
+        const std::string author;
+        const std::string isbn;
         unsigned int qty;
 
     public:
         //Books constructor
-        Books(){}
+        Books() : title(""), author(""), isbn(""), qty(0) {}
         Books(std::string t, std::string a, std::string i, std::string q);
         ~Books();
 
@@ -98,7 +98,7 @@ class Books: public Global {
         // book author getter
         std::string getAuthor();
         // book id getter
-        unsigned long long getId();
+        std::string getId();
         // to get the book quantity
         unsigned int getQty();
         // modifing book quantity attribute

@@ -93,7 +93,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
     unsigned int index = -1, splittedSize = 0;
     bool end;
     std::string titleWord = "", shrinkedTitle = "";
-    std::unordered_map<unsigned long long, Books*> found;
+    std::unordered_map<std::string, Books*> found;
     std::vector<std::string> splitted;
     std::deque<Books*> *a = &array;
     unsigned int sortedDataInMemorySIZE = sortedDataInMemory.size();

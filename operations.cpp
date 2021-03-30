@@ -682,17 +682,15 @@ bool Operations::reader(std::string fileName){
 
             while (std::getline(file, line)) {
                 index++;
-                if(line != "" && line != "1" && line != "0"){
+                if(line != " " && line != " " && line != "" && line != "1" && line != "0"){
                     line.c_str();
 
                     //splitting the string by delimiter "tab" (ascii code 9)
                     std::vector<std::string> elements = split(line, std::string(1, 9));
-                    if(elements.size() > 3 && elements.size() < 6){
-                        if(sToll(elements[3]) != 0 && sToll(elements[2]) != 0){
+                    if(elements.size() > 3 && sToll(elements[3]) != 0){
                             //storing the book object
                             Books *b = new Books(elements[0], elements[1], elements[2], elements[3]);
                             data.push_back( b );
-                        }
                     }else{ corruptedCounter++; }
                 }
                 //printing the loading bar
@@ -754,12 +752,6 @@ bool Operations::options(){
     std::cout << "| EXIT.................00 |" << std::endl;
     println(*border,"\r\n", "blue");
     delete border;
-
-    if(sortedDataInMemory.size() > 0){
-        for(auto b: sortedDataInMemory.at(sortedDataInMemory.size()-1)){
-            println((*b).getTitle(), "magenta");
-        }
-    }
 
     //sorting the default data deque
     if(!booksSorted){ shuffle(data); quicksort(data, 0, data.size()-1, 0); }

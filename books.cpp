@@ -3,11 +3,8 @@
 
 // -----------------   class Book   ------------------
 //constructor
-Books::Books(std::string t, std::string a, std::string i, std::string q){
-    title  = t;
-    author = a;
-    isbn   = stoull(i);
-    qty    = stoul(q);
+Books::Books(std::string t, std::string a, std::string i, std::string q) : title(t), author(a), isbn(i) {
+    qty = stoul(q);
 };
 //decontructor
 Books::~Books(){
@@ -20,7 +17,7 @@ std::string Books::getTitle(){
 std::string Books::getAuthor(){
     return author;
 }
-unsigned long long Books::getId(){
+std::string Books::getId(){
     return isbn;
 }
 unsigned int Books::getQty(){
@@ -54,7 +51,7 @@ unsigned int Books::setQty(int qty, bool mode){
 }
 //checking wether a book is empty or not
 bool Books::emptyCheck(){
-    if((getTitle() == "0" && getAuthor() == "0" && getId() == 0) || getQty() <= 0){
+    if((getTitle() == "" && getAuthor() == "" && getId() == "") || getQty() <= 0){
         return false;
     }
     return true;
@@ -63,7 +60,7 @@ bool Books::emptyCheck(){
 std::string Books::bookPrint(){
 
     std::deque<std::deque<std::string>> allData =   {{ "ATTRIBUTES", "Title", "Authors", "ISBN", "Quantity" },
-                    { "VALUES", getTitle(), getAuthor(), std::to_string(getId()), std::to_string(getQty()) }};
+                    { "VALUES", getTitle(), getAuthor(), getId(), std::to_string(getQty()) }};
 
     std::vector<unsigned int> longest = {allData[0][0].size(), allData[1][0].size()};
 
