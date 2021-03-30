@@ -47,13 +47,18 @@ std::string Global::loading(unsigned long long size, unsigned long long index){
         static int i = 0;
         int percent = index * 100 / size;
         int maxToken = percent/5;
+        std::string colors;
         
         if(maxToken != i){
             i = maxToken;
         
             if(percent != 100 && size > index){
-                std::string status = std::string(maxToken*2, (char)219);
-                return color("green")+status+" "+std::to_string(percent)+"%"+colorReset()+"\r";
+                std::string status = std::string(maxToken*2, (char)219); //219 is the ascii code for the square symbol
+                if(percent < 33){ colors = "red"; }
+                else if(percent < 66){ colors = "yellow"; }
+                else{ colors = "green"; }
+                
+                return color(colors)+status+" "+std::to_string(percent)+"%"+colorReset()+"\r";
             }
             return "\33[2K";
         }

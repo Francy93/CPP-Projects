@@ -96,7 +96,7 @@ TEST_CASE("Collection class", "[bool]"){
         std::vector<double> BI0 =  test.bookIndexes(test.getBook(0));
         //remove a book
         CHECK(test.removeBook(BI0));
-        
+
         //remove last book
         std::vector<double> BI1 =  test.bookIndexes(test.getBook(0));
         CHECK(test.removeBook(BI1));
@@ -113,4 +113,4 @@ TEST_CASE("Books class", "[bool]"){
 }
 
 
-//this instruction was previously used to compile with minGW: g++ -std=c++17 -o test testing.cpp
+//this instruction was previously used to compile this test file with minGW: g++ -std=c++17 -o test testing.cpp
