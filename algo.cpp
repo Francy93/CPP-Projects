@@ -327,8 +327,7 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
         
 
 
-        if (r >= l) {
-            
+        if (r >= l){
             iterTitle = indexedTitle(arr[mid]);
 
             //if a match has been found
@@ -336,6 +335,7 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
 
                 if(book != arr[mid]){
                     unsigned long long i = mid;
+                    
                     while(targetTitle == (*arr[++i]).getTitle()){
                         if(arr[i] == book){ result = i; return (unsigned int)1; }
                     }

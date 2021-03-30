@@ -288,7 +288,7 @@ void Collection::sortDataInMemory(){
                 }else{ sortedDataInMemory.push_back({data[i]}); }
             }
             //printing the loading bar
-            std::cout << loading(dataSize, i+1);
+            std::cout << loading(dataSize*2, i);
         }
 
         //sorting data of "sortedDataInMemory" from index 1 on
@@ -298,7 +298,7 @@ void Collection::sortDataInMemory(){
             quicksort(sortedDataInMemory[i], 0, sortedDataInMemory[i].size()-1, i);
 
             //printing the loading bar
-            std::cout << loading(BIGsize, i+1);
+            std::cout << loading(BIGsize*2, BIGsize+i+1);
         }
     }
     std::cout << std::endl;

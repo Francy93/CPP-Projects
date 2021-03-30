@@ -104,7 +104,6 @@ long long Global::sToll(std::string s){
     if(std::regex_match (s, std::regex("[-|+]{0,1}[0-9]+") )){
         return stoull(s);
     }
-    println("WARNING! Prevented a crash at sToll(). (Non numeric value enterd).", "yellow");
     return 0;
 }
 
