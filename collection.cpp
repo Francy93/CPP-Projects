@@ -57,7 +57,6 @@ void Collection::addBook(Books *book){
 bool Collection::removeBook(std::vector<double> indexes){
     bool removed = true;
     Books *b;
-    println("going to remove the book", "magenta");
 
     for(unsigned int i=0; i<indexes.size(); i++){
         if(indexes[i] != -1){
@@ -107,9 +106,10 @@ std::vector<double> Collection::bookIndexes(Books *book){
          println("No book found in standard data", "yellow"); 
     }
 
-    //getting indexes from the sortedDataInMemory data structure
+    //getting the maximum index iterable
     unsigned int tLength = (*book).getSplittedT().size();
     unsigned int sdimMaxSize = tLength > sortedDataInMemory.size()? sortedDataInMemory.size(): tLength;
+
     //getting indexes from the sortedDataInMemory
     for(unsigned int i=0; i<sdimMaxSize; i++){
         std::vector<unsigned long long> result = bookSearch(sortedDataInMemory[i], book, i);
