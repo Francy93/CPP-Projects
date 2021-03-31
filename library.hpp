@@ -82,14 +82,16 @@ class Global{
 class Books: public Global {
 
     private:
+        
         const std::string title;
         const std::string author;
         const std::string isbn;
         unsigned int qty;
+        const std::vector<std::string> splittedTitle;
 
     public:
         //Books constructor
-        Books() : title(""), author(""), isbn(""), qty(0) {}
+        Books() : title(""), author(""), isbn(""), qty(0), splittedTitle({})  {}
         Books(std::string t, std::string a, std::string i, std::string q);
         ~Books();
 
@@ -101,6 +103,8 @@ class Books: public Global {
         std::string getId();
         // to get the book quantity
         unsigned int getQty();
+        //get splitted title
+        std::vector<std::string> getSplittedT();
         // modifing book quantity attribute
         unsigned int setQty(int qty, bool mode);
         //checking wether a book is empty or not

@@ -3,7 +3,7 @@
 
 // -----------------   class Book   ------------------
 //constructor
-Books::Books(std::string t, std::string a, std::string i, std::string q) : title(t), author(a), isbn(i) {
+Books::Books(std::string t, std::string a, std::string i, std::string q) : title(t), author(a), isbn(i), splittedTitle(split(toLower(t), " ")) {
     qty = stoul(q);
 };
 //decontructor
@@ -22,6 +22,9 @@ std::string Books::getId(){
 }
 unsigned int Books::getQty(){
     return qty;
+}
+std::vector<std::string> Books::getSplittedT(){
+    return splittedTitle;
 }
 // modifing book quantity
 unsigned int Books::setQty(int qty, bool mode){

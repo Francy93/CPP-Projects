@@ -146,6 +146,7 @@ std::string Global::cinln(){
 }
 // table generator
 std::string Global::tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned int> longest){
+    //maximum of characters allowed per string
     const short maxLength = 100;
     //setting the max length of the rows
     for(unsigned int i = 0; i< longest.size(); i++){

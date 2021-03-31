@@ -14,14 +14,14 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
 
     // lambda function to get the word at a specific index (this has to be very light and performing)
     std::function<std::string(long long index)> getString = [&](long long index){
-        std::vector<std::string>arrWords = split((*arr[index]).getTitle(), " ");
+        std::vector<std::string>arrWords ( (*arr[index]).getSplittedT() );
         std::string lrElem = "";
         if(titleIndex < arrWords.size()){
             for (std::vector<std::string>::const_iterator it = arrWords.begin()+titleIndex; it != arrWords.end(); ++it){
                 lrElem += " "+*it;
             }
         }
-        return toLower(lrElem);
+        return lrElem;
     };
 
     //recursive lambda function
@@ -99,7 +99,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
 
     // lambda function to get the word at a specific index (this has to be very light and performing)
     std::function<std::string(std::deque<Books*> &arr, long long mid, unsigned int index)> getWord = [&](std::deque<Books*> &arr, long long mid, unsigned int index){
-        std::vector<std::string> splitted = split((*arr[mid]).getTitle(), " ");
+        std::vector<std::string> splitted( (*arr[mid]).getSplittedT() );
         std::string titleWord = "";
         unsigned int splitSize = splitted.size();
         if(index < splitSize){
@@ -109,7 +109,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
             //condition to terminate the while cycle of the DEEP search
             if(index+1 < splitSize){ end = false; }
         }
-        return toLower(titleWord.substr(0, word.size()));
+        return titleWord.substr(0, word.size());
     };
 
     //while cycle intended for "deep" search purposes
@@ -289,14 +289,14 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
 
     // lambda function to get the word at a specific index 
     std::function<std::string(Books *b)> indexedTitle = [&](Books *b){
-        std::vector<std::string> splitted = split((*b).getTitle(), " ");
+        std::vector<std::string> splitted( (*b).getSplittedT() );
         std::string titleWord = "";
         if(index < (splitted).size()){
             for (std::vector<std::string>::const_iterator it = (splitted).begin()+index; it != (splitted).end(); ++it){
                 titleWord += (*it) + " ";
             }
         }
-        return toLower(titleWord);
+        return titleWord;
     };
     //getting the indexed title of the books to be searched
     std::string targetTitle = indexedTitle(book);
