@@ -321,20 +321,23 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
 
 
         if (r >= l){
+            //getting a substring of title from a specified index
             iterTitle = indexedTitle(arr[mid]);
-
+            
+            
             //if a match has been found
             if (iterTitle == targetTitle){
-
+                
+                
                 //if the searched book is not actually the one just found
                 if(book != arr[mid]){
                     unsigned long long i = mid;
                     
-                    while(targetTitle == (*arr[++i]).getTitle()){
+                    while(iterTitle == indexedTitle(arr[++i])){
                         if(arr[i] == book){ result = i; return (unsigned int)1; }
                     }
                     i = mid;
-                    while(targetTitle == (*arr[--i]).getTitle()){
+                    while(iterTitle == indexedTitle(arr[--i])){
                         if(arr[i] == book){ result = i; return (unsigned int)1; }
                     }
                     result = mid;
@@ -346,7 +349,7 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
                 }
             }
 
-            // If element is smaller than mid, then it can only be present in left subarray 
+            // If element is smaller than mid, then it can only be present in left subarray
             if (iterTitle > targetTitle){
                 r = mid -1;
                 return search(); 
@@ -358,6 +361,7 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
         }
         result = mid;
         // end of searching recursion if nothig found
+        
         return  (unsigned int)0;
     };
 
