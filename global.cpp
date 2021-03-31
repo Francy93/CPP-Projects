@@ -146,6 +146,11 @@ std::string Global::cinln(){
 }
 // table generator
 std::string Global::tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned int> longest){
+    const short maxLength = 100;
+    //setting the max length of the rows
+    for(unsigned int i = 0; i< longest.size(); i++){
+        longest[i] = longest[i] > maxLength? maxLength: longest[i];
+    }
         
     std::string table = "";
     std::string border = "";
@@ -157,26 +162,26 @@ std::string Global::tableMaker(std::deque<std::deque<std::string>> &allData, std
         std::string symbol = "|";
         std::string delimiter =colorStart+symbol+colorEnd;
         std::string row = "";
+        
+        //cycling over the columns
         for(unsigned int j=0; j<allData.size(); j++){
-            auto allD = allData[j][i];
-            unsigned long long allDsize = allD.size();
-            int leng = longest[j] - allDsize < 1? 0: longest[j] - allDsize;
+
+            std::string str = allData[j][i];
+            if(str.size() > maxLength){ str = str.substr(0, maxLength-3)+"..."; }
+            const short strSize = str.size();
+
+            int leng = longest[j] - strSize < 1? 0: longest[j] - strSize;
             std::string elem ="";
             std::string spaces = leng > 0? std::string(leng, ' '): "";
 
-            std::string color = "";
             std::string start = "";
             std::string end   = "";
             if(i == 0 || j == 0){
-                color = "3";
-                if(i == 0){
-                    color = "6";
-                }
-                start = "\033[1;3"+color+"m";
+                start = color("yellow");
+                if(i == 0){ start = color("cyan"); }
                 end   = colorEnd;
             }
-            if(!getCstate()){ start =""; }
-            elem += start+ allD + spaces + end;
+            elem += start+ str + spaces + end;
             row += delimiter+" " + elem + " ";
         }
         row += delimiter;

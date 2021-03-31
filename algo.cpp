@@ -116,7 +116,6 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
     while(++index >= 0){
         //boolean witch determine the end of the DEEPER search
         end = true;
-        a = &array;
 
         //sorting the arr
         if(index < sortedDataInMemorySIZE){
@@ -125,6 +124,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
             right = arrSize > 0? arrSize-1: 0;
 
         }else if(!(index == 0 && booksSorted)){
+            a = &array;
             arrSize = (*a).size();
             right = arrSize > 0? arrSize-1: 0;
 
@@ -134,7 +134,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
             quicksort(*a, left, right, index);
         }
 
-        //higher scope variables not recursively defined
+        //higher scope variables reset without a new recursive redefinition
         long long l=left, r= right, mid;
         
 
@@ -326,6 +326,7 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
             //if a match has been found
             if (iterTitle == targetTitle){
 
+                //if the searched book is not actually the one just found
                 if(book != arr[mid]){
                     unsigned long long i = mid;
                     
