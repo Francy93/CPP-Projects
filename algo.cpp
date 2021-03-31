@@ -90,11 +90,10 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
 
     unsigned long long arrSize = array.size(), left=0, right= arrSize > 0? arrSize-1: 0;
     long long firstMatches = 0;
-    unsigned int index = -1, splittedSize = 0;
+    unsigned int index = -1;
     bool end;
-    std::string titleWord = "", shrinkedTitle = "";
+    std::string iterTitle = "";
     std::unordered_map<std::string, Books*> found;
-    std::vector<std::string> splitted;
     std::deque<Books*> *a = &array;
     unsigned int sortedDataInMemorySIZE = sortedDataInMemory.size();
 
@@ -102,15 +101,18 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
     std::function<std::string(std::deque<Books*> &arr, long long mid, unsigned int index)> getWord = [&](std::deque<Books*> &arr, long long mid, unsigned int index){
         std::vector<std::string> splitted = split((*arr[mid]).getTitle(), " ");
         std::string titleWord = "";
-        if(index < (splitted).size()){
-            for (std::vector<std::string>::const_iterator it = (splitted).begin()+index; it != (splitted).end(); ++it){
+        unsigned int splitSize = splitted.size();
+        if(index < splitSize){
+            for (std::vector<std::string>::const_iterator it = splitted.begin()+index; it != splitted.end(); ++it){
                 titleWord += (*it) + " ";
             }
+            //condition to terminate the while cycle of the DEEP search
+            if(index+1 < splitSize){ end = false; }
         }
         return toLower(titleWord.substr(0, word.size()));
     };
 
-
+    //while cycle intended for "deep" search purposes
     while(++index >= 0){
         //boolean witch determine the end of the DEEPER search
         end = true;
@@ -120,10 +122,12 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
         if(index < sortedDataInMemorySIZE){
             a = &sortedDataInMemory[index];
             arrSize = (*a).size();
-            right =  arrSize > 0? arrSize-1: 0;
+            right = arrSize > 0? arrSize-1: 0;
 
         }else if(!(index == 0 && booksSorted)){
-            a = &array;
+            arrSize = (*a).size();
+            right = arrSize > 0? arrSize-1: 0;
+
             //performin a shuffle to prevent cases of quadratic time scenario
             shuffle(*a);
             //sorting the array
@@ -143,22 +147,11 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
             
 
             if (r >= l) {
-                splitted = split((*arr[mid]).getTitle(), " ");
-                shrinkedTitle = titleWord = "";
-                splittedSize = (splitted).size();
-                if(index < splittedSize){
-                    for (std::vector<std::string>::const_iterator it = (splitted).begin()+index; it != (splitted).end(); ++it){
-                        titleWord += (*it) + " ";
-                    }
-                    titleWord = toLower(titleWord);
-                    shrinkedTitle = (titleWord).substr(0, word.size());
-                    //condition to exit the "title index" while loop
-                    if(index+1 < splittedSize){ end = false; }
-                }
+                iterTitle = getWord(arr, mid, index);
                
 
                 //if a match has been found
-                if (shrinkedTitle == word){
+                if (iterTitle == word){
                     double increaseMid = mid, decreaseMid = mid;
 
                     // checking if the next title matches
@@ -173,7 +166,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
                         found[(**it).getId()] = *it;
                     }
                     //get quantity of books found in the first seach
-                    firstMatches = index == 0? found.size(): firstMatches;
+                    if(index == 0){ firstMatches = found.size(); }
                     return true;
                 }
                 //end of "found" condition
@@ -181,7 +174,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
 
 
                 // If element is smaller than mid, then it can only be present in left subarray 
-                if (titleWord > word){
+                if (iterTitle > word){
                     r = mid -1;
                     return recur(arr); 
                 }

@@ -61,6 +61,7 @@ bool Collection::removeBook(std::vector<double> indexes){
     for(unsigned int i=0; i<indexes.size(); i++){
         if(indexes[i] != -1){
             if(i == 0){
+                //removing the book from the default data
                 if(indexes[i] < data.size() && indexes[i] >= 0){
                     b = &(*data[indexes[i]]);
                     data.erase(data.begin() + indexes[i]);
@@ -69,6 +70,7 @@ bool Collection::removeBook(std::vector<double> indexes){
                     removed = false;
                 }
             }else{
+                //removing the book from the sortedDataInMemory
                 if(i-1 <= sortedDataInMemory.size()){
                     if(indexes[i] < sortedDataInMemory[i-1].size() && indexes[i] >= 0){
                         sortedDataInMemory[i-1].erase(sortedDataInMemory[i-1].begin() + indexes[i]);
@@ -95,6 +97,7 @@ bool Collection::removeBook(std::vector<double> indexes){
 std::vector<double> Collection::bookIndexes(Books *book){
     std::vector<double> foundIndexes;
 
+    //getting index from default data
     std::vector<unsigned long long> resultData = bookSearch(data, book, 0);
     if(resultData[0] != 0){
         foundIndexes.push_back(resultData[1]);
@@ -104,7 +107,7 @@ std::vector<double> Collection::bookIndexes(Books *book){
     }
 
     unsigned int tLength = split((*book).getTitle()," ").size();
-
+    //getting indexes from the sortedDataInMemory
     for(unsigned int i=0; i<tLength; i++){
         std::vector<unsigned long long> result = bookSearch(sortedDataInMemory[i], book, i);
         if(result[0] != 0){
@@ -129,7 +132,7 @@ void Collection::addNewBook(){
     std::vector<std::string> wizard = {"Enter here the title","Now enter the author","Include an ISBN","Specify a quantity"};
     std::vector<std::string> bookData;
     
-    //std::cin.ignore();
+    //cicling over all the required filds
     for(unsigned int i=0; i< wizard.size(); i++){
         println("\r\n",wizard[i],"magenta");
         //getting user input
@@ -270,7 +273,7 @@ void Collection::shuffle(std::deque<Books*> &d){
 //coverting data to sortedDataInMemory data 
 void Collection::sortDataInMemory(){
 
-    unsigned long long dataSize = data.size();//, index = 0;
+    unsigned long long dataSize = data.size();
     quicksort(data, 0, dataSize-1, 0);
 
     // if the sortedDataInMemory is empty then fill it
