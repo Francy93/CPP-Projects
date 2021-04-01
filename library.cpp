@@ -1,7 +1,5 @@
 #include "library.hpp"
 
-Operations ope;
-
 
 std::string *intro = new std::string(R"(
                                                                                                             
@@ -32,8 +30,7 @@ std::string *intro = new std::string(R"(
 
 
 int main(){
-    //setting the color mode
-    ope.setColor(true);
+    Operations ope;
     
     //colored intro title
     ope.println(*intro, "\r\n", "green");

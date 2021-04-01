@@ -107,7 +107,7 @@ std::vector<double> Collection::bookIndexes(Books *book){
     }
 
     //getting the maximum index iterable
-    unsigned int tLength = (*book).getSplittedT().size();
+    unsigned int tLength = (*book).getSTsize();
     unsigned int sdimMaxSize = tLength > sortedDataInMemory.size()? sortedDataInMemory.size(): tLength;
 
     //getting indexes from the sortedDataInMemory

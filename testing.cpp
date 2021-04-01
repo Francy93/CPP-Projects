@@ -1,6 +1,8 @@
 //To Configure catch to use your main, and not its own: #define CATCH_CONFIG_RUNNER
-#define CATCH_CONFIG_MAIN // let Catch.hpp supply main() and handle configuring itself from the command line.
+#define CATCH_CONFIG_MAIN   //let Catch.hpp supply main() and handle configuring itself from the command line.
 #include "catch.hpp"
+#define private public     //making private methos public in order to allow testing
+#define protected public   //making protected methos public in order to allow testing
 #include "operations.cpp"
 #include "collection.cpp"
 #include "algo.cpp"

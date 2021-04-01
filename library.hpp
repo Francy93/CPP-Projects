@@ -16,6 +16,7 @@ class Global{
 
     private:
         inline static bool colorMode = true;
+
     public:
 
         void setColor(bool b);
@@ -87,7 +88,7 @@ class Books: public Global {
         const std::string author;
         const std::string isbn;
         unsigned int qty;
-        const std::vector<std::string> splittedTitle;
+        std::vector<std::string> splittedTitle;
 
     public:
         //Books constructor
@@ -95,6 +96,11 @@ class Books: public Global {
         Books(std::string t, std::string a, std::string i, std::string q);
         ~Books();
 
+    private:
+        // to split the title by indexes
+        void titleSplitter();
+
+    public:
         // book title getter
         std::string getTitle();
         // book author getter
@@ -104,7 +110,9 @@ class Books: public Global {
         // to get the book quantity
         unsigned int getQty();
         //get splitted title
-        std::vector<std::string> getSplittedT();
+        std::string getSplittedT(unsigned int index);
+        //get size of vector splittedTitle
+        unsigned int getSTsize();
         // modifing book quantity attribute
         unsigned int setQty(int qty, bool mode);
         //checking wether a book is empty or not
@@ -127,9 +135,7 @@ class Collection: public Global {
         //mark if data is sorted
         bool booksSorted = false;
 
-    public:
-        //erasing book collection
-        void collectionClear();
+    private:
         //remove a book
         bool removeBook(std::vector<double> indexes);
         //get book index
@@ -138,30 +144,30 @@ class Collection: public Global {
         void addBook(Books *book);
         //get a book
         Books* getBook(unsigned long long index);
-                
+        //building booksTable
+        std::string booksTable(std::deque<Books*> &books);
+        //binary-search
+        bool binarySearch(std::deque<Books*> &arr,std::string word);
+        // entire books search
+        std::vector<unsigned long long> bookSearch(std::deque<Books*>& arr, Books* book, unsigned int index);
 
+    public:
         //find a book
         bool findBook();
         //adding a new book
         void addNewBook();
-        //building booksTable
-        std::string booksTable(std::deque<Books*> &books);
         //print all books
         void printCollection();
+        //improved performance sorting data in memory
+        void sortDataInMemory();
+        //erasing book collection
+        void collectionClear();
+        //data shuffle       
+        void shuffle(std::deque<Books*> &data);
         //select book from table
         int booksChoice(std::deque<Books*> &books);
         //quick-sort
         void quicksort(std::deque<Books*>& a, long long l, long long r, unsigned int titleIndex);
-        //binary-search
-        bool binarySearch(std::deque<Books*> &arr,std::string word);
-        //data shuffle       
-        void shuffle(std::deque<Books*> &data);
-        // entire books search
-        std::vector<unsigned long long> bookSearch(std::deque<Books*>& arr, Books* book, unsigned int index);
-        //improved performance sorting data in memory
-        void sortDataInMemory();
-
-
 };
 
 

@@ -3,13 +3,27 @@
 
 // -----------------   class Book   ------------------
 //constructor
-Books::Books(std::string t, std::string a, std::string i, std::string q) : title(t), author(a), isbn(i), splittedTitle(split(toLower(t), " ")) {
+Books::Books(std::string t, std::string a, std::string i, std::string q) : title(t), author(a), isbn(i) {
     qty = stoul(q);
+    titleSplitter();
 };
 //decontructor
 Books::~Books(){
     std::cout << "Deleted: " << isbn << std::endl;
 };
+
+ //function to split title by indexes
+void Books::titleSplitter(){
+    std::vector<std::string> splitted(split(toLower(title), " ") );
+    for(unsigned int i=0; i< splitted.size(); i++){
+        std::string titleWord = "";
+        for (std::vector<std::string>::const_iterator it = splitted.begin()+i; it != splitted.end(); ++it){
+           titleWord += (*it) + " ";
+        }
+        
+        splittedTitle.push_back(titleWord.substr(0, titleWord.size()-1));
+    }
+}
 
 std::string Books::getTitle(){
     return title;
@@ -23,8 +37,14 @@ std::string Books::getId(){
 unsigned int Books::getQty(){
     return qty;
 }
-std::vector<std::string> Books::getSplittedT(){
-    return splittedTitle;
+std::string Books::getSplittedT(unsigned int index){
+    if(index >= splittedTitle.size()){
+        return "";
+    }
+    return splittedTitle[index];
+}
+unsigned int Books::getSTsize(){
+    return splittedTitle.size();
 }
 // modifing book quantity
 unsigned int Books::setQty(int qty, bool mode){
