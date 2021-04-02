@@ -1,16 +1,14 @@
 //To Configure catch to use your main, and not its own: #define CATCH_CONFIG_RUNNER
 #define CATCH_CONFIG_MAIN   //let Catch.hpp supply main() and handle configuring itself from the command line.
 #include "catch.hpp"
-#define private public     //making private methos public in order to allow testing
-#define protected public   //making protected methos public in order to allow testing
+#define private public      //making private methos public in order to allow testing
+#define protected public    //making protected methos public in order to allow testing
 #include "operations.cpp"
 #include "collection.cpp"
 #include "algo.cpp"
 #include "books.cpp"
 #include "global.cpp"
 
-
-//#include "operations.cpp"
 #include <sstream>
 
 Operations test;
@@ -36,18 +34,18 @@ TEST_CASE("Global methods", "[bool]"){
     SECTION("Testing the color switcher"){
         test.setColor(false);
         CHECK_FALSE(test.getCstate());
-        CHECK(test.colorReset() == "");
+        CHECK(test.colorReset()   == "");
         CHECK(test.color("green") == "");
 
         test.setColor(true);
         CHECK(test.getCstate());
-        CHECK(test.colorReset() != "");
+        CHECK(test.colorReset()   != "");
         CHECK(test.color("green") != "");
     }
 
     SECTION("Testing the string parser to long long"){
-        CHECK(test.sToll("abc") == 0);
-        CHECK(test.sToll("0") == 0);
+        CHECK(test.sToll("abc") ==   0);
+        CHECK(test.sToll("0")   ==   0);
         CHECK(test.sToll("123") == 123);
     }
 }
@@ -105,6 +103,7 @@ TEST_CASE("Collection class", "[bool]"){
     }
 }
 
+//testing Books class methods
 TEST_CASE("Books class", "[bool]"){
     //this check if a class is correctly defined
     REQUIRE(std::is_class<Books>::value);

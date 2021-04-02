@@ -4,8 +4,6 @@
 // -----------------   class Operations   ------------------
 
 Operations::Operations(){ 
-    //getting console in fullScreen mode uses the library: #include <windows.h>
-    ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
     //setting system base color;
     system("Color 0F"); // white text mode
 };

@@ -9,7 +9,6 @@
 #include <deque>         // deque library
 #include <unordered_map> // unordered hash table read/write: O(1)
 #include <algorithm>     // for toLower() and the shuffle()
-#include <windows.h>     // FullScreen mode (Operations constructor)
 
 
 class Global{
