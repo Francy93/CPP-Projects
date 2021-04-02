@@ -162,7 +162,7 @@ void Collection::addNewBook(){
 std::string Collection::booksTable(std::deque<Books*> &books){
     //the instruction to append at the begining would be like: a.insert(a.begin(), b.begin(), b.end());
     std::deque<std::deque<std::string>> allData = {{"No."}, {"Title(s)"}};
-    std::vector<unsigned int> longest = {allData[0][0].size(), allData[1][0].size()};
+    std::vector<unsigned int> longest = {(unsigned int)allData[0][0].size(), (unsigned int)allData[1][0].size()};
 
     //longest detector
     unsigned long long i=0;
@@ -234,7 +234,7 @@ int Collection::booksChoice(std::deque<Books*> &books){
                 return 1;
             }else if(choice == "00"){
                 return 0;
-            }else if(sToll(choice) > 0 && sToll(choice) <= books.size()){
+            }else if(sToll(choice) > 0 && sToll(choice) <= (long long)books.size()){
                 
                 int result = (*books[(sToll(choice)-1)]).bookManager();
                 

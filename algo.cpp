@@ -77,7 +77,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
     word = toLower(word);
 
     unsigned long long arrSize = array.size(), left=0, right= arrSize > 0? arrSize-1: 0;
-    long long firstMatches = 0;
+    unsigned long long firstMatches = 0;
     unsigned int index = -1;
     bool end;
     std::string iterTitle = "";

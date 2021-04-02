@@ -85,7 +85,7 @@ std::string Books::bookPrint(){
     std::deque<std::deque<std::string>> allData =   {{ "ATTRIBUTES", "Title", "Authors", "ISBN", "Quantity" },
                     { "VALUES", getTitle(), getAuthor(), getId(), std::to_string(getQty()) }};
 
-    std::vector<unsigned int> longest = {allData[0][0].size(), allData[1][0].size()};
+    std::vector<unsigned int> longest = {(unsigned int)allData[0][0].size(), (unsigned int)allData[1][0].size()};
 
 
     //longest detector
