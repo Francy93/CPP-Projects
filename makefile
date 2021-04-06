@@ -14,6 +14,7 @@ FILES = global.o collection.o books.o algo.o operations.o library.o
 ALLEXE = $(TESTS) $(TARGET)
 
 
+.PHONY : all
 #Making all executable
 all: $(ALLEXE)
 #compiling the two files to get the final one which would be main.cpp and components.cpp
@@ -56,7 +57,7 @@ testing.o: testing.cpp catch.hpp $(HEADER)
 
 
 
-
+.PHONY : clean
 #clearing all copild files
 clean:
 	rm *.o $(ALLEXE)
