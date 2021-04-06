@@ -10,7 +10,6 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
     //prevent possible out-of-bonds
     long long aSize = arr.size();
     r = aSize > r? r: aSize-1;
-    if(titleIndex < 0){ titleIndex =  0; }
 
     //recursive lambda function
     std::function<void(long long l, long long r)> recur = [&](long long left, long long right){
@@ -79,7 +78,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
     unsigned long long arrSize = array.size(), left=0, right= arrSize > 0? arrSize-1: 0;
     unsigned long long firstMatches = 0;
     unsigned int index = -1;
-    bool end;
+    bool end = false;
     std::string iterTitle = "";
     std::unordered_map<std::string, Books*> found;
     std::deque<Books*> *a = &array;
@@ -92,7 +91,8 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
     };
 
     //while cycle intended for "deep" search purposes
-    while(++index >= 0){
+    while(!end){
+        ++index;
         //boolean witch determine the end of the DEEPER search
         end = true;
 
