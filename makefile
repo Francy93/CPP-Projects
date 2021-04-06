@@ -8,12 +8,14 @@ TARGET = librarySystem
 TESTS = tests
 #header varable
 HEADER = library.hpp
+#files list
+FILES = global.o collection.o books.o algo.o operations.o library.o
 
 #Making all executable
 all: tests final
 #compiling the two files to get the final one which would be main.cpp and components.cpp
-final: global.o collection.o books.o algo.o operations.o library.o
-	$(CXX) global.o collection.o books.o algo.o operations.o library.o -o $(TARGET)
+final: $(FILES)
+	$(CXX) $(FILES) -o $(TARGET)
 #compiling the testing unit
 tests: testing.o
 	$(CXX) testing.o -o $(TESTS)
