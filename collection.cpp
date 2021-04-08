@@ -22,7 +22,7 @@ void Collection::addBook(Books *book){
     shuffle(data);
     quicksort(data, 0, data.size()-1, 0);
     
-    unsigned int titleSize = split((*book).getTitle(), " ").size();
+    unsigned int titleSize = (*book).getSTsize();
 
     //cicling over the title length of the new book
     for(unsigned int i=0; i<titleSize; i++){
@@ -37,7 +37,7 @@ void Collection::addBook(Books *book){
 
                 //cicling over the whole data
                 for(unsigned long long j=0; j<data.size(); j++){
-                    unsigned int iterTsize = split((*data[j]).getTitle(), " ").size();
+                    unsigned int iterTsize = (*data[j]).getSTsize();
 
                     if(iterTsize > i){ sortedDataInMemory[i].push_back(data[j]); }
                 }
