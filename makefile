@@ -63,4 +63,4 @@ clean:
 	rm *.o $(ALLEXE)
 
 
-#following instruction was used previously used for minGW: mingw32-make -f makefile clear
+#the following instruction was previously used to test Makefile with minGW: mingw32-make -f makefile clean

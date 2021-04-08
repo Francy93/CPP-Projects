@@ -6,7 +6,7 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
 
     //higher scope variables not recursively defined
     std::string pivot="";
-    long long newIndex = 0;
+    long long newIndex = 0, i, j;
     //prevent possible out-of-bonds
     long long aSize = arr.size();
     r = aSize > r? r: aSize-1;
@@ -14,7 +14,7 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
     //recursive lambda function
     std::function<void(long long l, long long r)> recur = [&](long long left, long long right){
 
-        long long i = left, j = right;
+        i = left, j = right;
         newIndex = (left + right) / 2;
 
         //getting the pivot string
