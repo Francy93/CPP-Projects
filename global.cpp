@@ -135,12 +135,14 @@ std::vector<std::string> Global::split(std::string s, std::string delim){
 std::string Global::cinln(){
     std::string input;
 
-    fflush(stdin);
-    std::cin.clear();
-    std::getline(std::cin, input);
-    std::cout << std::endl;
-    fflush(stdin);
-    std::cin.clear();
+    while(input.empty()){
+        fflush(stdin);
+        std::cin.clear();
+        std::getline(std::cin, input);
+        std::cout << std::endl;
+        fflush(stdin);
+        std::cin.clear();
+    }
 
     return input;
 }
