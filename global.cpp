@@ -11,7 +11,6 @@ bool Global::getCstate(){
 }
 
 
-
 //making strings lower case
 std::string Global::toLower(std::string s){
     #include <cctype>
@@ -21,6 +20,35 @@ std::string Global::toLower(std::string s){
     
     return s;
 }
+
+//this is a string printer
+void Global::printLn(std::vector<std::string> args){
+    
+    std::string start = "";
+    std::string end = "";
+
+    if(args.size() > 1){
+        std::string colors [] = {"black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"};
+        for (unsigned int i=0; i< sizeof(colors)/sizeof(*colors); i++){
+            if(toLower(args.back()) == colors[i]){
+                start = "\033[1;3"+std::to_string(i)+"m";
+                end = "\033[0m";
+                args.erase(args.end());
+            }
+        }
+    }
+    
+    std::string print = "";
+    for(unsigned int i=0; i< args.size(); i++){
+        print +=args[i];
+    }
+    
+    if(!getCstate()){
+        start = end = "";
+    }
+    std::cout << start+print+end << std::endl;
+}
+
 
 std::string Global::color(std::string c){
     std::string colors [] = {"black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"};
@@ -139,7 +167,7 @@ std::string Global::cinln(){
         fflush(stdin);
         std::cin.clear();
         std::getline(std::cin, input);
-        std::cout << std::endl;
+        std::cout << "\n";
         fflush(stdin);
         std::cin.clear();
     }

@@ -35,35 +35,20 @@ class Global{
         long long sToll(std::string s);
 
         //this is a string printer
+        void printLn(std::vector<std::string> args);
+
+        //allowing polimorphic inputs
+        template <typename T>
+        typename std::enable_if<false == std::is_convertible<T, std::string>::value,
+            std::string>::type toStr (T const & val){ return std::to_string(val); }
+        std::string toStr (std::string const & val) { return val; }
+        //this is a function to get template inputs
         template <typename... Ts>
         void println(Ts const & ... vals){
             using unused = int[];
             std::vector<std::string> args;
-            (void)unused { 0, (args.push_back(vals), 0)... };
-
-            std::string start = "";
-            std::string end = "";
-
-            if(args.size() > 1){
-                std::string colors [] = {"black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"};
-                for (unsigned int i=0; i< sizeof(colors)/sizeof(*colors); i++){
-                    if(toLower(args.back()) == colors[i]){
-                        start = "\033[1;3"+std::to_string(i)+"m";
-                        end = "\033[0m";
-                        args.erase(args.end());
-                    }
-                }
-            }
-            
-            std::string print = "";
-            for(unsigned int i=0; i< args.size(); i++){
-                print +=args[i];
-            }
-            
-            if(!getCstate()){
-                start = end = "";
-            }
-            std::cout << start+print+end << std::endl;
+            (void)unused { 0, (args.push_back(toStr(vals)), 0)... };
+            printLn(args);
         }
 
         //the holly strings splitter
