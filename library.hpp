@@ -42,6 +42,7 @@ class Global{
         typename std::enable_if<false == std::is_convertible<T, std::string>::value,
             std::string>::type toStr (T const & val){ return std::to_string(val); }
         std::string toStr (std::string const & val) { return val; }
+        std::string toStr (char const & val) { return std::string(1,val); }
         //this is a function to get template inputs
         template <typename... Ts>
         void println(Ts const & ... vals){
