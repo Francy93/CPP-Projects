@@ -22,16 +22,10 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
         
         // partition 
         while (i <= j) {
-            std::string rightElem = "", leftElem = "";
-            i--; j++;
-
             // loop left index if the word is lower than expetd
-            do{ if(++i >= left) { leftElem  = (*arr[i]).getSplittedT(titleIndex); }else{ i--; } }
-            while (leftElem  < pivot);
-
+            while ((*arr[i]).getSplittedT(titleIndex) < pivot){ i++; };
             // loop right index if the word is higher than expetd
-            do{ if(--j <= right){ rightElem = (*arr[j]).getSplittedT(titleIndex); }else{ j++; } }
-            while (rightElem > pivot);
+            while ((*arr[j]).getSplittedT(titleIndex) > pivot){ j--; };
 
             if (i <= j) {
                 Books** tmp = new Books*(arr[i]);
