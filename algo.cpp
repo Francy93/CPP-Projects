@@ -23,9 +23,9 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
         // partition 
         while (i <= j) {
             // loop left index if the word is lower than expetd
-            while ((*arr[i]).getSplittedT(titleIndex) < pivot){ i++; };
+            while (arr[i]->getSplittedT(titleIndex) < pivot){ i++; };
             // loop right index if the word is higher than expetd
-            while ((*arr[j]).getSplittedT(titleIndex) > pivot){ j--; };
+            while (arr[j]->getSplittedT(titleIndex) > pivot){ j--; };
 
             if (i <= j) {
                 Books** tmp = new Books*(arr[i]);
@@ -80,8 +80,8 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
 
     // lambda function to get the word at a specific index (this has to be very light and performing)
     std::function<std::string(std::deque<Books*> &arr, long long mid, unsigned int index)> getWord = [&](std::deque<Books*> &arr, long long mid, unsigned int index){
-        if(index+1 < (*arr[mid]).getSTsize()){ end = false; }
-        return (*arr[mid]).getSplittedT(index).substr(0, word.size());
+        if(index+1 < arr[mid]->getSTsize()){ end = false; }
+        return arr[mid]->getSplittedT(index).substr(0, word.size());
     };
 
     //while cycle intended for "deep" search purposes
@@ -93,12 +93,12 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
         //sorting the arr or getting an already sorted one if any
         if(index < sortedDataInMemorySIZE){
             a = &sortedDataInMemory[index];
-            arrSize = (*a).size();
+            arrSize = a->size();
             right = arrSize > 0? arrSize-1: 0;
 
         }else if(!(index == 0 && booksSorted)){
             a = &array;
-            arrSize = (*a).size();
+            arrSize = a->size();
             right = arrSize > 0? arrSize-1: 0;
 
             //performin a shuffle to prevent cases of quadratic time scenario
@@ -260,7 +260,7 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
     // store the final index
     unsigned long long result;
     //getting the indexed title of the books to be searched
-    std::string targetTitle = (*book).getSplittedT(index);
+    std::string targetTitle = book->getSplittedT(index);
 
     //higher scope variables not recursively defined
     long long l=left, r= right, mid;
@@ -283,7 +283,7 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
 
         if (r >= l){
             //getting a substring of title from a specified index
-            iterTitle = (*arr[mid]).getSplittedT(index);
+            iterTitle = arr[mid]->getSplittedT(index);
             
             
             //if a match has been found
@@ -294,11 +294,11 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
                 if(book != arr[mid]){
                     unsigned long long i = mid;
                     
-                    while(iterTitle == (*arr[++i]).getSplittedT(index)){
+                    while(iterTitle == arr[++i]->getSplittedT(index)){
                         if(arr[i] == book){ result = i; return (unsigned int)1; }
                     }
                     i = mid;
-                    while(iterTitle == (*arr[--i]).getSplittedT(index)){
+                    while(iterTitle == arr[--i]->getSplittedT(index)){
                         if(arr[i] == book){ result = i; return (unsigned int)1; }
                     }
                     result = mid;
