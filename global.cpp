@@ -166,11 +166,11 @@ std::string Global::cinln(){
     while(input.empty()){
         fflush(stdin);
         std::cin.clear();
-        std::getline(std::cin, input);
+        std::getline(std::cin, input);   
+    }
         std::cout << "\n";
         fflush(stdin);
         std::cin.clear();
-    }
 
     return input;
 }
