@@ -50,3 +50,6 @@ Thumbs.db
 
 # VScode
 /.vscode/*
+
+#compiled files
+#*.o

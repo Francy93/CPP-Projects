@@ -168,9 +168,9 @@ std::string Global::cinln(){
         std::cin.clear();
         std::getline(std::cin, input);   
     }
-        std::cout << "\n";
-        fflush(stdin);
-        std::cin.clear();
+    std::cout << "\n";
+    fflush(stdin);
+    std::cin.clear();
 
     return input;
 }
