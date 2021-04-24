@@ -53,7 +53,7 @@ operations.o: operations.cpp $(HEADER)
 
 #compiling just the testing.cpp file
 testing.o: testing.cpp catch.hpp $(HEADER)
-	$(CXX) $(CXXFLAGS) -c $<
+	$(CXX) $(CXXFLAGS) -Wa,-mbig-obj -c $<
 
 
 

@@ -11,7 +11,12 @@ bool Global::getCstate(){
 }
 
 
-//making strings lower case
+/**
+ * @brief making strings lower case
+ * 
+ * @param s 
+ * @return std::string 
+ */
 std::string Global::toLower(std::string s){
     #include <cctype>
     
@@ -21,7 +26,11 @@ std::string Global::toLower(std::string s){
     return s;
 }
 
-//this is a string printer
+/**
+ * @brief this is a string printer
+ * 
+ * @param args 
+ */
 void Global::printLn(std::vector<std::string> args){
     
     std::string start = "";
@@ -49,7 +58,12 @@ void Global::printLn(std::vector<std::string> args){
     std::cout << start+print+end << std::endl;
 }
 
-
+/**
+ * @brief getting color ANSI escape code
+ * 
+ * @param c 
+ * @return std::string 
+ */
 std::string Global::color(std::string c){
     std::string colors [] = {"black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"};
     std::string color = "";
@@ -70,6 +84,13 @@ std::string Global::colorReset(){
     return reset;
 }
 
+/**
+ * @brief loading bar
+ * 
+ * @param size 
+ * @param index 
+ * @return std::string 
+ */
 std::string Global::loading(unsigned long long size, unsigned long long index){
     if (size > 0){
         static int i = 0;
@@ -94,7 +115,13 @@ std::string Global::loading(unsigned long long size, unsigned long long index){
     return "";
 }
 
-//returns a string of numerate options
+/**
+ * @brief returns a string of numerate options
+ * 
+ * @param options 
+ * @param minimum 
+ * @return std::string 
+ */
 std::string Global::navOptions(std::vector<std::string> options, int minimum){
     std::string list="";
 
@@ -130,7 +157,12 @@ std::string Global::navOptions(std::vector<std::string> options, int minimum){
     return list;
 }
 
-//string to long long
+/**
+ * @brief string to long long
+ * 
+ * @param s 
+ * @return long long 
+ */
 long long Global::sToll(std::string s){
     //checking if string is a digit
     // sToll() method uses the regex library: #include <regex>
@@ -140,7 +172,13 @@ long long Global::sToll(std::string s){
     return 0;
 }
 
-//the strings splitter
+/**
+ * @brief the strings splitter
+ * 
+ * @param s 
+ * @param delim 
+ * @return std::vector<std::string> 
+ */
 std::vector<std::string> Global::split(std::string s, std::string delim){
     std::vector<std::string> vec;
 
@@ -159,7 +197,12 @@ std::vector<std::string> Global::split(std::string s, std::string delim){
     }
     return vec;
 }
-//an enanched and actually working cin
+
+/**
+ * @brief an enanched and actually working cin
+ * 
+ * @return std::string 
+ */
 std::string Global::cinln(){
     std::string input;
 
@@ -174,7 +217,14 @@ std::string Global::cinln(){
 
     return input;
 }
-// table generator
+
+/**
+ * @brief table generator
+ * 
+ * @param allData 
+ * @param longest 
+ * @return std::string 
+ */
 std::string Global::tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned int> longest){
     //maximum of characters allowed per string
     const short maxLength = 100;
@@ -230,7 +280,12 @@ std::string Global::tableMaker(std::deque<std::deque<std::string>> &allData, std
     return table+border+"\r\n";
 }
 
-//get user choice
+/**
+ * @brief get user choice
+ * 
+ * @param options 
+ * @return int 
+ */
 int Global::getChoice(int options){
 
     //checking the choice
@@ -252,6 +307,13 @@ int Global::getChoice(int options){
     return choice;
 }
 
+/**
+ * @brief display options and return choice
+ * 
+ * @param options 
+ * @param minimum 
+ * @return int 
+ */
 int Global::navChoice(std::vector<std::string> options, int minimum){
     //displaying options
     std::cout << navOptions(options, minimum) << std::endl;

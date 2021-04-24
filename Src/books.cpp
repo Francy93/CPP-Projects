@@ -2,17 +2,31 @@
 
 
 // -----------------   class Book   ------------------
-//constructor
+/**
+ * @brief Construct a new Books:: Books object
+ * 
+ * @param t 
+ * @param a 
+ * @param i 
+ * @param q 
+ */
 Books::Books(std::string t, std::string a, std::string i, std::string q) : title(t), author(a), isbn(i) {
     qty = stoul(q);
     titleSplitter();
 };
-//decontructor
+
+/**
+ * @brief Destroy the Books:: Books object
+ * 
+ */
 Books::~Books(){
     std::cout << "Deleted: " << isbn << std::endl;
 };
 
- //function to split title by indexes
+ /**
+  * @brief function to split title by indexes
+  * 
+  */
 void Books::titleSplitter(){
     std::vector<std::string> splitted(split(toLower(title), " ") );
     for(unsigned int i=0; i< splitted.size(); i++){
@@ -38,15 +52,20 @@ unsigned int Books::getQty(){
     return qty;
 }
 std::string Books::getSplittedT(unsigned int index){
-    if(index >= splittedTitle.size()){
-        return "";
-    }
+    if(index >= splittedTitle.size()){ return ""; }
     return splittedTitle[index];
 }
 unsigned int Books::getSTsize(){
     return splittedTitle.size();
 }
-// modifing book quantity
+
+/**
+ * @brief modifing book quantity
+ * 
+ * @param qty 
+ * @param mode 
+ * @return unsigned int 
+ */
 unsigned int Books::setQty(int qty, bool mode){
 
     if(mode && qty > 0){
@@ -72,14 +91,25 @@ unsigned int Books::setQty(int qty, bool mode){
     }
     return 1;
 }
-//checking wether a book is empty or not
+
+/**
+ * @brief checking wether a book is empty or not
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Books::emptyCheck(){
     if((getTitle() == "" && getAuthor() == "" && getId() == "") || getQty() <= 0){
         return false;
     }
     return true;
 }
-//printing book values
+
+/**
+ * @brief printing book values
+ * 
+ * @return std::string 
+ */
 std::string Books::bookPrint(){
 
     std::deque<std::deque<std::string>> allData =   {{ "ATTRIBUTES", "Title", "Authors", "ISBN", "Quantity" },
@@ -98,7 +128,12 @@ std::string Books::bookPrint(){
     }
     return tableMaker(allData, longest);
 }
-//book dashboard
+
+/**
+ * @brief book dashboard
+ * 
+ * @return int 
+ */
 int Books::bookManager(){
     std::cout << bookPrint() <<std::endl;
 

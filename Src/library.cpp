@@ -1,3 +1,14 @@
+/**
+ * @file library.cpp
+ * @author Francy (fa1033@live.mdx.ac.uk)
+ * @brief final project of Software engineering and management
+ * @version 0.1
+ * @date 2021-04-16
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #include "library.hpp"
 
 
@@ -63,7 +74,7 @@ int main(){
         delete border;
 
         std::cout << "\r\nEnter a choice here :> ";
-        std::string fileName; std::cin >> fileName;
+        std::string fileName = ope.cinln();
 
         if(fileName != "00"){
             if(fileName == "1"){

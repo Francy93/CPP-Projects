@@ -14,7 +14,11 @@ Books* Collection::getBook(unsigned long long index){
     
 }
 
-//adding the new book to the data structure
+/**
+ * @brief adding the new book to the data structure
+ * 
+ * @param book 
+ */
 void Collection::addBook(Books *book){
     
     //adding the new book to the primary data structure
@@ -53,7 +57,13 @@ void Collection::addBook(Books *book){
     }
 }
 
-//book remover
+/**
+ * @brief book remover
+ * 
+ * @param indexes 
+ * @return true 
+ * @return false 
+ */
 bool Collection::removeBook(std::vector<double> indexes){
     bool removed = true;
     Books *b;
@@ -93,7 +103,12 @@ bool Collection::removeBook(std::vector<double> indexes){
     return removed;
 }
 
-//get book index
+/**
+ * @brief get book index
+ * 
+ * @param book 
+ * @return std::vector<double> 
+ */
 std::vector<double> Collection::bookIndexes(Books *book){
     std::vector<double> foundIndexes;
 
@@ -123,13 +138,19 @@ std::vector<double> Collection::bookIndexes(Books *book){
     return foundIndexes;
 }
 
-//erase entire collection
+/**
+ * @brief erase entire collection
+ * 
+ */
 void Collection::collectionClear(){
     data.clear();
     sortedDataInMemory.clear();
 }
 
-//adding a new book
+/**
+ * @brief adding a new book
+ * 
+ */
 void Collection::addNewBook(){
 
     std::vector<std::string> wizard = {"Enter here the title","Now enter the author","Include an ISBN","Specify a quantity"};
@@ -158,7 +179,12 @@ void Collection::addNewBook(){
     println("\r\nBook successfully added!","green");
 }
 
-//building booksTable
+/**
+ * @brief building booksTable
+ * 
+ * @param books 
+ * @return std::string 
+ */
 std::string Collection::booksTable(std::deque<Books*> &books){
     //the instruction to append at the begining would be like: a.insert(a.begin(), b.begin(), b.end());
     std::deque<std::deque<std::string>> allData = {{"No."}, {"Title(s)"}};
@@ -181,12 +207,20 @@ std::string Collection::booksTable(std::deque<Books*> &books){
     return tableMaker(allData, longest);
 }
 
-//printing the whole collection is O(n*2) time complexity
+/**
+ * @brief printing the whole collection is O(n*2) time complexity
+ * 
+ */
 void Collection::printCollection(){
     std::cout << booksTable(data) << std::endl;
 }
 
-//find a book
+/**
+ * @brief find a book
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Collection::findBook(){
     
     std::cout << "Enter here below a book title to search" << std::endl;
@@ -214,7 +248,12 @@ bool Collection::findBook(){
     return false;
 }
 
-//select a book from a given list
+/**
+ * @brief select a book from a given list
+ * 
+ * @param books 
+ * @return int 
+ */
 int Collection::booksChoice(std::deque<Books*> &books){
     //if the books list is not empty
     
@@ -266,14 +305,21 @@ int Collection::booksChoice(std::deque<Books*> &books){
     return 0;
 }
 
-//data shuffle
+/**
+ * @brief data shuffle
+ * 
+ * @param d 
+ */
 void Collection::shuffle(std::deque<Books*> &d){
     //this function requires: #include <algorithm> and #include <regex>
     std::random_shuffle(d.begin(), d.end());
     if(&d == &data){  booksSorted = false; }
 }
 
-//coverting data to sortedDataInMemory data 
+/**
+ * @brief coverting data to sortedDataInMemory
+ * 
+ */
 void Collection::sortDataInMemory(){
 
     unsigned long long dataSize = data.size();

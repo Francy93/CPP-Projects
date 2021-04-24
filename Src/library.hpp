@@ -1,6 +1,17 @@
 #ifndef _LIBRARY_HXX_
 #define _LIBRARY_HXX_
 
+/**
+ * @file library.hpp
+ * @author Francy (fa1033@live.mdx.ac.uk)
+ * @brief header
+ * @version 0.1
+ * @date 2021-04-16
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #include <iostream>      // input output
 #include <string>        // library for string variables
 #include <regex>         // regular expressions

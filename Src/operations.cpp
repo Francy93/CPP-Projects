@@ -8,7 +8,13 @@ Operations::Operations(){
     system("Color 0F"); // white text mode
 };
 
-//file reader
+/**
+ * @brief file scanner
+ * 
+ * @param fileName 
+ * @return true 
+ * @return false 
+ */
 bool Operations::reader(std::string fileName){
     //getting the file lines amount
     std::ifstream count(fileName);
@@ -59,7 +65,7 @@ bool Operations::reader(std::string fileName){
                 std::cout << "Go back and Try again...0" << std::endl;
 
                 std::cout << "\r\nEnter a choice herer :> ";
-                std::string choice; std::cin >> choice;
+                std::string choice = cinln();
                 std::cout << std::endl;
 
                 if (choice == "1"){
@@ -67,8 +73,8 @@ bool Operations::reader(std::string fileName){
                     file2.open(fileName, std::ios::out);
                     file2 << std::fflush(stdin);
                     file2.close();
-                    file2.open(fileName, std::ios::in);
-                    if (file2.is_open()) { 
+                    file.open(fileName, std::ios::in);
+                    if (file.is_open()) { 
                         println("\"" + fileName + "\"" + " has been successfully created!\r\n\r\n\r\n", "green");
                         newOpen = true; 
                     }else{ println("Something went wrong while creating the new file.\r\n", "red"); }
@@ -83,6 +89,12 @@ bool Operations::reader(std::string fileName){
     }
 }
 
+/**
+ * @brief main menu
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Operations::options(){
     
     std::string *border = new std::string("---------------------------");
