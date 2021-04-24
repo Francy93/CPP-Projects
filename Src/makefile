@@ -2,6 +2,8 @@
 CXX = g++ -std=c++2a
 #creating the -c -Wall variable containing compilation parameters
 CXXFLAGS = -g -Wall -Wextra
+#to compile large sized file
+BIGFILE = -Wa,-mbig-obj
 #variable containing the final.exe file name
 TARGET = librarySystem
 #variable containing the testing.exe file name
@@ -53,7 +55,7 @@ operations.o: operations.cpp $(HEADER)
 
 #compiling just the testing.cpp file
 testing.o: testing.cpp catch.hpp $(HEADER)
-	$(CXX) $(CXXFLAGS) -Wa,-mbig-obj -c $<
+	$(CXX) $(CXXFLAGS) $(BIGFILE) -c $<
 
 
 

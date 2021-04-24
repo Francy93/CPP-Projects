@@ -65,7 +65,7 @@ bool Operations::reader(std::string fileName){
                 std::cout << "Go back and Try again...0" << std::endl;
 
                 std::cout << "\r\nEnter a choice herer :> ";
-                std::string choice = cinln();
+                std::string choice; std::cin >> choice;
                 std::cout << std::endl;
 
                 if (choice == "1"){
