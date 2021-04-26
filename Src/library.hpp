@@ -38,6 +38,8 @@ class Global{
         std::string color(std::string);
         //get color reset
         std::string colorReset();
+        //check wether a string is numeric
+        bool isNumber(const std::string str);
         //getting loading status
         std::string loading(unsigned long long size, unsigned long long index);
         //print navigation and get choice
