@@ -85,14 +85,14 @@ std::string Global::colorReset(){
 }
 
 /**
- * @brief check wether a string is numeric
+ * @brief check whether a string is numeric
  * 
  * @param str 
  * @return true 
  * @return false 
  */
 bool Global::isNumber(const std::string str){
-    bool symbol = false;
+    bool symbol = true;
     for (char const &c : str) {
         if (std::isdigit(c) == 0){
             if(!symbol && (c == '-' || c == '+')){ symbol = true; }
