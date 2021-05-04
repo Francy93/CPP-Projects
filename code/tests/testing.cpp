@@ -3,27 +3,26 @@
 #include "catch.hpp"
 #define private public      //making private methos public in order to allow testing
 #define protected public    //making protected methos public in order to allow testing
-#include "operations.cpp"
-#include "collection.cpp"
-#include "algo.cpp"
-#include "books.cpp"
-#include "global.cpp"
+#include "../src/operations.cpp"
+#include "../src/collection.cpp"
+#include "../src/algo.cpp"
+#include "../src/books.cpp"
 
 #include <sstream>
 
 Operations test;
 
-//testing Global methods
+//testing util.h library methods
 TEST_CASE("Global methods", "[bool]"){
 
     // function to get string to lower case
     SECTION("string to lower case"){
-        CHECK(test.toLower("TeSt") == "test");
+        CHECK(Util::toLower("TeSt") == "test");
     }
     
     SECTION("Testing the tring splitter"){
         //the function tested returns a string value
-        std::vector<std::string> vec = test.split("hello world", " "); 
+        std::vector<std::string> vec = Util::split("hello world", " "); 
         for(unsigned int i=0; i<vec.size() ;i++){
             //checking the splitting efficiency
             CHECK_FALSE(vec[i] == "");
@@ -32,21 +31,21 @@ TEST_CASE("Global methods", "[bool]"){
     }
 
     SECTION("Testing the color switcher"){
-        test.setColor(false);
-        CHECK_FALSE(test.getCstate());
-        CHECK(test.colorReset()   == "");
-        CHECK(test.color("green") == "");
+        Util::setColor(false);
+        CHECK_FALSE(Util::getColorState());
+        CHECK(Util::colorReset()   == "");
+        CHECK(Util::color("green") == "");
 
-        test.setColor(true);
-        CHECK(test.getCstate());
-        CHECK(test.colorReset()   != "");
-        CHECK(test.color("green") != "");
+        Util::setColor(true);
+        CHECK(Util::getColorState());
+        CHECK(Util::colorReset()   != "");
+        CHECK(Util::color("green") != "");
     }
 
     SECTION("Testing the string parser to long long"){
-        CHECK(test.sToll("abc") ==   0);
-        CHECK(test.sToll("0")   ==   0);
-        CHECK(test.sToll("123") == 123);
+        CHECK(Util::sTod("abc") ==   0);
+        CHECK(Util::sTod("0")   ==   0);
+        CHECK(Util::sTod("12-3") ==  9);
     }
 }
 
@@ -78,7 +77,6 @@ TEST_CASE("Operations class", "[bool]"){
 
 //testing Collection class methods
 TEST_CASE("Collection class", "[bool]"){
-
     SECTION("Testing book creation and insertion into the data structure"){
         //creating a new book
         Books *book1 = new Books("test11 test12 test13", "author1", "12345", "1");
@@ -90,7 +88,6 @@ TEST_CASE("Collection class", "[bool]"){
         CHECK((*test.getBook(0)).getId() == "12345");
         CHECK((*test.getBook(1)).getId() == "54321");
     }
-
     SECTION("Testing the quicksort, bookSearch, bookIndexes and removeBook"){
         //get book index
         std::vector<double> BI0 =  test.bookIndexes(test.getBook(0));

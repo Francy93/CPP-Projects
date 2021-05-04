@@ -1,12 +1,7 @@
-#include "library.hpp"
+#include "../include/library.hpp"
 
 
 // -----------------   class Operations   ------------------
-
-Operations::Operations(){ 
-    //setting system base color;
-    system("Color 0F"); // white text mode
-};
 
 /**
  * @brief file scanner
@@ -37,27 +32,27 @@ bool Operations::reader(std::string fileName){
                     line.c_str();
 
                     //splitting the string by delimiter "tab" (ascii code 9)
-                    std::vector<std::string> elements = split(line, std::string(1, 9));
-                    if(elements.size() > 3 && sToll(elements[3]) != 0){
+                    std::vector<std::string> elements = Util::split(line, std::string(1, 9));
+                    if(elements.size() > 3 && Util::sTod(elements[3]) != 0){
                             //storing the book object
                             Books *b = new Books(elements[0], elements[1], elements[2], elements[3]);
                             data.push_back( b );
                     }else{ corruptedCounter++; }
                 }
                 //printing the loading bar
-                std::cout << loading(fileSize, index);
+                std::cout << Util::loading(fileSize, index);
             }
             //closing the file scanner
             file.close();
             // displaying amount of corrupted data if any
             if(corruptedCounter != 0){
-                println("\r\n" +std::to_string(corruptedCounter)+ " book(s) data was corrupted!\r\n", "yellow");
+                Util::println("\r\n" +std::to_string(corruptedCounter)+ " book(s) data was corrupted!\r\n", "yellow");
             }
             //sorting elements
             shuffle(data);
             return true;
         }else if(file.fail()){
-            println("\r\nDummy file missing! Do you want to create one?", "cyan");
+            Util::println("\r\nDummy file missing! Do you want to create one?", "cyan");
 
             while(true){
                 
@@ -75,14 +70,14 @@ bool Operations::reader(std::string fileName){
                     file2.close();
                     file.open(fileName, std::ios::in);
                     if (file.is_open()) { 
-                        println("\"" + fileName + "\"" + " has been successfully created!\r\n\r\n\r\n", "green");
+                        Util::println("\"" + fileName + "\"" + " has been successfully created!\r\n\r\n\r\n", "green");
                         newOpen = true; 
-                    }else{ println("Something went wrong while creating the new file.\r\n", "red"); }
+                    }else{ Util::println("Something went wrong while creating the new file.\r\n", "red"); }
                     break;
                 } else if(choice == "0"){
                     return false;
                 }else{
-                    println("\r\nWrong selection!\r\n", "yellow");
+                    Util::println("\r\nWrong selection!\r\n", "yellow");
                 }
             }
         }
@@ -98,23 +93,23 @@ bool Operations::reader(std::string fileName){
 bool Operations::options(){
     
     std::string *border = new std::string("---------------------------");
-    println("\r\n", *border, "blue");
-    println("|        MAIN MENU        |", "cyan");
-    println(*border, "blue");
+    Util::println("\r\n", *border, "blue");
+    Util::println("|        MAIN MENU        |", "cyan");
+    Util::println(*border, "blue");
     std::cout << "| Add a new Book........1 |" << std::endl;
     std::cout << "| Find a Book...........2 |" << std::endl;
     std::cout << "| Show collection.......3 |" << std::endl;
-    println(*border, "blue");
+    Util::println(*border, "blue");
     std::cout << "| Go BACK...............0 |" << std::endl;
     std::cout << "| EXIT.................00 |" << std::endl;
-    println(*border,"\r\n", "blue");
+    Util::println(*border,"\r\n", "blue");
     delete border;
 
     //sorting the default data deque
     if(!booksSorted){ shuffle(data); quicksort(data, 0, data.size()-1, 0); }
 
     //user input
-    switch(getChoice(3)){
+    switch(Util::getChoice(3)){
         case -1: return false;
         case  0: return true;
         case  1: addNewBook(); return options();

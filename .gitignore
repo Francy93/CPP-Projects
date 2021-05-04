@@ -49,7 +49,13 @@ Thumbs.db
 *.wmv
 
 # VScode
-/.vscode/*
+*/.vscode/*
+
+#build directories
+Code/bin/*
+Code/build/*
 
 #compiled files
 *.o
+#dependencies files
+*.d

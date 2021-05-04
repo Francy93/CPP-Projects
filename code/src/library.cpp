@@ -9,7 +9,7 @@
  * 
  */
 
-#include "library.hpp"
+#include "../include/library.hpp"
 
 
 std::string *intro = new std::string(R"(
@@ -40,19 +40,28 @@ std::string *intro = new std::string(R"(
 
 
 
-int main(){
+int main(int argc, char *argv[]){
+    // geting main arguments (file name to read)
+    std::string fileName = "";
+    if(argc > 1){
+        for (int i = 1; i < argc; ++i) {
+            fileName += argv[i];
+            if(i < argc-1) fileName += " ";
+        }
+    }
+
     Operations ope;
     
     //colored intro title
-    ope.println(*intro, "\r\n", "green");
+    Util::println(*intro, "\r\n", "green");
     delete intro;
 
     //printing the welcome
     std::string *title = new std::string("  WELCOME TO THE LIBRARY SYSTEM  ");
     std::string *titleColor = new std::string("\033[1;43m "+std::string((*title).size(), '.')+" \033[0m");
-    ope.println("\r\n\r\n\r\n", *titleColor, "yellow");
-    ope.println("\033[1;43m ", *title," \033[0m", "black");
-    ope.println(*titleColor, "\r\n", "yellow");
+    Util::println("\r\n\r\n\r\n", *titleColor, "yellow");
+    Util::println("\033[1;43m ", *title," \033[0m", "black");
+    Util::println(*titleColor, "\r\n", "yellow");
 
 
     delete titleColor;
@@ -64,34 +73,40 @@ int main(){
     while(true){
         std::string *border = new std::string("----------------------------------");
         
-        ope.println("\r\n", *border, "blue");
-        ope.println("|       DUMMY FILE LOADER        |", "cyan");
-        ope.println(*border, "blue");
+        Util::println("\r\n", *border, "blue");
+        Util::println("|       DUMMY FILE LOADER        |", "cyan");
+        Util::println(*border, "blue");
         std::cout << "| Enter here below the file name |" << std::endl;
         std::cout << "| Press  1  to set color ON/OFF  |" << std::endl;
         std::cout << "| Otherwise enter  00  to EXIT   |" << std::endl;
-        ope.println(*border, "blue");
+        Util::println(*border, "blue");
         delete border;
 
+        //getting file name to read
         std::cout << "\r\nEnter a choice here :> ";
-        std::string fileName = ope.cinln();
+        if(fileName == "") fileName = Util::cinln();
+
 
         if(fileName != "00"){
             if(fileName == "1"){
-                ope.setColor(!ope.getCstate());
+                Util::setColor(!Util::getColorState());
             }else if(ope.reader(fileName)){
-                ope.println("\r\nBefore starting! Would you like to sort data so as to experiance faster performances?", "yellow");
-                const short nav = ope.navChoice({"Yes, get faster! (RECOMMENDED)", "No, go normal speed"}, 10);
+                Util::println("File: \"", fileName, "\" successfully loaded!\r\n", "green");
+                Util::println("\r\nBefore starting! Would you like to sort data so as to experiance faster performances?", "yellow");
+                const long long nav = Util::navChoice({"Yes, get faster! (RECOMMENDED)", "No, go normal speed"}, 10);
 
                 if(nav == 2){ if(!ope.options()){ break; } }
                 else if(nav == 1){ ope.sortDataInMemory(); if(!ope.options()){  break; } }
                 else if(nav == -1){ break; }
             }
         }else{ break; }
+
+        //resetting the fileName
+        fileName = "";
     }
 
  
-    ope.println("\r\nSuccessfully Exited!\r\n", "green");
-    std::exit(1);
+    Util::println("\r\nSuccessfully Exited!\r\n", "green");
+    std::exit(0);
     return 0;
 }

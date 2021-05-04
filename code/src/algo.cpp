@@ -1,8 +1,8 @@
-#include "library.hpp"
+#include "../include/library.hpp"
 
 
 //quick-sort
-void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, unsigned int titleIndex){
+void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, unsigned long titleIndex){
 
     //higher scope variables not recursively defined
     std::string pivot="";
@@ -18,7 +18,7 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
         newIndex = (left + right) / 2;
 
         //getting the pivot string
-        pivot = (*arr[newIndex]).getSplittedT(titleIndex);
+        pivot = arr[newIndex]->getSplittedT(titleIndex);
         
         // partition 
         while (i <= j) {
@@ -67,26 +67,24 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
 
 //the binary search algorithm
 bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
-    word = toLower(word);
+    word = Util::toLower(word);
 
-    unsigned long long arrSize = array.size(), left=0, right= arrSize > 0? arrSize-1: 0;
-    unsigned long long firstMatches = 0;
-    unsigned int index = -1;
+    long long arrSize = array.size(), left=0, right= arrSize > 0? arrSize-1: 0;
+    unsigned long firstMatches = 0;
     bool end = false;
     std::string iterTitle = "";
     std::unordered_map<std::string, Books*> found;
     std::deque<Books*> *a = &array;
-    unsigned int sortedDataInMemorySIZE = sortedDataInMemory.size();
+    unsigned long sortedDataInMemorySIZE = sortedDataInMemory.size();
 
     // lambda function to get the word at a specific index (this has to be very light and performing)
-    std::function<std::string(std::deque<Books*> &arr, long long mid, unsigned int index)> getWord = [&](std::deque<Books*> &arr, long long mid, unsigned int index){
-        if(index+1 < arr[mid]->getSTsize()){ end = false; }
-        return arr[mid]->getSplittedT(index).substr(0, word.size());
+    std::function<std::string(std::deque<Books*> &arr, long long mid, long i)> getWord = [&](std::deque<Books*> &arr, long long mid, unsigned long i){
+        if(i+1 < arr[mid]->getSTsize()){ end = false; }
+        return arr[mid]->getSplittedT(i).substr(0, word.size());
     };
 
     //while cycle intended for "deep" search purposes
-    while(!end){
-        ++index;
+    for(unsigned long index = 0; !end; index++){
         //boolean witch determine the end of the DEEPER search
         end = true;
 
@@ -125,17 +123,16 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
 
                 //if a match has been found
                 if (iterTitle == word){
-                    double increaseMid = mid, decreaseMid = mid;
+                    long long increaseMid = mid, decreaseMid = mid;
 
                     // checking if the next title matches
-                    while(right >= ++increaseMid){ if(getWord(arr, increaseMid, index) != word){ break; } }
+                    while(right >= increaseMid+1){ if(getWord(arr, ++increaseMid, index) != word){ break; } }
                     // checking if the previous title matches
-                    while(left <= --decreaseMid ){ if(getWord(arr, decreaseMid, index) != word){ break; } }
-                    decreaseMid++;
+                    while(left  <= decreaseMid-1){ if(getWord(arr, --decreaseMid, index) != word){ break; } }
 
 
                     //iterating over the found matches indexes
-                    for (auto it = arr.begin()+decreaseMid; it != arr.begin()+increaseMid; it++){
+                    for (auto it = arr.begin()+(long)decreaseMid+1; it != arr.begin()+(long)increaseMid; it++){
                         found[(**it).getId()] = *it;
                     }
                     //get quantity of books found in the first seach
@@ -168,10 +165,10 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
         
         // We reach here right before the actual search starts (recur())
         if(!recur(*a) && index == 0 && !end){
-            println("NOTHING FOUND, AT A GLANCE! ", "yellow");
+            Util::println("NOTHING FOUND, AT A GLANCE! ", "yellow");
 
             //processing the choice
-            switch(navChoice({"Perform a DEEPER search?"}, 8)){
+            switch(Util::navChoice({"Perform a DEEPER search?"}, 8)){
                 case -1: return false; //terminatign this function and close the program 
                 case  0: return true ; //exiting the main loop and terminate this function
             }
@@ -183,8 +180,8 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
                     std::cout << "FOUND: -----> " << (*(f->second)).getTitle() << std::endl;
                 }
                 
-                println("\r\n", "YES, FOUND: ", std::to_string(firstMatches), "\r\n", "green");
-                std::cout << navOptions({"Select one of these books","PERFORM A DEEPER SEARCH"}, 10) << std::endl;
+                Util::println("\r\n", "YES, FOUND: ", std::to_string(firstMatches), "\r\n", "green");
+                std::cout << Util::navOptions({"Select one of these books","PERFORM A DEEPER SEARCH"}, 10) << std::endl;
 
             }else if(end){
                 if(found.size() > firstMatches){
@@ -195,11 +192,11 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
                     //printing the message
                     std::string* lastMatches = new std::string("");
                     if(firstMatches != 0){ *lastMatches += " MORE OUT OF " + std::to_string(found.size()); }
-                    println("\r\n", "FOUND ", std::to_string(found.size()-firstMatches), *lastMatches, "\r\n", "green");
+                    Util::println("\r\n", "FOUND ", std::to_string(found.size()-firstMatches), *lastMatches, "\r\n", "green");
                     delete lastMatches;
-                    std::cout << navOptions({"Select a book"}, 10) << std::endl;
+                    std::cout << Util::navOptions({"Select a book"}, 10) << std::endl;
                 }else{ 
-                    println("\r\n", "NO FURTHER MATCHING FOUND!");
+                    Util::println("\r\n", "NO FURTHER MATCHING FOUND!");
                     if(&array == &data && sortedDataInMemory.size() > 0 && !booksSorted){
                         array = sortedDataInMemory[0];
                         booksSorted = true;
@@ -214,9 +211,9 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
                 std::string choice="";
                 while(true){
                     std::cout << "Enter a choice here :> ";
-                    choice = cinln();
+                    choice = Util::cinln();
                     if((choice != "1" && choice != "0" && choice != "00" && choice != "2") || (choice == "2" && end)){
-                        println("WRONG SELECTION! Try again.", "yellow"); 
+                        Util::println("WRONG SELECTION! Try again.", "yellow"); 
                     }else{ break; }
                 }
 
@@ -232,7 +229,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
             }
 
         }else if(end){
-            println("DEFINITELY NOT FOUND!\r\n", "red");
+            Util::println("DEFINITELY NOT FOUND!\r\n", "red");
             return true;
         }
     }
@@ -255,7 +252,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
 
 //searching a book
 std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, Books* book, unsigned int index){
-    const long long arrSize = arr.size(), left=0, right=arrSize-1;
+    const long long arrSize = arr.size(), left=0, right= arrSize>=1? arrSize-1: 0;
     std::string iterTitle = "";
     // store the final index
     unsigned long long result;
@@ -275,10 +272,9 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
 
 
     //recursive lambda function (!! SEARCHING CORE RECURSION !!)
-    std::function<unsigned int()> search = [&](){
+    std::function<unsigned short()> search = [&](){
         // calculating the mid point
-        mid = l + (r - l) / 2;
-        
+        mid = l + (r - l) / 2;        
 
 
         if (r >= l){
@@ -295,18 +291,19 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
                     unsigned long long i = mid;
                     
                     while(iterTitle == arr[++i]->getSplittedT(index)){
-                        if(arr[i] == book){ result = i; return (unsigned int)1; }
+                        if(arr[i] == book){ result = i; return (unsigned short)1; }
                     }
                     i = mid;
                     while(iterTitle == arr[--i]->getSplittedT(index)){
-                        if(arr[i] == book){ result = i; return (unsigned int)1; }
+                        if(arr[i] == book){ result = i; return (unsigned short)1; }
                     }
+
                     result = mid;
-                    return (unsigned int)0;
+                    return (unsigned short)0;
 
                 }else{
                     result = mid;
-                    return (unsigned int)1;
+                    return (unsigned short)1;
                 }
             }
 
@@ -320,10 +317,10 @@ std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, 
 
             return search(); 
         }
+
         result = mid;
         // end of searching recursion if nothig found
-        
-        return  (unsigned int)0;
+        return  (unsigned short)0;
     };
 
     // returning the result

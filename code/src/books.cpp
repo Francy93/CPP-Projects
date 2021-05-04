@@ -1,4 +1,4 @@
-#include "library.hpp"
+#include "../include/library.hpp"
 
 
 // -----------------   class Book   ------------------
@@ -13,7 +13,7 @@
 Books::Books(std::string t, std::string a, std::string i, std::string q) : title(t), author(a), isbn(i) {
     qty = stoul(q);
     titleSplitter();
-};
+}
 
 /**
  * @brief Destroy the Books:: Books object
@@ -21,14 +21,14 @@ Books::Books(std::string t, std::string a, std::string i, std::string q) : title
  */
 Books::~Books(){
     std::cout << "Deleted: " << isbn << std::endl;
-};
+}
 
  /**
   * @brief function to split title by indexes
   * 
   */
 void Books::titleSplitter(){
-    std::vector<std::string> splitted(split(toLower(title), " ") );
+    std::vector<std::string> splitted(Util::split(Util::toLower(title), " ") );
     for(unsigned int i=0; i< splitted.size(); i++){
         std::string titleWord = "";
         for (std::vector<std::string>::const_iterator it = splitted.begin()+i; it != splitted.end(); ++it){
@@ -48,14 +48,14 @@ std::string Books::getAuthor(){
 std::string Books::getId(){
     return isbn;
 }
-unsigned int Books::getQty(){
+unsigned long Books::getQty(){
     return qty;
 }
-std::string Books::getSplittedT(unsigned int index){
+std::string Books::getSplittedT(unsigned long index){
     if(index >= splittedTitle.size()){ return ""; }
     return splittedTitle[index];
 }
-unsigned int Books::getSTsize(){
+unsigned long Books::getSTsize(){
     return splittedTitle.size();
 }
 
@@ -66,27 +66,27 @@ unsigned int Books::getSTsize(){
  * @param mode 
  * @return unsigned int 
  */
-unsigned int Books::setQty(int qty, bool mode){
+unsigned short Books::setQty(long q, bool mode){
 
-    if(mode && qty > 0){
-        Books::qty = getQty()+qty;
+    if(mode && q > 0){
+        Books::qty = getQty()+(unsigned long)q;
     }else{
         //inverting sign
-        qty = qty<0? qty*-1: qty;
-        if(Books::qty-qty == 0){
-            println("\r\nWARNING! Are you sure you wanna remove this title from the library?\r\n", "yellow");
+        q = q<0? q*-1: q;
+        if(Books::qty-(unsigned long)q == 0){
+            Util::println("\r\nWARNING! Are you sure you wanna remove this title from the library?\r\n", "yellow");
             //processing the choice
-            switch(navChoice({"Confirm"}, 10)){
+            switch(Util::navChoice({"Confirm"}, 10)){
                 case -1: return 0; //terminatign this function and close the program
                 case  0: return 1; //exiting the main loop and terminate this function
                 case  1: return 2;
             }
 
-        }else if((int)Books::qty-qty < 0){
-            println("\r\nERROR! Not so many copies to be decreased.", "red");
-            std::cout << "Try again..\r\n" << std::endl;
+        }else if((long long)Books::qty-(long long)q > 0){
+            Books::qty -= (unsigned long)q;
         }else{
-            Books::qty -= qty;
+            Util::println("\r\nERROR! Not so many copies to be decreased.", "red");
+            std::cout << "Try again..\r\n" << std::endl;
         }
     }
     return 1;
@@ -115,7 +115,7 @@ std::string Books::bookPrint(){
     std::deque<std::deque<std::string>> allData =   {{ "ATTRIBUTES", "Title", "Authors", "ISBN", "Quantity" },
                     { "VALUES", getTitle(), getAuthor(), getId(), std::to_string(getQty()) }};
 
-    std::vector<unsigned int> longest = {(unsigned int)allData[0][0].size(), (unsigned int)allData[1][0].size()};
+    std::vector<unsigned long> longest = {allData[0][0].size(), allData[1][0].size()};
 
 
     //longest detector
@@ -126,7 +126,7 @@ std::string Books::bookPrint(){
             longest[i] = longest[i] < attr.size()? attr.size(): longest[i];
         }
     }
-    return tableMaker(allData, longest);
+    return Util::tableMaker(allData, longest);
 }
 
 /**
@@ -140,27 +140,25 @@ int Books::bookManager(){
     while(true){
         std::cout << std::endl;
         //processing the choice
-        switch(navChoice({"Edit the quantity"}, 10)){
+        switch(Util::navChoice({"Edit the quantity"}, 10)){
             case -1: return 0; //terminatign this function and close the program 
             case  0: return 1; //exiting the main loop and terminate this function
             case  1:
         
                 while(true){
                     std::cout << "\r\nNow enter a quantity to be summed (e.g 1, -1, 5, -18)" << std::endl;
-                    std::cout << navOptions({}, 10) << std::endl;
+                    std::cout << Util::navOptions({}, 10) << std::endl;
 
                     //getting user input
                     std::cout << "\r\nEnter a choice here :> ";
                     std::string choice; std::cin >> choice;
                     std::cout << std::endl;
 
-                    if(choice == "0"){
-                        return bookManager();
-                    }else if(choice == "00"){
-                        return 0;
-                    }else if(sToll(choice) != 0){
-                        long *q = new long(sToll(choice));
-                        int *result = new int(setQty(*q, *q>0));
+                    if(choice == "0") return bookManager();
+                    else if(choice == "00") return 0;
+                    else if(Util::isNumber(choice)){
+                        long *q = new long((long)Util::sTod(choice));
+                        unsigned int *result = new unsigned int(setQty(*q, *q>0));
                         delete q;
 
                         if(*result == 0){
@@ -169,11 +167,9 @@ int Books::bookManager(){
                         }else if(*result == 1){
                             delete result;
                             return bookManager();
-                        }else{
-                            return 2;
-                        }
+                        }else return 2;
                         break; //----------------------------------------------------------book remouving if decrese to 0 (TO DO)
-                    }else { println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow"); }
+                    }else Util::println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow");
                 }
 
             return bookManager();
