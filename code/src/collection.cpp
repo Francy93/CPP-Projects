@@ -265,8 +265,7 @@ int Collection::booksChoice(std::deque<Books*> &books){
 
             //getting user input
             std::cout << "\r\nEnter number here :> ";
-            std::string choice; std::cin >> choice;
-            std::cout << std::endl;
+            std::string choice = Util::cinln();
 
             if(choice == "0"){
                 return 1;
