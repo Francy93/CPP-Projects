@@ -23,9 +23,9 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
         // partition 
         while (i <= j) {
             // loop left index if the word is lower than expetd
-            while (arr[i]->getSplittedT(titleIndex) < pivot){ i++; };
+            while (arr[i]->getSplittedT(titleIndex) < pivot) i++;
             // loop right index if the word is higher than expetd
-            while (arr[j]->getSplittedT(titleIndex) > pivot){ j--; };
+            while (arr[j]->getSplittedT(titleIndex) > pivot) j--;
 
             if (i <= j) {
                 Books** tmp = new Books*(arr[i]);
@@ -36,8 +36,8 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
             }
         }
         // recursion 
-        if (left < j ){ recur(left, j ); }
-        if (i < right){ recur(i, right); }
+        if (left < j ) recur(left, j );
+        if (i < right) recur(i, right);
     };
 
     //if the array entered is the default dummy data
@@ -50,7 +50,7 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
             recur(l,r);
             booksSorted = true;
         }
-    }else{ recur(l,r); }
+    }else recur(l,r);
 }
 
 
@@ -126,9 +126,9 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
                     long long increaseMid = mid, decreaseMid = mid;
 
                     // checking if the next title matches
-                    while(right >= increaseMid+1){ if(getWord(arr, ++increaseMid, index) != word){ break; } }
+                    while(right >= ++increaseMid) if(getWord(arr, increaseMid, index) != word) break;
                     // checking if the previous title matches
-                    while(left  <= decreaseMid-1){ if(getWord(arr, --decreaseMid, index) != word){ break; } }
+                    while(left  <= --decreaseMid) if(getWord(arr, decreaseMid, index) != word) break;
 
 
                     //iterating over the found matches indexes
@@ -136,7 +136,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
                         found[(**it).getId()] = *it;
                     }
                     //get quantity of books found in the first seach
-                    if(index == 0){ firstMatches = found.size(); }
+                    if(index == 0) firstMatches = found.size();
                     return true;
                 }
                 //end of "found" condition
@@ -200,7 +200,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
                     if(&array == &data && sortedDataInMemory.size() > 0 && !booksSorted){
                         array = sortedDataInMemory[0];
                         booksSorted = true;
-                    }else if(&array == &data && !booksSorted){ quicksort(array, left, right, 0); }
+                    }else if(&array == &data && !booksSorted) quicksort(array, left, right, 0);
                     
                     return true; 
                 }
@@ -214,16 +214,14 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
                     choice = Util::cinln();
                     if((choice != "1" && choice != "0" && choice != "00" && choice != "2") || (choice == "2" && end)){
                         Util::println("WRONG SELECTION! Try again.", "yellow"); 
-                    }else{ break; }
+                    }else break;
                 }
 
-                if(choice == "00"){ return false; }  //terminatign this function and close the program 
-                else if(choice == "0"){ return true; } //exiting the main loop and terminate this function
+                if(choice == "00")     return false; //terminatign this function and close the program 
+                else if(choice == "0") return true;  //exiting the main loop and terminate this function
                 else if(choice == "1"){ 
                     std::deque<Books*>HF;
-                    for (auto f = found.begin(); f != found.end(); f++){
-                        HF.push_back(f->second);
-                    }
+                    for (auto f = found.begin(); f != found.end(); f++) HF.push_back(f->second);
                     return booksChoice(HF);
                 }
             }

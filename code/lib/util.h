@@ -25,7 +25,7 @@ class Util{
     private:
         inline static bool colorMode = true;
         // std color text mode
-        int systemColor = system("");
+        const int systemColor = system("");
 
     public:
         // turning on off methods color
@@ -309,8 +309,7 @@ class Util{
                 longest[i] = longest[i] > maxLength? maxLength: longest[i];
             }
                 
-            std::string table = "";
-            std::string border = "";
+            std::string table = "", border = "";
             for(unsigned long long i=0; i<allData[0].size(); i++){
                 //creating the row
                 std::string delimiter =colorStart+columnDelim+colorEnd;
@@ -327,8 +326,7 @@ class Util{
                     std::string elem ="";
                     std::string spaces = leng > 0? std::string(leng, ' '): "";
 
-                    std::string start = "";
-                    std::string end   = "";
+                    std::string start = "",end   = "";
                     if(i == 0 || j == 0){
                         start = color("yellow");
                         if(i == 0) start = color("cyan");
@@ -344,9 +342,7 @@ class Util{
                     const unsigned long spaces = row.size()-((delimiter.size()-columnDelim.size())*2*allData.size()+delimiter.size()-columnDelim.size());
                     border += colorStart+std::string(spaces, rowDelim)+colorEnd;
                     table += border+"\r\n"+row+"\r\n"+border+"\r\n";
-                }else{
-                    table += row+"\r\n";
-                }
+                }else table += row+"\r\n";
             }
 
             return table+border+"\r\n";
@@ -364,10 +360,8 @@ class Util{
             std::string list="";
 
             const unsigned long oSize = options.size();
-            unsigned long iSize = 2;
+            unsigned long iSize = 2, i = 0, longest = 7;
 
-            unsigned long i = 0;
-            unsigned long longest = 7;
             for(std::string o: options){
                 const unsigned long strSize = o.size();
                 longest = strSize > longest? strSize: longest;
