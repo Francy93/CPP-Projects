@@ -1,7 +1,14 @@
 #include "../include/library.hpp"
 
 
-//quick-sort
+/**
+ * @brief quick-sort
+ * 
+ * @param arr 
+ * @param l 
+ * @param r 
+ * @param titleIndex 
+ */
 void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, unsigned long titleIndex){
 
     //higher scope variables not recursively defined
@@ -60,12 +67,14 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
 
 
 
-
-
-
-
-
-//the binary search algorithm
+/**
+ * @brief the binary search algorithm
+ * 
+ * @param array 
+ * @param word 
+ * @return true 
+ * @return false 
+ */
 bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
     word = Util::toLower(word);
 
@@ -243,12 +252,14 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
 
 
 
-
-
-
-
-
-//searching a book
+/**
+ * @brief searching a book
+ * 
+ * @param arr 
+ * @param book 
+ * @param index 
+ * @return std::vector<unsigned long long> 
+ */
 std::vector<unsigned long long> Collection::bookSearch(std::deque<Books*>& arr, Books* book, unsigned int index){
     const long long arrSize = arr.size(), left=0, right= arrSize>=1? arrSize-1: 0;
     std::string iterTitle = "";
