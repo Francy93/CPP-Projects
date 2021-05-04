@@ -79,7 +79,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
 
     // lambda function to get the word at a specific index (this has to be very light and performing)
     std::function<std::string(std::deque<Books*> &arr, long long mid, long i)> getWord = [&](std::deque<Books*> &arr, long long mid, unsigned long i){
-        if(i+1 < arr[mid]->getSTsize()){ end = false; }
+        if(i+1 < arr[mid]->getSTsize()) end = false;
         return arr[mid]->getSplittedT(i).substr(0, word.size());
     };
 

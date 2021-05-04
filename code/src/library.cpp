@@ -58,7 +58,7 @@ int main(int argc, char *argv[]){
 
     //printing the welcome
     std::string *title = new std::string("  WELCOME TO THE LIBRARY SYSTEM  ");
-    std::string *titleColor = new std::string("\033[1;43m "+std::string((*title).size(), '.')+" \033[0m");
+    std::string *titleColor = new std::string("\033[1;43m "+std::string(title->size(), '.')+" \033[0m");
     Util::println("\r\n\r\n\r\n", *titleColor, "yellow");
     Util::println("\033[1;43m ", *title," \033[0m", "black");
     Util::println(*titleColor, "\r\n", "yellow");
@@ -95,11 +95,11 @@ int main(int argc, char *argv[]){
                 Util::println("\r\nBefore starting! Would you like to sort data so as to experiance faster performances?", "yellow");
                 const long long nav = Util::navChoice({"Yes, get faster! (RECOMMENDED)", "No, go normal speed"}, 10);
 
-                if(nav == 2){ if(!ope.options()){ break; } }
-                else if(nav == 1){ ope.sortDataInMemory(); if(!ope.options()){  break; } }
-                else if(nav == -1){ break; }
+                if(nav == 2){ if(!ope.options()) break; }
+                else if(nav == 1){ ope.sortDataInMemory(); if(!ope.options()) break; }
+                else if(nav == -1) break;
             }
-        }else{ break; }
+        }else break;
 
         //resetting the fileName
         fileName = "";

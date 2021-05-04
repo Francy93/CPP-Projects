@@ -5,9 +5,8 @@
 // -----------------   class Collection   ------------------
 
 Books* Collection::getBook(unsigned long long index){
-    if(index < data.size()){
-        return data[index];
-    }else{
+    if(index < data.size()) return data[index];
+    else{
         Util::println("\r\nOut of Bonds! Returned last index element.\r\n", "red");
         return data[data.size()-1];
     }
@@ -42,7 +41,7 @@ void Collection::addBook(Books *book){
                 for(unsigned long long j=0; j<data.size(); j++){
                     unsigned long iterTsize = data[j]->getSTsize();
 
-                    if(iterTsize > i){ sortedDataInMemory[i].push_back(data[j]); }
+                    if(iterTsize > i) sortedDataInMemory[i].push_back(data[j]);
                 }
                 //sorting the deque just made at a specific index of the words (i)
                 quicksort(sortedDataInMemory[i], 0, sortedDataInMemory[i].size()-1, i);
@@ -98,7 +97,7 @@ bool Collection::removeBook(std::vector<double> indexes){
             removed = false;
         }
     }
-    if(removed){ delete b; }
+    if(removed) delete b;
     return removed;
 }
 
@@ -113,9 +112,8 @@ std::vector<double> Collection::bookIndexes(Books *book){
 
     //getting index from default data
     std::vector<unsigned long long> resultData = bookSearch(data, book, 0);
-    if(resultData[0] != 0){
-        foundIndexes.push_back((double)resultData[1]);
-    }else{
+    if(resultData[0] != 0) foundIndexes.push_back((double)resultData[1]);
+    else{
          foundIndexes.push_back(-1);
          Util::println("No book found in standard data", "yellow"); 
     }
@@ -127,9 +125,8 @@ std::vector<double> Collection::bookIndexes(Books *book){
     //getting indexes from the sortedDataInMemory
     for(unsigned int i=0; i<sdimMaxSize; i++){
         std::vector<unsigned long long> result = bookSearch(sortedDataInMemory[i], book, i);
-        if(result[0] != 0){
-            foundIndexes.push_back((double)result[1]);
-        }else{
+        if(result[0] != 0) foundIndexes.push_back((double)result[1]);
+        else{
             foundIndexes.push_back(-1);
             Util::println("ERROR occurred! No book found in sortedDataInMemory at index: ", std::to_string(i), "red");
         }
@@ -166,8 +163,8 @@ void Collection::addNewBook(){
             if(!Util::isNumber(choice)){
                 Util::println("\r\nInput has to be a valid numeric! Try again.","yellow");
                 --i;
-            }else{ bookData.push_back(choice); }
-        }else{ bookData.push_back(choice); }
+            }else bookData.push_back(choice);
+        }else bookData.push_back(choice);
     }
     
     //creating book
@@ -231,18 +228,15 @@ bool Collection::findBook(){
     std::string choice = Util::cinln();
     std::cout << std::endl;
 
-    if(choice == "00"){
-        return false;
-    }else if(choice == "0"){
-        return true;
-    }else if(choice == "" || choice == " "){
+    if(choice == "00") return false;
+    else if(choice == "0") return true;
+    else if(choice == "" || choice == " "){
         Util::println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow");
         return findBook();
     }else{
         //if any book was found than do..
-        if(!binarySearch(data, choice)){
-            return false;
-        }else{ return findBook(); }
+        if(!binarySearch(data, choice)) return false;
+        else return findBook();
     }
     return false;
 }
@@ -267,34 +261,31 @@ int Collection::booksChoice(std::deque<Books*> &books){
             std::cout << "\r\nEnter number here :> ";
             std::string choice = Util::cinln();
 
-            if(choice == "0"){
-                return 1;
-            }else if(choice == "00"){
-                return 0;
-            }else if(Util::isNumber(choice) && Util::sTod(choice)>0 && Util::sTod(choice) <= (double)books.size()){
+            if(choice == "0") return 1;
+            else if(choice == "00") return 0;
+            else if(Util::isNumber(choice) && Util::sTod(choice)>0 && Util::sTod(choice) <= (double)books.size()){
                 
                 double result = books[(unsigned long)(Util::sTod(choice)-1)]->bookManager();
                 
-                if( result == 0){
-                    return 0;
-                }else if(result == 2){
+                if( result == 0) return 0;
+                else if(result == 2){
                     //book removing
                     if(&books == &data){
                         // if the deque "books" corispond to the default "data"
                         if(removeBook(bookIndexes(books[(unsigned long)Util::sTod(choice)-1]))){
                             Util::println("\r\n", "Book successfully removed!.", "\r\n", "green");
-                        } else{ Util::println("\r\n", "ERROR removing the book! Try again.", "\r\n", "red"); }
+                        }else Util::println("\r\n", "ERROR removing the book! Try again.", "\r\n", "red");
                         
                     }else{
                         if(removeBook(bookIndexes(books[(unsigned long)Util::sTod(choice)-1]))){
                             books.erase(books.begin() + (long)Util::sTod(choice)-1);
                             Util::println("\r\n", "Book successfully removed!.", "\r\n", "green");
                         
-                        }else {Util::println("\r\n", "ERROR removing the book! Try again.", "\r\n", "red"); }
+                        }else Util::println("\r\n", "ERROR removing the book! Try again.", "\r\n", "red");
                     }
                     return booksChoice(books);
-                }else{ return booksChoice(books); }
-            }else{ Util::println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow"); }
+                }else return booksChoice(books);
+            }else Util::println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow");
         }
     }else{ 
         Util::println("\r\n", "No more Books to show!", "\r\n", "\r\n", "yellow");
@@ -311,7 +302,7 @@ int Collection::booksChoice(std::deque<Books*> &books){
 void Collection::shuffle(std::deque<Books*> &d){
     //this function requires: #include <algorithm> and #include <regex>
     std::random_shuffle(d.begin(), d.end());
-    if(&d == &data){  booksSorted = false; }
+    if(&d == &data)  booksSorted = false;
 }
 
 /**
@@ -333,9 +324,8 @@ void Collection::sortDataInMemory(){
             unsigned long titleSize = Util::split(data[i]->getTitle(), " ").size();
 
             for(unsigned int j=1; j<titleSize; j++){
-                if(j < sortedDataInMemory.size()){
-                    sortedDataInMemory[j].push_back(data[i]);
-                }else{ sortedDataInMemory.push_back({data[i]}); }
+                if(j < sortedDataInMemory.size()) sortedDataInMemory[j].push_back(data[i]);
+                else sortedDataInMemory.push_back({data[i]});
             }
             //printing the loading bar
             std::cout << Util::loading(dataSize*2, i);

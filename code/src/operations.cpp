@@ -28,7 +28,7 @@ bool Operations::reader(std::string fileName){
 
             while (std::getline(file, line)) {
                 index++;
-                if(line != " " && line != " " && line != "" && line != "1" && line != "0"){
+                if(line != " " && line != "\n" && line != "" && line != "1" && line != "0"){
                     line.c_str();
 
                     //splitting the string by delimiter "tab" (ascii code 9)
@@ -37,7 +37,7 @@ bool Operations::reader(std::string fileName){
                             //storing the book object
                             Books *b = new Books(elements[0], elements[1], elements[2], elements[3]);
                             data.push_back( b );
-                    }else{ corruptedCounter++; }
+                    }else corruptedCounter++;
                 }
                 //printing the loading bar
                 std::cout << Util::loading(fileSize, index);
@@ -72,13 +72,10 @@ bool Operations::reader(std::string fileName){
                     if (file.is_open()) { 
                         Util::println("\"" + fileName + "\"" + " has been successfully created!\r\n\r\n\r\n", "green");
                         newOpen = true; 
-                    }else{ Util::println("Something went wrong while creating the new file.\r\n", "red"); }
+                    }else Util::println("Something went wrong while creating the new file.\r\n", "red");
                     break;
-                } else if(choice == "0"){
-                    return false;
-                }else{
-                    Util::println("\r\nWrong selection!\r\n", "yellow");
-                }
+                }else if(choice == "0") return false;
+                else Util::println("\r\nWrong selection!\r\n", "yellow");
             }
         }
     }
@@ -114,13 +111,11 @@ bool Operations::options(){
         case  0: return true;
         case  1: addNewBook(); return options();
         case  2:  
-            if(!findBook()){
-                return false;
-            } else {  return options(); }
+            if(!findBook()) return false;
+            else return options();
         case  3:
-            if(booksChoice(data) == 0){
-                return false;
-            }else{ return options(); }
+            if(booksChoice(data) == 0) return false;
+            else return options();
     }
     return false;
 }

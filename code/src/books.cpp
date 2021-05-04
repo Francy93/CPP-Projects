@@ -52,7 +52,7 @@ unsigned long Books::getQty(){
     return qty;
 }
 std::string Books::getSplittedT(unsigned long index){
-    if(index >= splittedTitle.size()){ return ""; }
+    if(index >= splittedTitle.size()) return "";
     return splittedTitle[index];
 }
 unsigned long Books::getSTsize(){
@@ -68,9 +68,8 @@ unsigned long Books::getSTsize(){
  */
 unsigned short Books::setQty(long q, bool mode){
 
-    if(mode && q > 0){
-        Books::qty = getQty()+(unsigned long)q;
-    }else{
+    if(mode && q > 0) Books::qty = getQty()+(unsigned long)q;
+    else{
         //inverting sign
         q = q<0? q*-1: q;
         if(Books::qty-(unsigned long)q == 0){
@@ -82,9 +81,8 @@ unsigned short Books::setQty(long q, bool mode){
                 case  1: return 2;
             }
 
-        }else if((long long)Books::qty-(long long)q > 0){
-            Books::qty -= (unsigned long)q;
-        }else{
+        }else if((long long)Books::qty-(long long)q > 0) Books::qty -= (unsigned long)q;
+        else{
             Util::println("\r\nERROR! Not so many copies to be decreased.", "red");
             std::cout << "Try again..\r\n" << std::endl;
         }
@@ -99,9 +97,7 @@ unsigned short Books::setQty(long q, bool mode){
  * @return false 
  */
 bool Books::emptyCheck(){
-    if((getTitle() == "" && getAuthor() == "" && getId() == "") || getQty() <= 0){
-        return false;
-    }
+    if((getTitle() == "" && getAuthor() == "" && getId() == "") || getQty() <= 0) return false;
     return true;
 }
 
