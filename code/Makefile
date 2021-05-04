@@ -276,7 +276,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.$(SRCEXT)
 exp_handler:
 	@if [ $(BIGFILE) = auto ]; then \
 		echo ;\
-		$(PRINTLN) $(call COLOR,Attempt,magenta) to handle "'File too big'" exception by enabling the "'BIGFILE'" flag; \
+		$(PRINTLN) $(call COLOR,Warning!,magenta) Attempt to handle "'File too big'" exception by enabling the "'BIGFILE'" flag; \
 		echo ; \
 		if $(MAKE) BIGFILE=true; then \
 			$(PRINTLN) $(call COLOR,Executing 'all' complete by using 'BIGFILE' flag!,yellow); echo; \
