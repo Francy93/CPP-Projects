@@ -345,7 +345,7 @@ remake: clean all
 #Run compiles all and runs the executable
 run: all
 	@echo Running the executable: $(TARGET_OUTPUT)
-	@$(TARGET_OUTPUT)
+	$(AT) $(TARGET_OUTPUT)
 	@echo; $(MESSAGE_4.1)
 
 #makefile debugger
