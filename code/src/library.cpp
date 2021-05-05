@@ -88,9 +88,8 @@ int main(int argc, char *argv[]){
 
 
         if(fileName != "00"){
-            if(fileName == "1"){
-                Util::setColor(!Util::getColorState());
-            }else if(ope.reader(fileName)){
+            if(fileName == "1") Util::setColor(!Util::getColorState());
+            else if(ope.reader(fileName)){
                 Util::println("File: \"", fileName, "\" successfully loaded!\r\n", "green");
                 Util::println("\r\nBefore starting! Would you like to sort data so as to experiance faster performances?", "yellow");
                 const long long nav = Util::navChoice({"Yes, get faster! (RECOMMENDED)", "No, go normal speed"}, 10);
