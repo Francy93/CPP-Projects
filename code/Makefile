@@ -42,7 +42,7 @@ TARGET_DIR_NAME		:= build
 # define output directory
 OBJECT_DIR_NAME		:= bin
 # define source directory 
-SRC_DIR_NAME		:= src
+SRC_DIR_NAME		:= tests
 # define include directory
 INCLUDE_DIR_NAME	:= include
 # define lib directory
@@ -176,7 +176,7 @@ ifeq ($(OS),Windows_NT)
 	LIB_DIRS	:= $(LIB_DIR_NAME)
 	FIXPATH 	= $1$(subst /,\,$1)
 	RM			= del /q /f
-	MD			:= @mkdir -p
+	MD			:= mkdir -p
 else
 	TARGET		:= $(TARGET_NAME)
 	SRC_DIR		:= $(shell find $(SRC_DIR_NAME) -type d)
@@ -186,7 +186,7 @@ else
 	LIB_DIRS	:= $(shell find $(LIB_DIR_NAME) -type d)
 	FIXPATH 	= $1
 	RM 			= rm -f
-	MD			:= @mkdir -p
+	MD			:= mkdir -p
 endif
 RM 			:= rm -f
 FIXPATH 	= $1
@@ -242,6 +242,7 @@ PRINTLN := echo -e
 
 #display complete info
 AT			= $(if $(filter true,$(DISP_INFO)),,@)
+-S			= $(if $(filter true,$(DISP_INFO)),,-s)
 #messages
 MESSAGE_0	= $(PRINTLN) $(call COLOR,Executing 'all' complete!,green)
 MESSAGE_1	= $(PRINTLN) $(call COLOR,Warning!,magenta) Attempt to handle "'File too big'" exception by enabling the "'BIGFILE'" flag
@@ -267,9 +268,10 @@ MESSAGE_11	= echo Assebling compiled objects into: $@
 
 # makes build directory, updates your objects, builds your executable
 all: --directories
-	@+$(MAKE) $(TARGET_OUTPUT) \
-	&& echo && $(MESSAGE_0) \
-	|| $(MAKE) -s exp_handler
+	@if $(MAKE) $(-S) $(TARGET_OUTPUT); then \
+		echo; $(MESSAGE_0); \
+	else $(MAKE) $(-S) exp_handler; \
+	fi
 
 # updates your objects, builds your executable
 $(TARGET_OUTPUT): $(OBJECTS)
@@ -289,8 +291,9 @@ $(TARGET_OUTPUT): $(OBJECTS)
 -include $(DEPS)
 
 #builds your objects
+# -MMD generates dependency output files same name as the .o file
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.$(SRCEXT)
-	@echo; $(MESSAGE_10)
+	$(if $(filter @,$(AT)),@,@echo;) $(MESSAGE_10)
 	$(AT) $(CCX) $(CXXFLAGS) $(BIG_EXP) -c -MMD $< -o $@ $(LFLAGS) $(LIBS) $(INCLUDES) 
 
 
@@ -305,10 +308,10 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.$(SRCEXT)
 #recursive exceptions handler
 exp_handler:
 	@if [ $(BIGFILE) = auto ]; then \
-		echo ;$(Message_1); echo; \
+		echo; $(MESSAGE_1); echo; \
 		if $(MAKE) BIGFILE=true; then \
 			$(MESSAGE_2); echo; \
-		else echo ;$(MESSAGE_3); echo; exit 1; \
+		else echo; $(MESSAGE_3); echo; exit 1; \
 		fi \
 	else (exit 1); \
 	fi
@@ -324,9 +327,9 @@ clean:
 	$(AT) $(RM) $(TARGET_OUTPUT)
 	$(AT) $(RM) $(call FIXPATH,$(OBJECTS))
 	$(AT) $(RM) $(call FIXPATH,$(DEPS))
-	@echo; $(MESSAGE_5)
+	$(if $(filter @,$(AT)),@,@echo;) $(MESSAGE_5)
 	$(AT) $(RM) -rf $(OBJ_DIR) $(TARGET_DIR)
-	@echo; $(MESSAGE_6)
+	$(if $(filter @,$(AT)),@,@echo;) $(MESSAGE_6)
 
 #Remake does clean and compile all
 remake: clean all
