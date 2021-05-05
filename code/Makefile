@@ -49,8 +49,8 @@ INCLUDE_DIR_NAME	:= include
 LIB_DIR_NAME		:= lib
 
 
-#display complete info
-DISP_INFO	= false
+#display complete info (this is automatically set to true when "make debug" is called)
+DISP_INFO	= flase
 
 
 
@@ -242,7 +242,9 @@ PRINTLN := echo -e
 
 #display complete info
 AT			= $(if $(filter true,$(DISP_INFO)),,@)
--S			= $(if $(filter true,$(DISP_INFO)),,-s)
+-S			= $(if $(filter true,$(DISP_INFO)),--no-silent,-s)
+-W			= $(if $(filter true,$(DISP_INFO)),--print-directory,--no-print-directory)
+
 #messages
 MESSAGE_0.0	= $(PRINTLN) $(call COLOR,Executing 'all' complete!,green)
 MESSAGE_0.1	= $(PRINTLN) $(call COLOR,Warning!,magenta) Attempt to handle "'File too big'" exception by enabling the "'BIGFILE'" flag
@@ -269,7 +271,7 @@ MESSAGE_4.1	= echo Executing 'run: all' complete!
 
 # makes build directory, updates your objects, builds your executable
 all: --directories
-	@if $(MAKE) $(-S) $(TARGET_OUTPUT); then \
+	@if $(MAKE) $(-W) $(TARGET_OUTPUT); then \
 		echo; $(MESSAGE_0.0); \
 	else $(MAKE) $(-S) exp_handler; \
 	fi
@@ -342,8 +344,13 @@ remake: clean all
 
 #Run compiles all and runs the executable
 run: all
-	$(TARGET_OUTPUT)
+	@echo Running the executable: $(TARGET_OUTPUT)
+	@$(TARGET_OUTPUT)
 	@echo; $(MESSAGE_4.1)
+
+#makefile debugger
+debug:
+	$(MAKE) DISP_INFO=true
 
 #Help is intended to provide the user a minimum of guide-lines
 help:
@@ -355,4 +362,4 @@ help:
 	@echo
 
 #Non-File Targets
-.PHONY: all clean remake run help
+.PHONY: all clean remake run debug help
