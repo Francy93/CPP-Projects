@@ -255,10 +255,10 @@ MESSAGE_1.1	= echo Removing directories..
 MESSAGE_1.2	= echo Cleanup complete!
 MESSAGE_2.0	= echo Making directories..
 MESSAGE_2.1	= echo Compilator..
-MESSAGE_2.3	= $(PRINTLN) $(call COLOR,Warning!,magenta) Attempt to handle "'File too big'" exception by enabling the "'BIGFILE'" flag..
+MESSAGE_2.2	= $(PRINTLN) $(call COLOR,Warning!,magenta) Attempt to handle "'File too big'" exception by enabling the "'BIGFILE'" flag..
 MESSAGE_3.0	= echo Creating dir:
 MESSAGE_3.1	= echo Compiling object file: $@
-MESSAGE_3.2	= echo Assebling compiled objects into: $@
+MESSAGE_3.2	= echo Assembling compiled objects into: $@
 MESSAGE_4.0	= echo Remake complete!
 MESSAGE_4.1	= echo Executing 'run: all' complete!
 
@@ -316,7 +316,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.$(SRCEXT)
 #recursive exceptions handler
 exp_handler:
 	@if [ $(BIGFILE) = auto ]; then \
-		echo; $(MESSAGE_2.3); echo; \
+		echo; $(MESSAGE_2.2); echo; \
 		if $(MAKE) BIGFILE=true; then \
 			$(MESSAGE_0.1); echo; \
 		else echo; $(MESSAGE_0.2); echo; exit 1; \
