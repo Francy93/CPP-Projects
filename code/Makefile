@@ -42,7 +42,7 @@ TARGET_DIR_NAME		:= build
 # define output directory
 OBJECT_DIR_NAME		:= bin
 # define source directory 
-SRC_DIR_NAME		:= tests
+SRC_DIR_NAME		:= src
 # define include directory
 INCLUDE_DIR_NAME	:= include
 # define lib directory
@@ -293,7 +293,7 @@ $(TARGET_OUTPUT): $(OBJECTS)
 #builds your objects
 # -MMD generates dependency output files same name as the .o file
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.$(SRCEXT)
-	$(if $(filter @,$(AT)),@,@echo;) $(MESSAGE_10)
+	$(if $(AT),@,@echo;) $(MESSAGE_10)
 	$(AT) $(CCX) $(CXXFLAGS) $(BIG_EXP) -c -MMD $< -o $@ $(LFLAGS) $(LIBS) $(INCLUDES) 
 
 
@@ -327,9 +327,9 @@ clean:
 	$(AT) $(RM) $(TARGET_OUTPUT)
 	$(AT) $(RM) $(call FIXPATH,$(OBJECTS))
 	$(AT) $(RM) $(call FIXPATH,$(DEPS))
-	$(if $(filter @,$(AT)),@,@echo;) $(MESSAGE_5)
+	$(if $(AT),@,@echo;) $(MESSAGE_5)
 	$(AT) $(RM) -rf $(OBJ_DIR) $(TARGET_DIR)
-	$(if $(filter @,$(AT)),@,@echo;) $(MESSAGE_6)
+	$(if $(AT),@,@echo;) $(MESSAGE_6)
 
 #Remake does clean and compile all
 remake: clean all
