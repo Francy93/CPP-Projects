@@ -259,6 +259,7 @@ MESSAGE_2.2	= $(PRINTLN) $(call COLOR,Warning!,magenta) Attempt to handle "'File
 MESSAGE_3.0	= echo Creating dir:
 MESSAGE_3.1	= echo Compiling object file: $@
 MESSAGE_3.2	= echo Assembling compiled objects into: $@
+MESSAGE_3.3 = echo Running the executable: $(TARGET_OUTPUT)
 MESSAGE_4.0	= echo Remake complete!
 MESSAGE_4.1	= echo Executing 'run: all' complete!
 
@@ -329,7 +330,7 @@ exp_handler:
 	@if [ ! -d $(OBJ_DIR) ] || [ ! -d $(TARGET_DIR) ]; then echo; $(MESSAGE_2.0); fi
 	@if [ ! -d $(OBJ_DIR) ]; then $(MESSAGE_3.0) $(OBJ_DIR); fi
 	$(AT) $(MD) $(OBJ_DIR)
-	@if [ ! -d $(TARGET_DIR) ]; then $(if $(AT),,echo;) $(MESSAGE_2.1) $(TARGET_DIR); fi
+	@if [ ! -d $(TARGET_DIR) ]; then $(if $(AT),,echo;) $(MESSAGE_3.0) $(TARGET_DIR); fi
 	$(AT) $(MD) $(TARGET_DIR)
 
 #Cean removes all the object and executable files
@@ -348,8 +349,14 @@ remake: clean all
 
 #Run compiles all and runs the executable
 run: all
-	@echo Running the executable: $(TARGET_OUTPUT)
+	@$(MESSAGE_3.3)
 	$(AT) $(TARGET_OUTPUT)
+	@echo; $(MESSAGE_4.1)
+
+#run by passing arguments to the "main" ( previously used to remove first letter: #$(shell cut -c2- <<< $@) )
+%?: all
+	@@$(MESSAGE_3.3) $(shell head -c-2 <<< $@)
+	$(AT) $(TARGET_OUTPUT) $(shell head -c-2 <<< $@)
 	@echo; $(MESSAGE_4.1)
 
 #makefile debugger
