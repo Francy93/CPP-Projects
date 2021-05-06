@@ -70,7 +70,7 @@ bool Operations::reader(std::string fileName){
                     file2.close();
                     file.open(fileName, std::ios::in);
                     if (file.is_open()) { 
-                        Util::println("\"" + fileName + "\"" + " has been successfully created!\r\n\r\n\r\n", "green");
+                        Util::println("File: \"" + fileName + "\"" + " has been successfully created!\r\n", "green");
                         newOpen = true; 
                     }else Util::println("Something went wrong while creating the new file.\r\n", "red");
                     break;

@@ -1,7 +1,8 @@
 #	INSTRUCTIONS:
 # 'make'        build executable file 'main'
 # 'make run'    build and run executable file
-# 'make clean'  removes all .o and executable files
+# 'make run?..  unlike 'run', it allows passing arguments to the executable (e.g: make run?MyArgs OR make run?'My Arguments')
+# 'make clean'  removes every .o and executable files
 # 'make remake' execute a make clean and subsequently compile all
 # 'make help'   show brief guide-lines about this makefile usage
 
@@ -259,7 +260,7 @@ MESSAGE_2.2	= $(PRINTLN) $(call COLOR,Warning!,magenta) Attempt to handle "'File
 MESSAGE_3.0	= echo Creating dir:
 MESSAGE_3.1	= echo Compiling object file: $@
 MESSAGE_3.2	= echo Assembling compiled objects into: $@
-MESSAGE_3.3 = echo Running the executable: $(TARGET_OUTPUT)
+MESSAGE_3.3	= echo Running the executable: $(TARGET_OUTPUT)
 MESSAGE_4.0	= echo Remake complete!
 MESSAGE_4.1	= echo Executing 'run: all' complete!
 
@@ -353,11 +354,13 @@ run: all
 	$(AT) $(TARGET_OUTPUT)
 	@echo; $(MESSAGE_4.1)
 
-#run by passing arguments to the "main" ( previously used to remove first letter: #$(shell cut -c2- <<< $@) )
-%?: all
-	@@$(MESSAGE_3.3) $(shell head -c-2 <<< $@)
-	$(AT) $(TARGET_OUTPUT) $(shell head -c-2 <<< $@)
-	@echo; $(MESSAGE_4.1)
+#run by passing arguments to the "main" ( previously used to remove last letter: $(shell head -c-2 <<< $@) )
+run?%:
+	@$(if $(subst run?,,$@),\
+		$(MAKE) $(-W) all &&\
+		$(MESSAGE_3.3) $(subst run?,,$@) &&\
+		$(TARGET_OUTPUT) $(subst run?,,$@) &&\
+		echo && $(MESSAGE_4.1),)
 
 #makefile debugger
 debug:
@@ -370,7 +373,10 @@ help:
 	@echo "make clean  - removes object file folder and executable"
 	@echo "make remake - remake consist of cleaning and compileing all"
 	@echo "make run    - builds/updates everything, runs immediately"
+	@$(PRINTLN) make run?.. - unlike \'run\', it allows passing arguments to the executable \
+		\(e.g: $(call COLOR,make,yellow) run?\'My Arguments\' OR $(call COLOR,make,yellow) run?MyArguments\)
+	@echo "make debug  - builds/updates everything displaying more detailed messages"
 	@echo
 
 #Non-File Targets
-.PHONY: all clean remake run debug help
+.PHONY: all clean remake run run? run?% debug help
