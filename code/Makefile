@@ -26,8 +26,8 @@ USE_STRICT 			:= false
 
 
 
-# define the executable output name
-TARGET_NAME			:= librarySystem
+# define the executable output name (if set to auto it will automatically be assigned the main file name)
+TARGET_NAME			= auto
 # custom flags:
 LFLAGS 				:=
 CCXFLAGS			:=
@@ -83,7 +83,7 @@ ifeq ($(OPTIMIZER),true)
 	OPT := -Ofast
 else ifeq ($(OPTIMIZER),auto)
 	OPT := -Og
-else 
+else ifneq ($(OPTIMIZER),false)
 	OPT := $(OPTIMIZER)
 endif
 
@@ -171,6 +171,14 @@ CXXFLAGS	= -std=$(STD)$(COMPILER_SUPPORT) $(OPT) -Wall $(CCXFLAGS) $(CWARNS) $(D
 #############################
 
 
+# automatically generate target name copying it from main file name
+ifeq ($(subst auto,,$(TARGET_NAME)),)
+	MAIN_MATCH	:= "^(\s)*int main\((\s|\S)*\)\s*\{"
+	MAIN_PATH	= $(shell egrep -E --include=\*.$(SRCEXT) -rnl $(SRC_DIR) -e $(MAIN_MATCH))
+	MAIN_NAME	= $(basename $(notdir $(MAIN_PATH)))
+	TARGET_NAME	= $(MAIN_NAME)
+endif
+
 # defining directories
 ifeq ($(OS),Windows_NT)
 	TARGET		:= $(TARGET_NAME).exe
@@ -253,7 +261,7 @@ AT			= $(if $(filter true,$(DISP_INFO)),,@)
 -S			= $(if $(filter true,$(DISP_INFO)),--no-silent,-s)
 -W			= $(if $(filter true,$(DISP_INFO)),--print-directory,--no-print-directory)
 
-# footer messages
+# outcome messages
 MESSAGE_0.0	:= $(PRINTLN) $(call COLOR,Executing 'all' complete!,green)
 MESSAGE_0.1	:= $(PRINTLN) $(call COLOR,Executing 'all' complete by using '-Ofast' optimizer flag!,yellow)
 MESSAGE_0.2	:= $(PRINTLN) $(call COLOR,Exceptions handler failed!,red)
@@ -288,7 +296,7 @@ MESSAGE_3.3	:= echo Executing 'run: all' complete!
 # makes build directory, updates your objects, builds your executable
 all: --directories
 	@echo;
-	@if $(MAKE) -q $(TARGET_OUTPUT); then \
+	@if $(MAKE) $(-W) -q $(TARGET_OUTPUT); then \
 		$(MESSAGE_0.3); \
 	elif $(MESSAGE_1.3) && $(MAKE) $(-W) $(TARGET_OUTPUT); then \
 		echo; $(MESSAGE_0.0); \
