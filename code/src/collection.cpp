@@ -64,7 +64,7 @@ void Collection::addBook(Books *book){
  */
 bool Collection::removeBook(std::vector<double> indexes){
     bool removed = true;
-    Books *b;
+    Books *b = nullptr;
 
     for(unsigned int i=0; i<indexes.size(); i++){
         if(indexes[i] != -1){
