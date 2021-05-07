@@ -31,7 +31,7 @@ TARGET_NAME			:= librarySystem
 # custom flags:
 LFLAGS 				:=
 CCXFLAGS			:=
-#debug
+# debug
 DEBUG				:= -g
 
 # define library paths in addition to /usr/lib
@@ -50,7 +50,7 @@ INCLUDE_DIR_NAME	:= include
 LIB_DIR_NAME		:= lib
 
 
-#display complete info (this is automatically set to true when "make debug" is called)
+# display complete info (this is automatically set to true when "make debug" is called)
 DISP_INFO	= flase
 
 
@@ -167,7 +167,7 @@ CXXFLAGS	= -std=$(STD)$(COMPILER_SUPPORT) -Wall $(CCXFLAGS) $(CWARNS) $(DEBUG)
 #############################
 
 
-#defining directories
+# defining directories
 ifeq ($(OS),Windows_NT)
 	TARGET		:= $(TARGET_NAME).exe
 	SRC_DIR		:= $(SRC_DIR_NAME)
@@ -222,17 +222,17 @@ TARGET_OUTPUT	=	$(call FIXPATH,$(TARGET_DIR)/$(TARGET))
 #############################
 
 
-#chose text style
+# chose text style
 COLOR = $(if $(filter red,$2),"\e[1;31m$(subst ",,$1)\e[0m",\
 			$(if $(filter green,$2),"\e[1;32m$(subst ",,$1)\e[0m",\
 				$(if $(filter yellow,$2),"\e[1;33m$(subst ",,$1)\e[0m",\
 					$(if $(filter blue,$2),"\e[1;34m$(subst ",,$1)\e[0m",\
 						$(if $(filter magenta,$2),"\e[1;35m$(subst ",,$1)\e[0m",\
 							$(if $(filter cyan,$2),"\e[1;36m$(subst ",,$1)\e[0m",$1))))))
-#enable echo output styling
+# enable echo output styling
 PRINTLN := echo -e
 
-#recipe debug
+# recipe debug
 RECIPE_DEBUG = $(if $(AT),,echo $1) $1
 
 
@@ -244,12 +244,12 @@ RECIPE_DEBUG = $(if $(AT),,echo $1) $1
 #############################
 
 
-#display complete info
+# display complete info
 AT			= $(if $(filter true,$(DISP_INFO)),,@)
 -S			= $(if $(filter true,$(DISP_INFO)),--no-silent,-s)
 -W			= $(if $(filter true,$(DISP_INFO)),--print-directory,--no-print-directory)
 
-#messages
+# messages
 MESSAGE_0.0	= $(PRINTLN) $(call COLOR,Executing 'all' complete!,green)
 MESSAGE_0.1	= $(PRINTLN) $(call COLOR,Executing 'all' complete by using 'BIGFILE' flag!,yellow)
 MESSAGE_0.2	= $(PRINTLN) $(call COLOR,'BIGFILE' exceptions handler failed!,red)
@@ -305,7 +305,7 @@ $(TARGET_OUTPUT): $(OBJECTS)
 # include all .d files
 -include $(DEPS)
 
-#builds your objects
+# builds your objects
 # -MMD generates dependency output files same name as the .o file
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.$(SRCEXT)
 	$(if $(AT),@,@echo;) $(MESSAGE_2.1)
@@ -320,7 +320,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.$(SRCEXT)
 #############################
 
 
-#recursive exceptions handler
+# recursive exceptions handler
 exp_handler:
 	@if [ $(BIGFILE) = auto ]; then \
 		echo; $(MESSAGE_1.4); echo; \
@@ -331,7 +331,7 @@ exp_handler:
 	else (exit 1); \
 	fi
 
-#Make the Directories
+# Make the Directories
 --directories:
 	@if [ ! -d $(OBJ_DIR) ] || [ ! -d $(TARGET_DIR) ]; then echo; $(MESSAGE_1.2); fi
 	@if [ ! -d $(OBJ_DIR) ]; then \
@@ -345,7 +345,7 @@ exp_handler:
 		$(call RECIPE_DEBUG, $(MD) $(TARGET_DIR);) \
 	fi
 
-#Cean removes all the object and executable files
+# Cean removes all the object and executable files
 clean:
 	@echo; 
 	@if [ -d $(OBJ_DIR) ] || [ -d $(TARGET_DIR) ]; then \
@@ -363,17 +363,17 @@ clean:
 	else $(MESSAGE_3.1); \
 	fi
 
-#Remake does clean and compile all
+# Remake does clean and compile all
 remake: clean all
 	@echo; $(MESSAGE_3.2)
 
-#Run compiles all and runs the executable
+# Run compiles all and runs the executable
 run: all
 	@$(MESSAGE_2.3)
 	$(AT) $(TARGET_OUTPUT)
 	@echo; $(MESSAGE_3.3)
 
-#run by passing arguments to the "main" \
+# run by passing arguments to the "main" \
 ( previously used to remove last letter: $(shell head -c-2 <<< $@) ) \
 ( previously used to remove first letter: $(shell cut -c2- <<< "$@")) )
 run?%:
@@ -383,11 +383,11 @@ run?%:
 		$(TARGET_OUTPUT) $(subst run?,,$@) &&\
 		echo && $(MESSAGE_3.3),)
 
-#makefile debugger
+# makefile debugger
 debug:
 	$(MAKE) DISP_INFO=true
 
-#Help is intended to provide the user a minimum of guide-lines
+# Help is intended to provide the user a minimum of guide-lines
 help:
 	@echo
 	@echo "make        - builds/updates everything, is ready to run with $(TARGET_OUTPUT) after completion"
@@ -399,5 +399,5 @@ help:
 	@echo "make debug  - builds/updates everything displaying more detailed messages"
 	@echo
 
-#Non-File Targets
+# Non-File Targets
 .PHONY: all clean remake run run? run?% debug help
