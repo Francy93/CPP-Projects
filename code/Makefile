@@ -1,7 +1,7 @@
 #	INSTRUCTIONS:
 # 'make'        build executable file 'main'
 # 'make run'    build and run executable file
-# 'make run?..  unlike 'run', it allows passing arguments to the executable (e.g: make run?MyArgs OR make run?'My Arguments')
+# 'make run?..  unlike 'run', it allows passing arguments to the executable (e.g: make run?MyArgs OR make run?'My Args')
 # 'make clean'  removes every .o and executable files
 # 'make remake' execute a make clean and subsequently compile all
 # 'make help'   show brief guide-lines about this makefile usage
@@ -171,12 +171,12 @@ CXXFLAGS	= -std=$(STD)$(COMPILER_SUPPORT) $(OPT) -Wall $(CCXFLAGS) $(CWARNS) $(D
 #############################
 
 
-# automatically generate target name copying it from main file name
+# automatically generate target name by using the main file name
 ifeq ($(subst auto,,$(TARGET_NAME)),)
-	MAIN_MATCH	:= "^(\s)*int main\((\s|\S)*\)\s*\{"
-	MAIN_PATH	= $(shell egrep -E --include=\*.$(SRCEXT) -rnl $(SRC_DIR) -e $(MAIN_MATCH))
+	MAIN_MATCH	:= "^(\s)*(unsigned\s+)?(void|bool|short|int|long|long\s+long|double|char)\s+main\s*\((\s|\S)*\)\s*\{?"
+	MAIN_PATH	= $(shell egrep -E --include=\*.$(SRCEXT) -rnwl $(SRC_DIR) -e $(MAIN_MATCH))
 	MAIN_NAME	= $(basename $(notdir $(MAIN_PATH)))
-	TARGET_NAME	= $(MAIN_NAME)
+	TARGET_NAME	= $(if $(MAIN_NAME),$(MAIN_NAME),a)
 endif
 
 # defining directories
