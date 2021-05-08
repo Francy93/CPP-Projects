@@ -50,6 +50,7 @@ Thumbs.db
 
 # VScode
 *.vscode/*
+*/.vscode/*
 
 #build directories
 Code/bin/*
