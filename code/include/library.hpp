@@ -120,7 +120,7 @@ class Collection {
 class Operations: public Collection{
 
     public:
-        Operations(){};
+        Operations();
         ~Operations(){};
 
         //file reader

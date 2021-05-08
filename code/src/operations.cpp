@@ -4,6 +4,12 @@
 // -----------------   class Operations   ------------------
 
 /**
+ * @brief Construct a new Operations:: Operations object
+ * 
+ */
+Operations::Operations(){ system(""); };
+
+/**
  * @brief file scanner
  * 
  * @param fileName 
