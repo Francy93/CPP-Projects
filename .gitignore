@@ -49,7 +49,7 @@ Thumbs.db
 *.wmv
 
 # VScode
-*/.vscode/*
+*.vscode/*
 
 #build directories
 Code/bin/*
