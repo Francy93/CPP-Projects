@@ -28,31 +28,31 @@ USE_STRICT 			:=	false
 
 
 # define the executable output name (if set to auto it will automatically be assigned the main file name)
-TARGET_NAME			= auto
+TARGET_NAME			=	auto
 # custom flags:
 LFLAGS 				:=
 CCXFLAGS			:=
 # debug
-DEBUG				:= -g
+DEBUG				:=	-g
 
 # define library paths in addition to /usr/lib
 #   if I wanted to include libraries not in /usr/lib I'd specify
 #   their path using -Lpath, something like:
 
 # define output directory
-TARGET_DIR_NAME		:= build
+TARGET_DIR_NAME		:=	build
 # define output directory
-OBJECT_DIR_NAME		:= bin
+OBJECT_DIR_NAME		:=	bin
 # define source directory 
-SRC_DIR_NAME		:= src
+SRC_DIR_NAME		:=	src
 # define include directory
-INCLUDE_DIR_NAME	:= include
+INCLUDE_DIR_NAME	:=	include
 # define lib directory
-LIB_DIR_NAME		:= lib
+LIB_DIR_NAME		:=	lib
 
 
 # display complete info (this is automatically set to true when "make debug" is called)
-DISP_INFO			= false
+DISP_INFO			=	false
 
 
 
@@ -67,58 +67,61 @@ DISP_INFO			= false
 #############################
 
 
-# main finder regex
-MAIN_MATCH	:= "^(\s)*(unsigned\s+)?(void|bool|short|int|long|long\s+long|double|char)\s+main\s*\((\s|\S)*\)\s*\{?"
-
-# project language detector ('$s ' stands for literal space)
-SRCEXT0	=	$(if $(subst auto,,$(SRC_EXT)),$(subst $s ,,$(SRC_EXT)),$(firstword $(patsubst .%,%,$(filter .%,$(suffix\
-					$(filter %.cpp %.c,$(shell egrep -E --include=\*.* -rnwl $(SRC_DIR) -e $(MAIN_MATCH))))))))
-# final attempt to get the extension
-SRCEXT	=	$(if $(SRCEXT0),$(SRCEXT0),$(firstword $(patsubst .%,%,$(filter .%,$(suffix\
-					$(filter %.cpp %.c,$(wildcard $(SRC_DIR)/*.*)))))))
-
-# automatically generate target name by using the main file name
-TARGET_N0 =	$(subst $s ,,$(if $(subst auto,,$(TARGET_NAME)),$(subst $s ,_,$(TARGET_NAME)),\
-							$(basename $(notdir $(shell egrep -E --include=\*.$(SRCEXT) -rnwl $(SRC_DIR) -e $(MAIN_MATCH))))))
-# final attempt to get the name						
-TARGET_N =	$(subst $s ,,$(if $(TARGET_N0),$(TARGET_N0),\
-							$(basename $(notdir $(wildcard $(SRC_DIR)/*.$(SRCEXT))))))
-
 # defining directories
 ifeq ($(OS),Windows_NT)
-	SRC_DIR		=	$(SRC_DIR_NAME)
-	TARGET		:=	$(if $(TARGET_N),$(TARGET_N),a).exe
+	OS_EXE		:=	.exe
+	SRC_DIR		:=	$(SRC_DIR_NAME)
 	TARGET_DIR	:=	$(TARGET_DIR_NAME)
 	OBJ_DIR		:=	$(OBJECT_DIR_NAME)
 	INCL_DIRS	:=	$(INCLUDE_DIR_NAME)
 	LIB_DIRS	:=	$(LIB_DIR_NAME)
 	FIXPATH 	=	$(subst /,\,$1)
-	RM			=	del /q /f
+	RM			:=	del /q /f
 	MD			:=	mkdir
 else
-	SRC_DIR		=	$(shell find $(SRC_DIR_NAME) -type d)
-	TARGET		:=	$(if $(TARGET_N),$(TARGET_N),a)
+	OS_EXE		:=
+	SRC_DIR		:=	$(shell find $(SRC_DIR_NAME) -type d)
 	TARGET_DIR	:=	$(shell find $(TARGET_DIR_NAME) -type d)
 	OBJ_DIR		:=	$(shell find $(OBJECT_DIR_NAME) -type d)
 	INCL_DIRS	:=	$(shell find $(INCLUDE_DIR_NAME) -type d)
 	LIB_DIRS	:=	$(shell find $(LIB_DIR_NAME) -type d)
 	FIXPATH 	=	$1
-	RM 			=	rm -f
+	RM 			:=	rm -f
 	MD			:=	mkdir -p
 endif
 RM 			:= rm -f
 FIXPATH 	= $1
 
+# main finder regex
+MAIN_MATCH	:= "^(\s)*(unsigned\s+)?(void|bool|short|int|long|long\s+long|double|char)\s+main\s*\((\s|\S)*\)\s*\{?"
+
+# project language detector ('$s ' stands for literal space)
+SRCEXT0	:=	$(if $(subst auto,,$(SRC_EXT)),$(subst $s ,,$(SRC_EXT)),$(firstword $(patsubst .%,%,$(filter .%,$(suffix\
+					$(filter %.cpp %.c,$(shell egrep -E --include=\*.* -rnwl $(SRC_DIR) -e $(MAIN_MATCH))))))))
+# final attempt to get the extension
+SRCEXT	:=	$(if $(SRCEXT0),$(SRCEXT0),$(firstword $(patsubst .%,%,$(filter .%,$(suffix\
+					$(filter %.cpp %.c,$(wildcard $(SRC_DIR)/*.*)))))))
+
+# automatically generate target name by using the main file name
+TARGET_N0 :=	$(subst $s ,,$(if $(subst auto,,$(TARGET_NAME)),$(subst $s ,_,$(TARGET_NAME)),\
+							$(basename $(notdir $(shell egrep -E --include=\*.$(SRCEXT) -rnwl $(SRC_DIR) -e $(MAIN_MATCH))))))
+# final attempt to get the name						
+TARGET_N :=	$(subst $s ,,$(if $(TARGET_N0),$(TARGET_N0),\
+							$(basename $(notdir $(wildcard $(SRC_DIR)/*.$(SRCEXT))))))
+
+# setting target name and extension
+TARGET		:=	$(if $(TARGET_N),$(TARGET_N),a)$(OS_EXE)
+
 # define any directories containing header files other than /usr/include
-INCLUDES	= $(patsubst %,-I%, $(INCL_DIRS:%/=%))
+INCLUDES	:=	$(patsubst %,-I%, $(INCL_DIRS:%/=%))
 # define the C libs
-LIBS		= $(patsubst %,-L%, $(LIB_DIRS:%/=%))
+LIBS		:=	$(patsubst %,-L%, $(LIB_DIRS:%/=%))
 # define the C source files
-SOURCES		= $(wildcard $(patsubst %,%/*.$(SRCEXT), $(SRC_DIR)))
+SOURCES		:=	$(wildcard $(patsubst %,%/*.$(SRCEXT), $(SRC_DIR)))
 # define the C object files
-OBJECTS		= $(SOURCES:.$(SRCEXT)=.o)
+OBJECTS		:=	$(SOURCES:.$(SRCEXT)=.o)
 # define the dependency output files
-DEPS		= $(OBJECTS:.o=.d)
+DEPS		:=	$(OBJECTS:.o=.d)
 
 #
 # The following part of the makefile is generic; it can be used to 
@@ -128,7 +131,7 @@ DEPS		= $(OBJECTS:.o=.d)
 # finds all your objects that corrispond to your .cpp files, system agnostic version
 OBJECTS 		:=	$(patsubst $(SRC_DIR)/%.$(SRCEXT),$(OBJ_DIR)/%.o, $(wildcard $(SRC_DIR)/*.$(SRCEXT)))
 # defining target directory
-TARGET_OUTPUT	=	$(call FIXPATH,$(TARGET_DIR)/$(TARGET))
+TARGET_OUTPUT	:=	$(call FIXPATH,$(TARGET_DIR)/$(TARGET))
 
 
 
@@ -239,7 +242,7 @@ endif
 
 
 # define any compile-time flags
-CXXFLAGS	= -std=$(STD)$(COMPILER_SUPPORT) $(OPT) -Wall $(CCXFLAGS) $(CWARNS) $(DEBUG)
+CXXFLAGS	:= -std=$(STD)$(COMPILER_SUPPORT) $(OPT) -Wall $(CCXFLAGS) $(CWARNS) $(DEBUG)
 
 
 
