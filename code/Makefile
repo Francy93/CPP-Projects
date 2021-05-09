@@ -44,7 +44,7 @@ TARGET_DIR_NAME		:=	build
 # define output directory
 OBJECT_DIR_NAME		:=	bin
 # define source directory 
-SRC_DIR_NAME		:=	tests
+SRC_DIR_NAME		:=	src
 # define include directory
 INCLUDE_DIR_NAME	:=	include
 # define lib directory
