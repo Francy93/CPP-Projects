@@ -44,7 +44,7 @@ TARGET_DIR_NAME		:=	build
 # define output directory
 OBJECT_DIR_NAME		:=	bin
 # define source directory 
-SRC_DIR_NAME		:=	src
+SRC_DIR_NAME		:=	tests
 # define include directory
 INCLUDE_DIR_NAME	:=	include
 # define lib directory
@@ -105,9 +105,9 @@ SRCEXT	:=	$(if $(SRCEXT0),$(SRCEXT0),$(firstword $(patsubst .%,%,$(filter .%,$(s
 # automatically generate target name by using the main file name
 TARGET_N0 :=	$(subst $s ,,$(if $(subst auto,,$(TARGET_NAME)),$(subst $s ,_,$(TARGET_NAME)),\
 							$(basename $(notdir $(shell egrep -E --include=\*.$(SRCEXT) -rnwl $(SRC_DIR) -e $(MAIN_MATCH))))))
-# final attempt to get the name						
-TARGET_N :=	$(subst $s ,,$(if $(TARGET_N0),$(TARGET_N0),\
-							$(basename $(notdir $(wildcard $(SRC_DIR)/*.$(SRCEXT))))))
+# final attempt to get the name				
+FILES_NAME	:=	$(basename $(notdir $(wildcard $(SRC_DIR)/*.$(SRCEXT))))
+TARGET_N :=	$(subst $s ,,$(if $(TARGET_N0),$(TARGET_N0),$(shell if [ $(words $(FILES_NAME)) = 1 ]; then echo $(FILES_NAME); fi)))
 
 # setting target name and extension
 TARGET		:=	$(if $(TARGET_N),$(TARGET_N),a)$(OS_EXE)
@@ -285,7 +285,7 @@ MESSAGE_0.0	:=	$(PRINTLN) $(call COLOR,Executing 'all' complete!,green)
 MESSAGE_0.1	:=	$(PRINTLN) $(call COLOR,Executing 'all' complete by using '-Ofast' optimizer flag!,yellow)
 MESSAGE_0.2	:=	$(PRINTLN) $(call COLOR,Exceptions handler failed!,red)
 MESSAGE_0.3	=	$(PRINTLN) $(call COLOR,Executable,green) "'$(TARGET_OUTPUT)'" $(call COLOR,is already up to date!,green)
-MESSAGE_0.4	:=	$(PRINTLN) $(call COLOR,Language detection failed! Pleas, fill manually the Makefile 'SRC_EXT' variable,red)
+MESSAGE_0.4	:=	$(PRINTLN) $(call COLOR,Language detection failed! Please  fill manually the Makefile 'SRC_EXT' variable,red)
 # header messages
 MESSAGE_1.0	:=	$(PRINTLN) $(call COLOR,Removing files..,blue)
 MESSAGE_1.1	:=	$(PRINTLN) $(call COLOR,Removing directories..,blue)
