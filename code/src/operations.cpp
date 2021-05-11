@@ -7,7 +7,7 @@
  * @brief Construct a new Operations:: Operations object
  * 
  */
-Operations::Operations(){ system(""); };
+Operations::Operations(){ int s = system(""); s=s?s:s; };
 
 /**
  * @brief file scanner
