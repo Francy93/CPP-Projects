@@ -44,11 +44,11 @@ TARGET_DIR		:=	build
 # define output directory
 OBJECT_DIR		:=	bin
 # define source directory 
-SRC_DIR		:=	src
+SRC_DIR			:=	tests
 # define include directory
-INCLUDE_DIR	:=	include
+INCLUDE_DIR		:=	include
 # define lib directory
-LIB_DIR		:=	lib
+LIB_DIR			:=	lib
 
 
 # display complete info (this is automatically set to true when "make debug" is called)
@@ -273,6 +273,7 @@ RECIPE_DEBUG = $(if $(AT),,echo $1) $1
 AT			=	$(if $(filter true,$(DISP_INFO)),,@)
 -S			=	$(if $(filter true,$(DISP_INFO)),--no-silent,-s)
 -W			=	$(if $(filter true,$(DISP_INFO)),--print-directory,--no-print-directory)
+EXIT1		=	$(if $(filter true,$(DISP_INFO)),exit 1,exit 1 &> /dev/null)
 
 # outcome messages
 MESSAGE_0.0	:=	$(PRINTLN) $(call COLOR,Executing 'all' complete!,green)
@@ -316,8 +317,8 @@ all: --directories
 			$(MESSAGE_0.3); \
 		elif $(MESSAGE_1.3) && $(MAKE) $(-W) $(TARGET_OUTPUT); then \
 			echo; $(MESSAGE_0.0); \
-		elif [ ! $(MAKE) $(-S) exp_handler ]; then \
-			$(MESSAGE_0.2); exit 1; \
+		elif ! $(MAKE) $(-S) exp_handler; then \
+			$(if $(filter auto,$(OPTIMIZER)),echo; $(MESSAGE_0.2);,) $(EXIT1) \
 		fi \
 	else $(MESSAGE_0.4); \
 	fi
@@ -360,9 +361,9 @@ exp_handler:
 		echo; $(MESSAGE_1.4); echo; \
 		if $(MAKE) OPTIMIZER=true; then \
 			$(MESSAGE_0.1); echo; \
-		else echo; $(MESSAGE_3.4); echo; exit 1; \
+		else echo; $(MESSAGE_3.4); $(EXIT1); \
 		fi \
-	else (exit 1); \
+	else $(EXIT1); \
 	fi
 
 # Make the Directories
