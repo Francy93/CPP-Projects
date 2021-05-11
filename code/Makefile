@@ -44,7 +44,7 @@ TARGET_DIR		:=	build
 # define output directory
 OBJECT_DIR		:=	bin
 # define source directory 
-SRC_DIR			:=	tests
+SRC_DIR			:=	src
 # define include directory
 INCLUDE_DIR		:=	include
 # define lib directory
@@ -318,7 +318,7 @@ all: --directories
 		elif $(MESSAGE_1.3) && $(MAKE) $(-W) $(TARGET_OUTPUT); then \
 			echo; $(MESSAGE_0.0); \
 		elif ! $(MAKE) $(-S) exp_handler; then \
-			$(if $(filter auto,$(OPTIMIZER)),echo; $(MESSAGE_0.2);,) $(EXIT1) \
+			$(if $(filter auto,$(OPTIMIZER)),echo; $(MESSAGE_0.2);,) $(EXIT1); \
 		fi \
 	else $(MESSAGE_0.4); \
 	fi
