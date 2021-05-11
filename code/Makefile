@@ -17,8 +17,8 @@ SRC_EXT				:=	auto
 CCX					=	auto
 # define the compiler support version (e.g: 98, 99, 11, 14, 17, 2a, ...)
 COMPILER_SUPPORT	=	auto
-# to compile and optimize code \
-	(set to 'true' to get optimizer -Ofast, 'auto' to handle it automatically or any optimizer else, like -O0, -O1, -O2, -O3, ...)
+# to compile and optimize code (if set to false, the exceptions handler will not start, set to 'true' to get optimizer -Ofast,\
+	'auto' to handle it automatically or any optimizer else like: -O0, -O1, -O2, -O3, ...)
 OPTIMIZER			=	auto
 # get general warnings (set to false to remove general warnings)
 GENERAL_WARNINGS    :=	true
