@@ -318,7 +318,7 @@ all: --directories
 		elif $(MESSAGE_1.3) && $(MAKE) $(-W) $(TARGET_OUTPUT); then \
 			echo; $(MESSAGE_0.0); \
 		elif ! $(MAKE) $(-S) exp_handler; then \
-			$(if $(filter auto,$(OPTIMIZER)),echo; $(MESSAGE_0.2);,) $(EXIT1); \
+			$(if $(filter-out true,$(OPTIMIZER)),echo; $(MESSAGE_0.2);,) $(EXIT1); \
 		fi \
 	else $(MESSAGE_0.4); \
 	fi
