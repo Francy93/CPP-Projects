@@ -21,16 +21,16 @@ COMPILER_SUPPORT	=	auto
 	'auto' to handle it automatically or any optimizer else like: -O0, -O1, -O2, -O3, ...)
 OPTIMIZER			=	auto
 # get general warnings (set to false to remove general warnings)
-GENERAL_WARNINGS    :=	true
+GENERAL_WARNINGS	:=	true
 # get larger amount of warnings (set to false to remove negligible warnings)
-USE_STRICT 			:=	false
+USE_STRICT			:=	false
 
 
 
 # define the executable output name (if set to auto it will automatically be assigned the main file name)
 TARGET_NAME			=	auto
 # custom flags:
-LFLAGS 				:=
+LFLAGS				:=
 CCXFLAGS			:=
 # debug
 DEBUG				:=	-g
@@ -40,15 +40,15 @@ DEBUG				:=	-g
 #   their path using -Lpath, something like:
 
 # define output directory
-TARGET_DIR		:=	build
+TARGET_DIR			:=	build
 # define output directory
-OBJECT_DIR		:=	bin
+OBJECT_DIR			:=	bin
 # define source directory 
-SRC_DIR			:=	src
+SRC_DIR				:=	src
 # define include directory
-INCLUDE_DIR		:=	include
+INCLUDE_DIR			:=	include
 # define lib directory
-LIB_DIR			:=	lib
+LIB_DIR				:=	lib
 
 
 # display complete info (this is automatically set to true when "make debug" is called)
@@ -70,6 +70,8 @@ DISP_INFO			=	false
 # defining directories
 ifeq ($(OS),Windows_NT)
 	OS_EXE		:=	.exe
+	INCL_DIRS	:=	$(INCLUDE_DIR)
+	LIB_DIRS	:=	$(LIB_DIR)
 	FIXPATH 	=	$(subst /,\,$1)
 	RM			:=	del /q /f
 	MD			:=	mkdir
@@ -112,20 +114,17 @@ INCLUDES	:=	$(patsubst %,-I%, $(INCL_DIRS:%/=%))
 LIBS		:=	$(patsubst %,-L%, $(LIB_DIRS:%/=%))
 # define the C source files
 SOURCES		:=	$(wildcard $(patsubst %,%/*.$(SRCEXT), $(SRC_DIR)))
-# define the C object files
-OBJECTS		:=	$(SOURCES:.$(SRCEXT)=.o)
+
+# finds objects that corrispond to the src files, system agnostic version
+OBJECTS		:=	$(patsubst $(SRC_DIR)/%.$(SRCEXT),$(OBJECT_DIR)/%.o, $(SOURCES))
 # define the dependency output files
 DEPS		:=	$(OBJECTS:.o=.d)
-
+# defining target directory
+TARGET_OUTPUT	:=	$(call FIXPATH,$(TARGET_DIR)/$(TARGET))
 #
 # The following part of the makefile is generic; it can be used to 
 # build any executable just by changing the definitions above and by
 # deleting dependencies appended to the file from 'make depend'
-
-# finds all your objects that corrispond to your .cpp files, system agnostic version
-OBJECTS 		:=	$(patsubst $(SRC_DIR)/%.$(SRCEXT),$(OBJECT_DIR)/%.o, $(wildcard $(SRC_DIR)/*.$(SRCEXT)))
-# defining target directory
-TARGET_OUTPUT	:=	$(call FIXPATH,$(TARGET_DIR)/$(TARGET))
 
 
 
@@ -344,7 +343,8 @@ $(TARGET_OUTPUT): $(OBJECTS)
 # -MMD generates dependency output files same name as the .o file
 $(OBJECT_DIR)/%.o: $(SRC_DIR)/%.$(SRCEXT)
 	$(if $(AT),@,@echo;) $(MESSAGE_2.1)
-	$(AT) $(CCX) $(CXXFLAGS) -c -MMD $< -o $@ $(LFLAGS) $(LIBS) $(INCLUDES) 
+	$(AT) $(CCX) $(CXXFLAGS) -c -MMD $< -o $@ $(LFLAGS) $(LIBS) $(INCLUDES)
+
 
 
 
