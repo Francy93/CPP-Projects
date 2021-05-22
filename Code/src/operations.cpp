@@ -44,7 +44,7 @@ bool Operations::reader(std::string fileName){
                             Books *b = new Books(elements[0], elements[1], elements[2], elements[3]);
                             data.push_back( b );
                     }else corruptedCounter++;
-                }
+                }else corruptedCounter++;
                 //printing the loading bar
                 std::cout << Util::loading(fileSize, index);
             }
@@ -52,7 +52,8 @@ bool Operations::reader(std::string fileName){
             file.close();
             // displaying amount of corrupted data if any
             if(corruptedCounter != 0){
-                Util::println("\r\n" +std::to_string(corruptedCounter)+ " book(s) data was corrupted!\r\n", "yellow");
+                const char s = corruptedCounter != 1? 's': '\0';
+                Util::println("\r\n" +std::to_string(corruptedCounter)+ " book"+s+" data was corrupted!\r\n", "yellow");
             }
             //sorting elements
             shuffle(data);
