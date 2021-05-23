@@ -154,8 +154,8 @@ class Util{
 
             if (size > 0 && index <= size){
                 //bar standard parameters
-                unsigned short barLength= vals.size() > 2 && vals.at(2) > 0 ? (unsigned short)vals.at(2): 50;
-                unsigned short updates  = vals.size() > 3 && vals.at(3) > 0 ? (unsigned short)vals.at(3): 100;
+                unsigned short barLength    = vals.size() > 2 && vals.at(2) > 0 ? (unsigned short)vals.at(2): 50;
+                unsigned short updates      = vals.size() > 3 && vals.at(3) > 0 ? (unsigned short)vals.at(3): 100;
 
                 //calculating loading bar
                 static unsigned short i     = 0;
@@ -165,11 +165,10 @@ class Util{
                 
                 if(tokens != i){
                     i = tokens;
-                    std::string colors;
                     unsigned short percent = (unsigned short)(index * 100 / size);
                     
                     if(percent != 100 && size > index){
-                        std::string status = std::string(tokens, (char)219); //219 is the ascii code for the square symbol
+                        std::string status = std::string(tokens, (char)219), colors; //219 is the ascii code for the square symbol
                         if      (percent < 33)  colors = "red";
                         else if (percent < 66)  colors = "yellow";
                         else                    colors = "green";
