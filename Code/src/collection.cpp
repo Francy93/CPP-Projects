@@ -47,7 +47,7 @@ void Collection::addBook(Books *book){
                 quicksort(sortedDataInMemory[i], 0, sortedDataInMemory[i].size()-1, i);
             }
         }else{
-            //insert the new book in the proper sorted index int the sortedDataInMemory
+            //insert the new book into the proper sorted index of the "sortedDataInMemory"
             sortedDataInMemory.at(i).insert(sortedDataInMemory.at(i).begin() + (long)bookSearch(sortedDataInMemory.at(i), book, i)[1], book);
         }
         //printing the loading bar
