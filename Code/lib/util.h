@@ -134,29 +134,45 @@ class Util{
             return !symbol;
         }
 
-
+        
         /**
          * @brief loading bar
          * 
          * @param size 
          * @param index 
+         * @param barLength
+         * @param updates
          * @return std::string 
          */
-        static std::string loading(unsigned long long size, unsigned long long index){
+        template <typename... Ts>
+        static std::string loading(Ts const & ... args){
+            using unused = int[];
+            std::vector<unsigned long long> vals;
+            (void)unused { 0, (vals.push_back(args), 0)... };
+
+            unsigned long long size = vals.at(0), index = vals.at(1);
+
             if (size > 0 && index <= size){
-                static unsigned short i = 0;
-                unsigned short percent = (unsigned short)(index * 100 / size);
-                unsigned short maxToken = (unsigned short)(percent/5);
-                std::string colors;
+                //bar standard parameters
+                unsigned short barLength= vals.size() > 2 && vals.at(2) > 0 ? (unsigned short)vals.at(2): 50;
+                unsigned short updates  = vals.size() > 3 && vals.at(3) > 0 ? (unsigned short)vals.at(3): 100;
+
+                //calculating loading bar
+                static unsigned short i     = 0;
+                updates = updates > 99? 100: updates < 1? 0: updates;
+                unsigned short barPercent   = (unsigned short)(index * updates / size);
+                unsigned short tokens       = (unsigned short)((float)barLength / updates * barPercent);
                 
-                if(maxToken != i){
-                    i = maxToken;
-                
+                if(tokens != i){
+                    i = tokens;
+                    std::string colors;
+                    unsigned short percent = (unsigned short)(index * 100 / size);
+                    
                     if(percent != 100 && size > index){
-                        std::string status = std::string(maxToken*2, (char)219); //219 is the ascii code for the square symbol
-                        if(percent < 33) colors = "red";
-                        else if(percent < 66) colors = "yellow";
-                        else colors = "green";
+                        std::string status = std::string(tokens, (char)219); //219 is the ascii code for the square symbol
+                        if      (percent < 33)  colors = "red";
+                        else if (percent < 66)  colors = "yellow";
+                        else                    colors = "green";
                         
                         return color(colors)+status+" "+std::to_string(percent)+"%"+colorReset()+"\r";
                     }
