@@ -24,7 +24,7 @@ void Collection::addBook(Books *book){
     shuffle(data);
     quicksort(data, 0, data.size()-1, 0);
     
-    unsigned long titleSize = book->getSTsize();
+    const unsigned long titleSize = book->getSTsize();
 
     //cicling over the title length of the new book
     for(unsigned long i=0; i<titleSize; i++){
@@ -39,7 +39,7 @@ void Collection::addBook(Books *book){
 
                 //cicling over the whole data
                 for(unsigned long long j=0; j<data.size(); j++){
-                    unsigned long iterTsize = data[j]->getSTsize();
+                    const unsigned long iterTsize = data[j]->getSTsize();
 
                     if(iterTsize > i) sortedDataInMemory[i].push_back(data[j]);
                 }
@@ -111,7 +111,7 @@ std::vector<double> Collection::bookIndexes(Books *book){
     std::vector<double> foundIndexes;
 
     //getting index from default data
-    std::vector<unsigned long long> resultData = bookSearch(data, book, 0);
+    const std::vector<unsigned long long> resultData = bookSearch(data, book, 0);
     if(resultData[0] != 0) foundIndexes.push_back((double)resultData[1]);
     else{
          foundIndexes.push_back(-1);
@@ -119,12 +119,12 @@ std::vector<double> Collection::bookIndexes(Books *book){
     }
 
     //getting the maximum index iterable
-    unsigned long tLength = (*book).getSTsize();
-    unsigned long sdimMaxSize = tLength > sortedDataInMemory.size()? sortedDataInMemory.size(): tLength;
+    const unsigned long tLength = book->getSTsize();
+    const unsigned long sdimMaxSize = tLength > sortedDataInMemory.size()? sortedDataInMemory.size(): tLength;
 
     //getting indexes from the sortedDataInMemory
     for(unsigned int i=0; i<sdimMaxSize; i++){
-        std::vector<unsigned long long> result = bookSearch(sortedDataInMemory[i], book, i);
+        const std::vector<unsigned long long> result = bookSearch(sortedDataInMemory[i], book, i);
         if(result[0] != 0) foundIndexes.push_back((double)result[1]);
         else{
             foundIndexes.push_back(-1);
@@ -149,7 +149,7 @@ void Collection::collectionClear(){
  */
 void Collection::addNewBook(){
 
-    std::vector<std::string> wizard = {"Enter here the title","Now enter the author","Include an ISBN","Specify a quantity"};
+    const std::vector<std::string> wizard = {"Enter here the title","Now enter the author","Include an ISBN","Specify a quantity"};
     std::vector<std::string> bookData;
     
     //cicling over all the required filds
@@ -157,7 +157,7 @@ void Collection::addNewBook(){
         Util::println("\r\n",wizard[i],"magenta");
         //getting user input
         std::cout << "\r\nEnter data here :> ";
-        std::string choice = Util::cinln();
+        const std::string choice = Util::cinln();
 
         if(i > 1){
             if(!Util::isNumber(choice)){
@@ -189,13 +189,13 @@ std::string Collection::booksTable(std::deque<Books*> &books){
     //longest detector
     unsigned long long i=0;
     for (auto it = books.begin(); it != books.end(); it++){
-        std::string title = (**it).getTitle();
+        const std::string title = (**it).getTitle();
         //adding data
         allData[0].push_back(std::to_string(++i));
         allData[1].push_back(title);
         
         //calculating longest
-        unsigned long iSize = std::to_string(i).size(), titleSize = title.size();
+        const unsigned long iSize = std::to_string(i).size(), titleSize = title.size();
         longest[0] = longest[0] < iSize? iSize: longest[0];
         longest[1] = longest[1] < titleSize? titleSize: longest[1];
     }
@@ -225,11 +225,11 @@ bool Collection::findBook(){
 
     //getting user input
     std::cout << "\r\nEnter data here :> ";
-    std::string choice = Util::cinln();
+    const std::string choice = Util::cinln();
     std::cout << std::endl;
 
-    if(choice == "00") return false;
-    else if(choice == "0") return true;
+    if     (choice == "00") return false;
+    else if(choice == "0" ) return true;
     else if(choice == "" || choice == " "){
         Util::println("\r\n", "Wrong selection! Try again.", "\r\n", "yellow");
         return findBook();
@@ -259,15 +259,15 @@ int Collection::booksChoice(std::deque<Books*> &books){
 
             //getting user input
             std::cout << "\r\nEnter number here :> ";
-            std::string choice = Util::cinln();
+            const std::string choice = Util::cinln();
 
-            if(choice == "0") return 1;
+            if     (choice == "0" ) return 1;
             else if(choice == "00") return 0;
             else if(Util::isNumber(choice) && Util::sTod(choice)>0 && Util::sTod(choice) <= (double)books.size()){
                 
-                double result = books[(unsigned long)(Util::sTod(choice)-1)]->bookManager();
+                const double result = books[(unsigned long)(Util::sTod(choice)-1)]->bookManager();
                 
-                if( result == 0) return 0;
+                if     (result == 0) return 0;
                 else if(result == 2){
                     //book removing
                     if(&books == &data){

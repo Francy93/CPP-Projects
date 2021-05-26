@@ -19,7 +19,7 @@ Operations::Operations(){ int s = system(""); s=s; };
 bool Operations::reader(std::string fileName){
     //getting the file lines amount
     std::ifstream count(fileName);
-    unsigned long long fileSize = std::count(std::istreambuf_iterator<char>(count),  std::istreambuf_iterator<char>(), '\n');
+    const unsigned long long fileSize = std::count(std::istreambuf_iterator<char>(count),  std::istreambuf_iterator<char>(), '\n');
     count.close();
     //opening back the file
     std::ifstream file(fileName);
@@ -38,7 +38,7 @@ bool Operations::reader(std::string fileName){
                     line.c_str();
 
                     //splitting the string by delimiter "tab" (ascii code 9)
-                    std::vector<std::string> elements = Util::split(line, std::string(1, 9));
+                    const std::vector<std::string> elements = Util::split(line, std::string(1, 9));
                     if(elements.size() > 3 && Util::sTod(elements[3]) != 0){
                             //storing the book object
                             Books *b = new Books(elements[0], elements[1], elements[2], elements[3]);

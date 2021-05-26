@@ -150,22 +150,22 @@ class Util{
             std::vector<unsigned long long> vals;
             (void)unused { 0, (vals.push_back(args), 0)... };
 
-            unsigned long long size = vals.at(0), index = vals.at(1);
+            const unsigned long long size = vals.at(0), index = vals.at(1);
 
             if (size > 0 && index <= size){
                 //bar standard parameters
-                unsigned short barLength    = vals.size() > 2 && vals.at(2) > 0 ? (unsigned short)vals.at(2): 50;
-                unsigned short updates      = vals.size() > 3 && vals.at(3) > 0 ? (unsigned short)vals.at(3): 100;
+                static const unsigned short barLength   = vals.size() > 2 && vals.at(2) > 0? (unsigned short)vals.at(2): 50;
+                static unsigned short updates           = vals.size() > 3 && vals.at(3) > 0? (unsigned short)vals.at(3): 100;
 
                 //calculating loading bar
                 static unsigned short i     = 0;
                 updates = updates > 99? 100: updates < 1? 0: updates;
-                unsigned short barPercent   = (unsigned short)(index * updates / size);
-                unsigned short tokens       = (unsigned short)((float)barLength / updates * barPercent);
+                const unsigned short barPercent   = (unsigned short)(index * updates / size);
+                const unsigned short tokens       = (unsigned short)((float)barLength / updates * barPercent);
                 
                 if(tokens != i){
                     i = tokens;
-                    unsigned short percent = (unsigned short)(index * 100 / size);
+                    const unsigned short percent = (unsigned short)(index * 100 / size);
                     
                     if(percent != 100 && size > index){
                         std::string status = std::string(tokens, (char)219), colors; //219 is the ascii code for the square symbol

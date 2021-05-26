@@ -28,7 +28,7 @@ Books::~Books(){
   * 
   */
 void Books::titleSplitter(){
-    std::vector<std::string> splitted(Util::split(Util::toLower(title), " ") );
+    const std::vector<std::string> splitted(Util::split(Util::toLower(title), " ") );
     for(unsigned int i=0; i< splitted.size(); i++){
         std::string titleWord = "";
         for (std::vector<std::string>::const_iterator it = splitted.begin()+i; it != splitted.end(); ++it){
@@ -117,7 +117,7 @@ std::string Books::bookPrint(){
     //longest detector
     for(unsigned int i=0; i<longest.size() ;i++){
         for(unsigned int j=0; j<allData[0].size(); j++){
-            std::string attr = allData[i][j];
+            const std::string attr = allData[i][j];
             //calculating longest
             longest[i] = longest[i] < attr.size()? attr.size(): longest[i];
         }
