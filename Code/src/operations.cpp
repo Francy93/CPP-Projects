@@ -33,7 +33,6 @@ bool Operations::reader(std::string fileName){
             unsigned long long corruptedCounter = 0, index = 0;
 
             while (std::getline(file, line)) {
-                index++;
                 if(line != " " && line != "\n" && line != "" && line != "1" && line != "0"){
                     line.c_str();
 
@@ -44,9 +43,9 @@ bool Operations::reader(std::string fileName){
                             Books *b = new Books(elements[0], elements[1], elements[2], elements[3]);
                             data.push_back( b );
                     }else corruptedCounter++;
-                }else corruptedCounter++;
+                }
                 //printing the loading bar
-                std::cout << Util::loading(fileSize, index);
+                std::cout << Util::loading(fileSize, ++index);
             }
             //closing the file scanner
             file.close();
