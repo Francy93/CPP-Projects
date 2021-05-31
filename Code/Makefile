@@ -189,7 +189,8 @@ endif
 
 
 # The next warnings are neither valid nor needed for C++
-CWARNSC = -Wdeclaration-after-statement \
+CWARNSC = \
+	-Wdeclaration-after-statement \
 	-Wmissing-prototypes \
 	-Wnested-externs \
 	-Wstrict-prototypes \
