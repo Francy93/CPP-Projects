@@ -67,25 +67,33 @@ DISP_INFO			=	false
 #############################
 
 
+SLASH = \\
 # defining directories
 ifeq ($(OS),Windows_NT)
 	OS_EXE		:=	.exe
 	INCL_DIRS	:=	$(INCLUDE_DIR)
 	LIB_DIRS	:=	$(LIB_DIR)
-	FIXPATH 	=	$(subst /,\,$1)
-	RM			:=	del /q /f
-	MD			:=	mkdir
 	ESC_SEQ		:=	-e
+	ifeq ($(shell echo $$OSTYPE),cygwin)
+		FIXPATH		=	$1
+		RM 			:=	rm -f
+		RMDIR		:=	$(RM)r
+		MD			:=	mkdir -p
+	else
+		FIXPATH	 	=	$(subst /,$(SLASH),$1)
+		RM			:=	DEL /F/Q
+		RMDIR		:=	RMDIR /Q/S
+		MD			:=	MD
+	endif
 else
 	SRC_DIR		:=	$(shell find $(SRC_DIR) -type d)
 	INCL_DIRS	:=	$(shell find $(INCLUDE_DIR) -type d)
 	LIB_DIRS	:=	$(shell find $(LIB_DIR) -type d)
-	FIXPATH 	=	$1
+	FIXPATH		=	$1
 	RM 			:=	rm -f
+	RMDIR		:=	$(RM)r
 	MD			:=	mkdir -p
 endif
-RM 			:= rm -f
-FIXPATH 	= $1
 
 
 # main finder regex
@@ -310,7 +318,6 @@ MESSAGE_3.4	:=	echo Exceptions handler failed!
 
 # makes build directory, updates your objects, builds your executable
 all: --directories
-	@echo;
 	@if [ $(SRCEXT) ]; then \
 		if $(MAKE) $(-W) -q $(TARGET_OUTPUT); then \
 			$(MESSAGE_0.3); \
@@ -393,7 +400,7 @@ clean:
 		$(call RECIPE_DEBUG, $(RM) $(call FIXPATH,$(DEPS));) \
 		echo; $(MESSAGE_1.1); \
 		$(MESSAGE_2.4) $(OBJECT_DIR) $(TARGET_DIR); \
-		$(call RECIPE_DEBUG, $(RM) -rf $(OBJECT_DIR) $(TARGET_DIR);) \
+		$(call RECIPE_DEBUG, $(RMDIR) $(OBJECT_DIR) $(TARGET_DIR);) \
 		echo; $(MESSAGE_3.0); \
 	else $(MESSAGE_3.1); \
 	fi

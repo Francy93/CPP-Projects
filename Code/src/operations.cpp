@@ -33,12 +33,12 @@ bool Operations::reader(std::string fileName){
             unsigned long long corruptedCounter = 0, index = 0;
 
             while (std::getline(file, line)) {
-                if(line != " " && line != "\n" && line != "" && line != "1" && line != "0"){
-                    line.c_str();
+                line.c_str();
+                //splitting the string by delimiter "tab" (ascii code 9)
+                const std::vector<std::string> elements = Util::split(line, std::string(1, 9));
 
-                    //splitting the string by delimiter "tab" (ascii code 9)
-                    const std::vector<std::string> elements = Util::split(line, std::string(1, 9));
-                    if(elements.size() > 3 && Util::sTod(elements[3]) != 0){
+                if(elements.size() > 3){
+                    if(Util::sTod(elements[3]) != 0){
                             //storing the book object
                             Books *b = new Books(elements[0], elements[1], elements[2], elements[3]);
                             data.push_back( b );

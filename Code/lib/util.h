@@ -140,22 +140,20 @@ class Util{
          * 
          * @param size 
          * @param index 
-         * @param barLength
-         * @param updates
+         * @param barLength (facultative)
+         * @param updates (facultative)
          * @return std::string 
          */
         template <typename... Ts>
-        static std::string loading(Ts const & ... args){
+        static std::string loading(const unsigned long long size, const unsigned long long index, Ts const & ... args){
             using unused = int[];
             std::vector<unsigned long long> vals;
             (void)unused { 0, (vals.push_back(args), 0)... };
 
-            const unsigned long long size = vals.at(0), index = vals.at(1);
-
             if (size > 0 && index <= size){
                 //bar standard parameters
-                static const unsigned short barLength   = vals.size() > 2 && vals.at(2) > 0? (unsigned short)vals.at(2): 50;
-                static unsigned short updates           = vals.size() > 3 && vals.at(3) > 0? (unsigned short)vals.at(3): 100;
+                static const unsigned short barLength   = vals.size() > 0 && vals.at(0) > 0? (unsigned short)vals.at(0): 50;
+                static unsigned short updates           = vals.size() > 1 && vals.at(1) > 0? (unsigned short)vals.at(1): 100;
 
                 //calculating loading bar
                 static unsigned short i     = 0;
