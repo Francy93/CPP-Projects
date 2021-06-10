@@ -325,11 +325,11 @@ MESSAGE_2.2	=	echo Assembling compiled objects into: $@
 MESSAGE_2.3	=	echo Running the executable: $(TARGET_OUTPUT)
 MESSAGE_2.4	:=	echo Removing:
 # footer messages
-MESSAGE_3.0	:=	echo Cleanup complete!
-MESSAGE_3.1	:=	echo Nothing to be deleted!
-MESSAGE_3.2	:=	echo Remake complete!
-MESSAGE_3.3	:=	echo Executing 'run: all' complete!
-MESSAGE_3.4	:=	echo Exceptions handler failed!
+MESSAGE_3.0	:=	$(PRINTLN) Cleanup complete! $(call COLOR,👍,green)
+MESSAGE_3.1	:=	$(PRINTLN) Nothing to be deleted! $(call COLOR,⚠️,yellow)
+MESSAGE_3.2	:=	$(PRINTLN) Remake complete! $(call COLOR,✔️,green)
+MESSAGE_3.3	:=	$(PRINTLN) Executing 'run: all' complete! $(call COLOR,✔️,green)
+MESSAGE_3.4	:=	$(PRINTLN) Exceptions handler failed! $(call COLOR,❌,red)
 
 
 
