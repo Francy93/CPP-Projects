@@ -355,7 +355,7 @@ all: --directories
 
 # updates your objects, builds your executable
 $(TARGET_OUTPUT): $(OBJECTS)
-	@$(NL)$(BR) $(if $(AT),,$(NL)$(BR)) $(MESSAGE_1.4) $(BR) $(MESSAGE_2.2)
+	@$(NL)$(BR)  $(MESSAGE_1.4) $(BR) $(if $(AT),,$(NL)$(BR)) $(MESSAGE_2.2)
 	$(AT) $(CCX) $(CXXFLAGS) $^ -o $@ $(LFLAGS) $(LIBS) $(INCLUDES)
 
 
