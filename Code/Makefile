@@ -405,7 +405,6 @@ exp_handler:
 		$(MESSAGE_2.0) $(TARGET_DIR) $(BR)\
 		$(call RECIPE_DEBUG, $(MD) $(TARGET_DIR) $(BR)))
 
-
 # Clean removes all the object and executable files
 clean:
 	@$(NL)$(BR)

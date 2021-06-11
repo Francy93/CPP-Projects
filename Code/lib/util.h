@@ -171,6 +171,7 @@ class Util{
                         else if (percent < 66)  colors = "yellow";
                         else                    colors = "green";
                         
+                        std::cout << std::flush;
                         return color(colors)+status+" "+std::to_string(percent)+"%"+colorReset()+"\r";
                     }
                     return "\33[2K";
