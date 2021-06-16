@@ -289,6 +289,7 @@ class Util{
             return vec;
         }
 
+
         /**
          * @brief an enanched and actually working cin
          * 
@@ -311,22 +312,53 @@ class Util{
 
 
         /**
+         * @brief Get a list of the longest strings size
+         * 
+         * @param allData 
+         * @return std::vector<unsigned long> 
+         */
+        static std::vector<unsigned long> getLongest(std::deque<std::deque<std::string>> &allData){
+            //final vector of longest
+            std::vector<unsigned long> longest;
+            //longest detector
+            unsigned long long i=0;
+            for (auto col = allData.begin(); col != allData.end(); col++){
+                longest.push_back(0);
+                //iterating over rows checking each string size
+                for (auto str = col->begin(); str != col->end(); str++){
+                   longest[i] = str->size() > longest[i]? str->size(): longest[i];
+                }
+                i++;
+            }
+            return longest;
+        }
+
+
+        /**
          * @brief table generator
          * 
          * @param allData 
          * @param longest 
          * @return std::string 
          */
-        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest){
+        static std::string tableMaker(std::deque<std::deque<std::string>> &allData){ return tableMk(allData,{}); }
+        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest){ return tableMk(allData,longest); }
+        static std::string tableMk(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest){
             // style parameters
-            const short maxLength         = 100;              // maximum of characters allowed per string
-            const std::string columnDelim = "|";              // columns delimiter
-            const char rowDelim           = '-';              // rows delimiter
+            const short maxLength           = 100;              // maximum of characters allowed per string
+            const std::string columnDelim   = "|";              // columns delimiter
+            const char rowDelim             = '-';              // rows delimiter
             // color paramenters
-            const std::string colorStart  = color("magenta"); // the table frame color
-            const std::string colorEnd    = colorReset();     // resetting the color after use
+            const std::string colorStart    = color("magenta"); // the table frame color
+            const std::string colorEnd      = colorReset();     // resetting the color after use
 
-
+            // auto detect of the longest strings size
+            if(longest.size() < allData.size()){
+                std::deque<std::deque<std::string>> partialData;
+                partialData.insert(partialData.end(), allData.begin()+longest.size(), allData.end());
+                std::vector<unsigned long> missingLongest = getLongest(partialData);
+                longest.insert(longest.end(), missingLongest.begin(), missingLongest.end());
+            }
             //setting the max length of the rows
             for(unsigned int i = 0; i< longest.size(); i++){
                 longest[i] = longest[i] > maxLength? maxLength: longest[i];
