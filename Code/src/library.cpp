@@ -85,6 +85,7 @@ int main(int argc, char *argv[]){
         //getting file name to read
         std::cout << "\r\nEnter a choice here :> ";
         if(fileName == "") fileName = Util::cinln();
+        else std::cout << fileName << std::endl;
 
 
         if(fileName != "00"){

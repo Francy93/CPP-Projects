@@ -144,16 +144,15 @@ class Util{
          * @param updates (facultative)
          * @return std::string 
          */
-        template <typename... Ts>
-        static std::string loading(const unsigned long long size, const unsigned long long index, Ts const & ... args){
-            using unused = int[];
-            std::vector<unsigned long long> vals;
-            (void)unused { 0, (vals.push_back(args), 0)... };
+        static std::string loading(const unsigned long long size, const unsigned long long index){ return loadingBar(size,index,0,0); }
+        static std::string loading(const unsigned long long size, const unsigned long long index ,unsigned short barLength){ return loadingBar(size,index,barLength,0); }
+        static std::string loading(const unsigned long long size, const unsigned long long index ,unsigned short barLength, unsigned short updates){ return loadingBar(size,index,barLength,updates); }
+        static std::string loadingBar(const unsigned long long size, const unsigned long long index, unsigned short barLength, unsigned short updates){
 
             if (size > 0 && index <= size){
                 //bar standard parameters
-                static const unsigned short barLength   = vals.size() > 0 && vals.at(0) > 0? (unsigned short)vals.at(0): 50;
-                static unsigned short updates           = vals.size() > 1 && vals.at(1) > 0? (unsigned short)vals.at(1): 100;
+                barLength   = barLength > 0? barLength: 50;
+                updates     = updates > 0? updates: 100;
 
                 //calculating loading bar
                 static unsigned short i     = 0;
@@ -161,21 +160,32 @@ class Util{
                 const unsigned short barPercent   = (unsigned short)(index * updates / size);
                 const unsigned short tokens       = (unsigned short)((float)barLength / updates * barPercent);
                 
-                if(tokens != i){
-                    i = tokens;
+                if( (tokens != i && tokens != 0) || i == 0){
+
+                    i = i == 0? 1: tokens;
                     const unsigned short percent = (unsigned short)(index * 100 / size);
+                    std::string block,dotted;
+                    #if defined(_WIN32)
+                        block   = std::string(1,(char)219), dotted  = std::string(1,(char)176);
+                    #else
+                        block   = "█",dotted = "░";
+                    #endif
                     
                     if(percent != 100 && size > index){
-                        std::string status = std::string(tokens, (char)219), colors; //219 is the ascii code for the square symbol
+                        std::string statusFull = "", statusVoid = "", colors; //219 is the ascii code for the square symbol
+                        for(unsigned long j=0;j<tokens;j++) statusFull += block;
+                        for(unsigned long j=0;j<barLength-(unsigned long)tokens;j++) statusVoid += dotted;
                         if      (percent < 33)  colors = "red";
                         else if (percent < 66)  colors = "yellow";
                         else                    colors = "green";
                         
-                        std::cout << std::flush;
-                        return color(colors)+status+" "+std::to_string(percent)+"%"+colorReset()+"\r";
+                        return color(colors)+statusFull+colorReset()+statusVoid+" "+color(colors)+std::to_string(percent)+"%"+colorReset()+"\r";
                     }
+                    i = 0;
+                    std::cout << std::flush;
                     return "\33[2K";
                 }
+                std::cout << std::flush;
             }
             return "";
         }
