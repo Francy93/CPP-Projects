@@ -51,7 +51,7 @@ void Collection::addBook(Books *book){
             sortedDataInMemory.at(i).insert(sortedDataInMemory.at(i).begin() + (long)bookSearch(sortedDataInMemory.at(i), book, i)[1], book);
         }
         //printing the loading bar
-        std::cout << Util::loading(titleSize, i+1);
+        Util::loading(titleSize, i+1);
     }
 }
 
@@ -328,7 +328,7 @@ void Collection::sortDataInMemory(){
                 else sortedDataInMemory.push_back({data[i]});
             }
             //printing the loading bar
-            std::cout << Util::loading(dataSize*2, i);
+            Util::loading(dataSize*2, i);
         }
 
         //sorting data of "sortedDataInMemory" from index 1 on
@@ -338,7 +338,7 @@ void Collection::sortDataInMemory(){
             quicksort(sortedDataInMemory[i], 0, sortedDataInMemory[i].size()-1, i);
 
             //printing the loading bar
-            std::cout << Util::loading(BIGsize*2, BIGsize+i+1);
+            Util::loading(BIGsize*2, BIGsize+i+1);
         }
     }
     std::cout << std::endl;

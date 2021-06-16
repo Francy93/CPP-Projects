@@ -144,10 +144,10 @@ class Util{
          * @param updates (facultative)
          * @return std::string 
          */
-        static std::string loading(const unsigned long long size, const unsigned long long index){ return loadingBar(size,index,0,0); }
-        static std::string loading(const unsigned long long size, const unsigned long long index ,unsigned short barLength){ return loadingBar(size,index,barLength,0); }
-        static std::string loading(const unsigned long long size, const unsigned long long index ,unsigned short barLength, unsigned short updates){ return loadingBar(size,index,barLength,updates); }
-        static std::string loadingBar(const unsigned long long size, const unsigned long long index, unsigned short barLength, unsigned short updates){
+        static void loading(const unsigned long long size, const unsigned long long index){ loadingBar(size,index,0,0); }
+        static void loading(const unsigned long long size, const unsigned long long index ,unsigned short barLength){ loadingBar(size,index,barLength,0); }
+        static void loading(const unsigned long long size, const unsigned long long index ,unsigned short barLength, unsigned short updates){ loadingBar(size,index,barLength,updates); }
+        static void loadingBar(const unsigned long long size, const unsigned long long index, unsigned short barLength, unsigned short updates){
 
             if (size > 0 && index <= size){
                 //bar standard parameters
@@ -155,14 +155,14 @@ class Util{
                 updates     = updates > 0? updates: 100;
 
                 //calculating loading bar
-                static unsigned short i     = 0;
+                static short i  = -1;
                 updates = updates > 99? 100: updates < 1? 0: updates;
                 const unsigned short barPercent   = (unsigned short)(index * updates / size);
                 const unsigned short tokens       = (unsigned short)((float)barLength / updates * barPercent);
                 
-                if( (tokens != i && tokens != 0) || i == 0){
-
-                    i = i == 0? 1: tokens;
+                if(tokens != i){
+                    // "i" determines when to print the status bar
+                    i = tokens;
                     const unsigned short percent = (unsigned short)(index * 100 / size);
                     std::string block,dotted;
                     #if defined(_WIN32)
@@ -179,15 +179,14 @@ class Util{
                         else if (percent < 66)  colors = "yellow";
                         else                    colors = "green";
                         
-                        return color(colors)+statusFull+colorReset()+statusVoid+" "+color(colors)+std::to_string(percent)+"%"+colorReset()+"\r";
+                        std::string outcome = color(colors)+statusFull+colorReset()+statusVoid+" "+color(colors)+std::to_string(percent)+"%"+colorReset()+"\r";
+                        std::cout << std::flush << outcome << std::flush;
+                    }else {
+                        i = -1;
+                        std::cout << "\33[2K" << std::flush;
                     }
-                    i = 0;
-                    std::cout << std::flush;
-                    return "\33[2K";
                 }
-                std::cout << std::flush;
             }
-            return "";
         }
 
 
@@ -332,9 +331,14 @@ class Util{
             for(unsigned int i = 0; i< longest.size(); i++){
                 longest[i] = longest[i] > maxLength? maxLength: longest[i];
             }
+            // getting the size of the longest column
+            unsigned long long longestColumn = 0;
+            for(unsigned int i = 0; i< allData.size(); i++){
+                longestColumn = allData[i].size() > longestColumn? allData[i].size(): longestColumn;
+            }
                 
             std::string table = "", border = "";
-            for(unsigned long long i=0; i<allData[0].size(); i++){
+            for(unsigned long long i=0; i<longestColumn; i++){
                 //creating the row
                 std::string delimiter =colorStart+columnDelim+colorEnd;
                 std::string row = "";
@@ -342,8 +346,8 @@ class Util{
                 //cycling over the columns
                 for(unsigned int j=0; j<allData.size(); j++){
 
-                    std::string str = allData[j][i];
-                    if(str.size() > maxLength){ str = str.substr(0, maxLength-3)+"..."; }
+                    std::string str = allData[j].size() > i? allData[j][i]: " ";
+                    if(str.size() > maxLength) str = str.substr(0, maxLength-3)+"...";
                     const unsigned long strSize = str.size();
 
                     const unsigned long leng = longest[j] - strSize < 1? 0: longest[j] - strSize;

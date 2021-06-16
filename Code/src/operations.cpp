@@ -45,7 +45,7 @@ bool Operations::reader(std::string fileName){
                     }else corruptedCounter++;
                 }
                 //printing the loading bar
-                std::cout << Util::loading(fileSize, ++index);
+                Util::loading(fileSize, ++index);
             }
             //closing the file scanner
             file.close();
