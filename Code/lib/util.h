@@ -417,7 +417,7 @@ class Util{
                         end   = colorEnd;
                     }
                     elem += start+ str + spaces + end;
-                    row += delimiter+" " + elem + " ";
+                    row  += delimiter+" "+ elem + " ";
                 }
                 row += delimiter;
 
