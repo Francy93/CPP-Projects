@@ -122,7 +122,7 @@ std::string Books::bookPrint(){
             longest[i] = longest[i] < attr.size()? attr.size(): longest[i];
         }
     }
-    return Util::tableMaker(allData, longest);
+    return Util::tableMaker(allData, longest, 100);
 }
 
 /**

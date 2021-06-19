@@ -341,16 +341,21 @@ class Util{
          * @param longest 
          * @return std::string 
          */
-        static std::string tableMaker(std::deque<std::deque<std::string>> &allData){ return tableMk(allData,{}); }
-        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest){ return tableMk(allData,longest); }
-        static std::string tableMk(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest){
+        static std::string tableMaker(std::deque<std::deque<std::string>> &allData){ return tableMk(allData,{},0); }
+        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest){ return tableMk(allData,longest,0); }
+        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, unsigned long size){ return tableMk(allData,{},size); }
+        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest, unsigned long size){ return tableMk(allData,longest,size); }
+        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, unsigned long size, std::vector<unsigned long> longest){ return tableMk(allData,longest,size); }
+        static std::string tableMk   (std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest,unsigned long size){
             // style parameters
-            const short maxLength           = 100;              // maximum of characters allowed per string
             const std::string columnDelim   = "|";              // columns delimiter
             const char rowDelim             = '-';              // rows delimiter
             // color paramenters
             const std::string colorStart    = color("magenta"); // the table frame color
             const std::string colorEnd      = colorReset();     // resetting the color after use
+
+            const unsigned long delimSize   = (((allData.size()+1)*(columnDelim.size()+2))-2);
+            if(size) size = size >= delimSize+allData.size()? size-delimSize: allData.size();
 
             // auto detect of the longest strings size
             if(longest.size() < allData.size()){
@@ -359,37 +364,56 @@ class Util{
                 std::vector<unsigned long> missingLongest = getLongest(partialData);
                 longest.insert(longest.end(), missingLongest.begin(), missingLongest.end());
             }
+            
             //setting the max length of the rows
-            for(unsigned int i = 0; i< longest.size(); i++){
-                longest[i] = longest[i] > maxLength? maxLength: longest[i];
+            std::vector<unsigned long> maxLength = longest;
+            if(size){
+                unsigned long rowSum = 0;
+                for(unsigned long i=0; i<allData.size(); i++) rowSum += longest[i];
+                // maximum of characters allowed per string
+                if((double)size - rowSum >= 0) for(unsigned long i = 0; i< allData.size(); i++) maxLength[i] = ((double)longest[i] / rowSum) * size;
+                else{
+                    unsigned long spaceTaken = 0, bigColumns = allData.size();
+                    for(unsigned long i = 0; i< allData.size(); i++){
+                        if(longest[i] <= (double)size/allData.size()) maxLength[i] = longest[i], spaceTaken += longest[i], bigColumns--;
+                    }
+                    for(unsigned long i = 0; i< allData.size(); i++){
+                        if(longest[i] > (double)size/allData.size()) maxLength[i] = (double)(size - spaceTaken)/bigColumns;
+                    }
+                }
+                longest = maxLength;
             }
+
             // getting the size of the longest column
             unsigned long long longestColumn = 0;
             for(unsigned int i = 0; i< allData.size(); i++){
                 longestColumn = allData[i].size() > longestColumn? allData[i].size(): longestColumn;
             }
-                
+
             std::string table = "", border = "";
             for(unsigned long long i=0; i<longestColumn; i++){
                 //creating the row
-                std::string delimiter =colorStart+columnDelim+colorEnd;
-                std::string row = "";
-                
+                std::string row = "", delimiter =colorStart+columnDelim+colorEnd;
+
                 //cycling over the columns
                 for(unsigned int j=0; j<allData.size(); j++){
 
                     std::string str = allData[j].size() > i? allData[j][i]: " ";
-                    if(str.size() > maxLength) str = str.substr(0, maxLength-3)+"...";
+                    if(str.size() > maxLength[j]){
+                        std::string excess = "...";
+                        if      (maxLength[j] == 1) str = str.substr(0, 1);
+                        else if (maxLength[j] >1 && maxLength[j] <5) str = str.substr(0, 1)+excess.substr(0, maxLength[j]-1);
+                        else str = str.substr(0, maxLength[j]-3)+excess;
+                    }
                     const unsigned long strSize = str.size();
 
-                    const unsigned long leng = longest[j] - strSize < 1? 0: longest[j] - strSize;
-                    std::string elem ="";
-                    std::string spaces = leng > 0? std::string(leng, ' '): "";
+                    const unsigned long leng = (double)longest[j] - strSize < 1? 0: longest[j] - strSize;
+                    std::string elem ="", spaces = leng > 0? std::string(leng, ' '): "";
 
                     std::string start = "",end   = "";
                     if(i == 0 || j == 0){
-                        start = color("yellow");
                         if(i == 0) start = color("cyan");
+                        else start = color("yellow");
                         end   = colorEnd;
                     }
                     elem += start+ str + spaces + end;
