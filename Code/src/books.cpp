@@ -75,7 +75,7 @@ unsigned short Books::setQty(long q, bool mode){
         if(Books::qty-(unsigned long)q == 0){
             Util::println("\r\nWARNING! Are you sure you wanna remove this title from the library?\r\n", "yellow");
             //processing the choice
-            switch(Util::navChoice({"Confirm"}, 10)){
+            switch(Util::navChoice({"Confirm"}, 20)){
                 case -1: return 0; //terminatign this function and close the program
                 case  0: return 1; //exiting the main loop and terminate this function
                 case  1: return 2;
@@ -122,7 +122,7 @@ std::string Books::bookPrint(){
             longest[i] = longest[i] < attr.size()? attr.size(): longest[i];
         }
     }
-    return Util::tableMaker(allData, longest, 100);
+    return Util::tableMaker(allData, longest,100,"magenta");
 }
 
 /**
@@ -131,19 +131,19 @@ std::string Books::bookPrint(){
  * @return int 
  */
 int Books::bookManager(){
-    std::cout << bookPrint() <<std::endl;
+    std::cout << bookPrint();
 
     while(true){
         std::cout << std::endl;
         //processing the choice
-        switch(Util::navChoice({"Edit the quantity"}, 10)){
+        switch(Util::navChoice({"Edit the quantity"}, 40)){
             case -1: return 0; //terminatign this function and close the program 
             case  0: return 1; //exiting the main loop and terminate this function
             case  1:
         
                 while(true){
                     std::cout << "\r\nNow enter a quantity to be summed (e.g 1, -1, 5, -18)" << std::endl;
-                    std::cout << Util::navOptions({}, 10) << std::endl;
+                    Util::navOptions({}, 20, "yellow",true);
 
                     //getting user input
                     std::cout << "\r\nEnter a choice here :> ";

@@ -180,7 +180,7 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
             Util::println("NOTHING FOUND, AT A GLANCE! ", "yellow");
 
             //processing the choice
-            switch(Util::navChoice({"Perform a DEEPER search?"}, 8)){
+            switch(Util::navChoice({"Perform a DEEPER search?"}, 40)){
                 case -1: return false; //terminatign this function and close the program 
                 case  0: return true ; //exiting the main loop and terminate this function
             }
@@ -193,8 +193,9 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
                 }
                 
                 Util::println("\r\n", "YES, FOUND: ", std::to_string(firstMatches), "\r\n", "green");
-                if(end) std::cout << Util::navOptions({"Select one of these books"}, 10) << std::endl;
-                else std::cout << Util::navOptions({"Select one of these books","PERFORM A DEEPER SEARCH"}, 10) << std::endl;
+                if(end) Util::navOptions({"Select one of these books"}, 40, "yellow", true);
+                else Util::navOptions({"Select one of these books","PERFORM A DEEPER SEARCH"}, 40, "yellow", true);
+                std::cout << std::endl;
 
             }else if(end){
                 if(found.size() > firstMatches){
@@ -207,7 +208,8 @@ bool Collection::binarySearch(std::deque<Books*> &array,std::string word){
                     if(firstMatches != 0){ *lastMatches += " MORE OUT OF " + std::to_string(found.size()); }
                     Util::println("\r\n", "FOUND ", std::to_string(found.size()-firstMatches), *lastMatches, "\r\n", "green");
                     delete lastMatches;
-                    std::cout << Util::navOptions({"Select a book"}, 10) << std::endl;
+                    Util::navOptions({"Select a book"}, 40, "yellow", true);
+                    std::cout << std::endl;
                 }else{ 
                     Util::println("\r\n", "NO FURTHER MATCHING FOUND!");
                     if(&array == &data && sortedDataInMemory.size() > 0 && !booksSorted){

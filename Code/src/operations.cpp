@@ -95,18 +95,12 @@ bool Operations::reader(std::string fileName){
  */
 bool Operations::options(){
     
-    std::string *border = new std::string("---------------------------");
-    Util::println("\r\n", *border, "blue");
-    Util::println("|        MAIN MENU        |", "cyan");
-    Util::println(*border, "blue");
-    std::cout << "| Add a new Book........1 |" << std::endl;
-    std::cout << "| Find a Book...........2 |" << std::endl;
-    std::cout << "| Show collection.......3 |" << std::endl;
-    Util::println(*border, "blue");
-    std::cout << "| Go BACK...............0 |" << std::endl;
-    std::cout << "| EXIT.................00 |" << std::endl;
-    Util::println(*border,"\r\n", "blue");
-    delete border;
+    std::deque<std::deque<std::string>> * menu = new std::deque<std::deque<std::string>>{};
+    *menu = {{"       MAIN MENU       ", "Add a new Book........1", "Find a Book...........2", "Show collection.......3"}}; 
+    std::cout << Util::tableMaker(*menu, "blue");
+    *menu = {{"Go BACK...............0", "EXIT.................00"}};
+    std::cout << Util::tableMaker(*menu, "blue", false) << std::endl;
+    delete menu;
 
     //sorting the default data deque
     if(!booksSorted){ shuffle(data); quicksort(data, 0, data.size()-1, 0); }

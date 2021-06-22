@@ -71,19 +71,13 @@ int main(int argc, char *argv[]){
 
     //starting the main while loop
     while(true){
-        std::string *border = new std::string("----------------------------------");
-        
-        Util::println("\r\n", *border, "blue");
-        Util::println("|       DUMMY FILE LOADER        |", "cyan");
-        Util::println(*border, "blue");
-        std::cout << "| Enter here below the file name |" << std::endl;
-        std::cout << "| Press  1  to set color ON/OFF  |" << std::endl;
-        std::cout << "| Otherwise enter  00  to EXIT   |" << std::endl;
-        Util::println(*border, "blue");
-        delete border;
+        std::deque<std::deque<std::string>> * loader = new std::deque<std::deque<std::string>>{};
+        *loader={{"      DUMMY FILE LOADER       ","Enter here below the file name","Press  1  to set color ON/OFF","Otherwise enter  00  to EXIT"}};
+        std::cout << Util::tableMaker(*loader, "blue") << std::endl;
+        delete loader;
 
         //getting file name to read
-        std::cout << "\r\nEnter a choice here :> ";
+        std::cout << "Enter a choice here :> ";
         if(fileName == "") fileName = Util::cinln();
         else std::cout << fileName << std::endl;
 
@@ -93,7 +87,7 @@ int main(int argc, char *argv[]){
             else if(ope.reader(fileName)){
                 Util::println("File: \"", fileName, "\" successfully loaded!\r\n", "green");
                 Util::println("\r\nBefore starting! Would you like to sort data so as to experience faster performances?", "yellow");
-                const long long nav = Util::navChoice({"Yes, get faster! (Memory load)", "No, go normal speed (CPU load)"}, 10);
+                const long long nav = Util::navChoice({"Yes, get faster! (Memory load)", "No, go normal speed (CPU load)"}, 40);
 
                 if(nav == 2){ if(!ope.options()) break; }
                 else if(nav == 1){ ope.sortDataInMemory(); if(!ope.options()) break; }

@@ -144,10 +144,9 @@ class Util{
          * @param updates (facultative)
          * @return std::string 
          */
-        static void loading(const unsigned long long size, const unsigned long long index){ loadingBar(size,index,0,0); }
-        static void loading(const unsigned long long size, const unsigned long long index ,unsigned short barLength){ loadingBar(size,index,barLength,0); }
-        static void loading(const unsigned long long size, const unsigned long long index ,unsigned short barLength, unsigned short updates){ loadingBar(size,index,barLength,updates); }
-        static void loadingBar(const unsigned long long size, const unsigned long long index, unsigned short barLength, unsigned short updates){
+        static void loading(const unsigned long long size, const unsigned long long index){ loading(size,index,0,0); }
+        static void loading(const unsigned long long size, const unsigned long long index ,unsigned short barLength){ loading(size,index,barLength,0); }
+        static void loading(const unsigned long long size, const unsigned long long index, unsigned short barLength, unsigned short updates){
 
             if (size > 0 && index <= size){
                 //bar standard parameters
@@ -335,27 +334,60 @@ class Util{
 
 
         /**
+         * @brief Get the Type of value
+         * 
+         * @tparam T 
+         * @param val 
+         * @return int 
+         */
+        template <typename T>
+        static int getType(T val){
+            switch(*(typeid(val).name())){
+                case 100: case 102: case 105: case 106: case 108: case 109: case 115: case 116: case 120: case 121: return 1;
+                case 98: return 2;
+                case 78: case 65: case 80: return 3;
+            }
+            return 0;
+        }
+
+
+        /**
          * @brief table generator
          * 
          * @param allData 
          * @param longest 
          * @return std::string 
          */
-        static std::string tableMaker(std::deque<std::deque<std::string>> &allData){ return tableMk(allData,{},0); }
-        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest){ return tableMk(allData,longest,0); }
-        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, unsigned long size){ return tableMk(allData,{},size); }
-        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest, unsigned long size){ return tableMk(allData,longest,size); }
-        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, unsigned long size, std::vector<unsigned long> longest){ return tableMk(allData,longest,size); }
-        static std::string tableMk   (std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest,unsigned long size){
+        static std::string tableMaker(std::deque<std::deque<std::string>> &allData){ return tableMk(allData,{},0,0,"",true); }
+        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest){ return tableMk(allData,longest,0,0,"",true); }
+        template <typename... T> static std::string tableMaker(std::deque<std::deque<std::string>> &allData, T const & ... vals){
+            std::vector<unsigned long> minMax; bool title = true; std::string color = "";
+            std::function<int(double n)> num = [&](int n){ minMax.push_back(n>0?(unsigned long)n:0); return 0; };
+            std::function<int(bool b)> cond = [&](bool b){ title = b; return 0; };
+            std::function<int(std::string s)> stri = [&](std::string s){ color = s; return 0; };
+            using unused = int[];
+            (void)unused{0,( getType(vals) == 1? num(std::stod(toStr(vals))): getType(vals) == 2? cond(std::stod(toStr(vals))): getType(vals) == 3? stri(toStr(vals)):0 ,0)... };
+            return tableMk(allData,{},minMax.size()?minMax[0]:0,minMax.size()>1?minMax[1]:0,color,title);
+        }
+        template <typename... T> static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest, T const & ... vals){
+            std::vector<unsigned long> minMax; bool title = true; std::string color = "";
+            std::function<int(double n)> num = [&](int n){ minMax.push_back(n>0?(unsigned long)n:0); return 0; };
+            std::function<int(bool b)> cond = [&](bool b){ title = b; return 0; };
+            std::function<int(std::string s)> stri = [&](std::string s){ color = s; return 0; };
+            using unused = int[];
+            (void)unused{0,( getType(vals) == 1? num(std::stod(toStr(vals))): getType(vals) == 2? cond(std::stod(toStr(vals))): getType(vals) == 3? stri(toStr(vals)):0 ,0)... };
+            return tableMk(allData,longest,minMax.size()?minMax[0]:0,minMax.size()>1?minMax[1]:0,color,title);
+        }
+        static std::string tableMk(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest, unsigned long minSize, unsigned long maxSize, std::string colors, bool title){
             // style parameters
             const std::string columnDelim   = "|";              // columns delimiter
             const char rowDelim             = '-';              // rows delimiter
             // color paramenters
-            const std::string colorStart    = color("magenta"); // the table frame color
+            const std::string colorStart    = color(colors);    // the table frame color
             const std::string colorEnd      = colorReset();     // resetting the color after use
 
-            const unsigned long delimSize   = (((allData.size()+1)*(columnDelim.size()+2))-2);
-            if(size) size = size >= delimSize+allData.size()? size-delimSize: allData.size();
+            // distinguishing minSize from maxSize
+            unsigned long size = minSize; minSize = minSize<maxSize?minSize: maxSize; maxSize = maxSize > minSize? maxSize: size;
 
             // auto detect of the longest strings size
             if(longest.size() < allData.size()){
@@ -367,9 +399,16 @@ class Util{
             
             //setting the max length of the rows
             std::vector<unsigned long> maxLength = longest;
-            if(size){
+            if(minSize+maxSize){
                 unsigned long rowSum = 0;
                 for(unsigned long i=0; i<allData.size(); i++) rowSum += longest[i];
+                
+                // setting the size range
+                const unsigned long delimSize = (((allData.size()+1)*(columnDelim.size()+2))-2);
+                minSize = minSize >= delimSize+allData.size()? minSize-delimSize: allData.size();
+                maxSize = maxSize >= delimSize+allData.size()? maxSize-delimSize: allData.size();
+                size = rowSum >= minSize? (rowSum <= maxSize? rowSum: maxSize): minSize;
+
                 // maximum of characters allowed per string
                 if((double)size - rowSum >= 0) for(unsigned long i = 0; i< allData.size(); i++) maxLength[i] = ((double)longest[i] / rowSum) * size;
                 else{
@@ -384,16 +423,24 @@ class Util{
                 longest = maxLength;
             }
 
+            // getting the row size
+            unsigned long rowSize = 0;
+            for(unsigned long i=0; i<allData.size();i++){
+                if(i==0)  rowSize += longest[i] + (1 + columnDelim.size())*2;
+                else rowSize += longest[i] + 2 + columnDelim.size();
+            }
+            
             // getting the size of the longest column
             unsigned long long longestColumn = 0;
             for(unsigned int i = 0; i< allData.size(); i++){
                 longestColumn = allData[i].size() > longestColumn? allData[i].size(): longestColumn;
             }
 
+            //cycling over the rows
             std::string table = "", border = "";
             for(unsigned long long i=0; i<longestColumn; i++){
                 //creating the row
-                std::string row = "", delimiter =colorStart+columnDelim+colorEnd;
+                std::string row = "", colorDelim = colorStart+columnDelim+colorEnd;
 
                 //cycling over the columns
                 for(unsigned int j=0; j<allData.size(); j++){
@@ -411,21 +458,18 @@ class Util{
                     std::string elem ="", spaces = leng > 0? std::string(leng, ' '): "";
 
                     std::string start = "",end   = "";
-                    if(i == 0 || j == 0){
-                        if(i == 0) start = color("cyan");
-                        else start = color("yellow");
-                        end   = colorEnd;
-                    }
+                    if(i == 0 && title) start = color("cyan"), end = colorEnd;
+                    else if(j == 0 && allData.size() > 1) start = color("yellow"), end = colorEnd;
+                    
                     elem += start+ str + spaces + end;
-                    row  += delimiter+" "+ elem + " ";
+                    row  += colorDelim+" "+ elem + " ";
                 }
-                row += delimiter;
+                row += colorDelim;
 
                 if(i == 0){
                     //creating the border
-                    const unsigned long spaces = row.size()-((delimiter.size()-columnDelim.size())*2*allData.size()+delimiter.size()-columnDelim.size());
-                    border += colorStart+std::string(spaces, rowDelim)+colorEnd;
-                    table += border+"\r\n"+row+"\r\n"+border+"\r\n";
+                    border += colorStart+" "+std::string(rowSize-2, rowDelim)+" "+colorEnd;
+                    table += border+"\r\n"+row+"\r\n"+(title? border+"\r\n":"");
                 }else table += row+"\r\n";
             }
 
@@ -440,36 +484,46 @@ class Util{
          * @param minimum 
          * @return std::string 
          */
-        static std::string navOptions(std::vector<std::string> options, const unsigned long minimum){
-            std::string list="";
+        static std::deque<std::string> navOptions(std::vector<std::string> options){ return navOptions({options.begin(), options.end()},0,true); }
+        template <typename... T> static std::deque<std::string> navOptions(std::vector<std::string> options, const T & ... args){ 
+            unsigned long minMax; bool print = false; std::string color = "";
+            std::function<int(double n)> num = [&](int n){ minMax = n>0?(unsigned long)n:0; return 0; };
+            std::function<int(bool b)> cond = [&](bool b){ print = b; return 0; };
+            std::function<int(std::string s)> stri = [&](std::string s){ color = s; return 0; };
+            using unused = int[];
+            (void)unused{0,( getType(args) == 1? num(std::stod(toStr(args))): getType(args) == 2? cond(std::stod(toStr(args))): getType(args) == 3? stri(toStr(args)):0 ,0)... };
+            return navOptions({options.begin(), options.end()},minMax,color,print);
+        }
+        static std::deque<std::string> navOptions(std::deque<std::string> options, unsigned long minSize, std::string colors, bool print){
 
             const unsigned long oSize = options.size();
             unsigned long iSize = 2, i = 0, longest = 7;
 
+            // getting the longest string size
             for(std::string o: options){
                 const unsigned long strSize = o.size();
                 longest = strSize > longest? strSize: longest;
-                if(++i == oSize){
-                    iSize = std::to_string(i).size() > iSize? std::to_string(i).size(): iSize;
-                }
+                if(++i == oSize) iSize = std::to_string(i).size() > iSize? std::to_string(i).size(): iSize;
             }
-            
-            std::string cStart = color("yellow"); //yellow corresponds to: "\033[1;35m"
-            std::string cEnd = colorReset();      //reset  corresponds to: "\033[0m"
 
-            longest += minimum > 3? minimum: 3;
+            std::string cStart = color(colors);                 //yellow corresponds to: "\033[1;35m"
+            std::string cEnd = cStart==""? "": colorReset();    //reset  corresponds to: "\033[0m"
+ 
+            longest = longest+3>=(double)minSize-iSize? longest+3: minSize-iSize;
             i = 0;
             for(auto o: options){
-                const unsigned long currentSize = iSize - std::to_string(i).size();
-                const unsigned long dotSize = longest - o.size();
-                std::string index = cStart + std::to_string(++i) + cEnd;
-                
-                list += o + std::string(dotSize+currentSize,'.') + index + "\r\n";
-            }
+                const unsigned long indexSize = iSize - std::to_string(++i).size();
+                const unsigned long gap = longest - o.size();
+                std::string index = cStart + std::to_string(i) + cEnd;
 
-            list += "Go back" + std::string(longest-7+iSize-1,'.') + cStart+"0"+cEnd  + "\r\n";
-            list += "Exit"    + std::string(longest-4+iSize-2,'.') + cStart+"00"+cEnd + "\r\n";
-            return list;
+                options[i-1] = o + std::string(gap+indexSize,'.') + index;
+            }
+            options.push_back("Go back" + std::string(longest-7+iSize-1,'.') + cStart+"0"+cEnd);
+            options.push_back("Exit"    + std::string(longest-4+iSize-2,'.') + cStart+"00"+cEnd);
+
+            // printing
+            if(print) for(auto line: options) std::cout << line << std::endl;
+            return options;
         }
 
 
@@ -508,7 +562,8 @@ class Util{
          */
         static long long navChoice(std::vector<std::string> options, unsigned long minimum){
             //displaying options
-            std::cout << navOptions(options, minimum) << std::endl;
+            navOptions(options, minimum, true, "yellow");
+            std::cout << std::endl;
             //getting the choice
             return getChoice(options.size());
         }

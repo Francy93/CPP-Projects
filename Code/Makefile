@@ -98,7 +98,7 @@ ifeq ($(OS),Windows_NT)
 		BR			:=	&
 		NL			:=	type nul | more /e /p
 		EXITSTATUS	:=	%errorlevel%
-		MAIN_MATCH	:=	"^[ ]*[unsigned ]*[void bool char short int long long long double ][ ][ ]*main[ ]*(.*)[ ]*{*"
+		MAIN_MATCH	:=	"^[ ]*[unsigned ]*[ ]*[void bool char short int long long long double][ ][ ]*main[ ]*(.*)[ ]*{*"
 		SRCEXT_FIND	=	findstr /s /i /m /r /c:$(MAIN_MATCH) $(SRC_DIR)/*.$(if $(SRCEXT),$(SRCEXT),*)
 		EXIT1		=	$(if $(filter true,$(DISP_INFO)),exit 1,exit 1 >nul 2>&1)
 		FIXPATH		=	$(subst /,$\,$1)

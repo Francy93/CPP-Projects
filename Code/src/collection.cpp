@@ -200,7 +200,7 @@ std::string Collection::booksTable(std::deque<Books*> &books){
         longest[1] = longest[1] < titleSize? titleSize: longest[1];
     }
 
-    return Util::tableMaker(allData, longest,100);
+    return Util::tableMaker(allData, longest,100,"magenta");
 }
 
 /**
@@ -220,8 +220,7 @@ void Collection::printCollection(){
 bool Collection::findBook(){
     
     std::cout << "Enter here below a book title to search" << std::endl;
-    std::cout << Util::navOptions({}, 10) << std::endl;
-
+    Util::navOptions({}, 20, "yellow", true);
 
     //getting user input
     std::cout << "\r\nEnter data here :> ";
@@ -255,7 +254,7 @@ int Collection::booksChoice(std::deque<Books*> &books){
 
         while(true){
             std::cout << "Enter here below the number of the book to show" << std::endl;
-            std::cout << Util::navOptions({}, 10) << std::endl;
+            Util::navOptions({}, 20, "yellow", true);
 
             //getting user input
             std::cout << "\r\nEnter number here :> ";
