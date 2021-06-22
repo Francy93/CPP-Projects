@@ -200,7 +200,7 @@ std::string Collection::booksTable(std::deque<Books*> &books){
         longest[1] = longest[1] < titleSize? titleSize: longest[1];
     }
 
-    return Util::tableMaker(allData, longest,100,"magenta");
+    return Util::tableMaker(allData, longest,100,"magenta")+"\n";
 }
 
 /**

@@ -171,7 +171,7 @@ class Util{
                     #endif
                     
                     if(percent != 100 && size > index){
-                        std::string statusFull = "", statusVoid = "", colors; //219 is the ascii code for the square symbol
+                        std::string statusFull = "", statusVoid = "", colors;
                         for(unsigned long j=0;j<tokens;j++) statusFull += block;
                         for(unsigned long j=0;j<barLength-(unsigned long)tokens;j++) statusVoid += dotted;
                         if      (percent < 33)  colors = "red";
@@ -473,7 +473,7 @@ class Util{
                 }else table += row+"\r\n";
             }
 
-            return table+border+"\r\n";
+            return table+border;
         }
 
 

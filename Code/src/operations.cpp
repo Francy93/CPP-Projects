@@ -96,10 +96,10 @@ bool Operations::reader(std::string fileName){
 bool Operations::options(){
     
     std::deque<std::deque<std::string>> * menu = new std::deque<std::deque<std::string>>{};
-    *menu = {{"       MAIN MENU", "Add a new Book........1", "Find a Book...........2", "Show collection.......3"}}; 
-    std::cout << Util::tableMaker(*menu, "blue");
-    *menu = {{"Go BACK...............0", "EXIT.................00"}};
-    std::cout << Util::tableMaker(*menu, "blue", false) << std::endl;
+    *menu = {{"         MAIN MENU", "Add a new Book...........1", "Find a Book..............2", "Show collection..........3"}}; 
+    std::cout << Util::tableMaker(*menu, "blue")+"\r";
+    *menu = {Util::navOptions({},Util::getLongest(*menu)[0])};
+    std::cout << Util::tableMaker(*menu, "blue", false)+"\n" << std::endl;
     delete menu;
 
     //sorting the default data deque
