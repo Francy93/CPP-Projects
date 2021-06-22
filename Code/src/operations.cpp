@@ -96,7 +96,7 @@ bool Operations::reader(std::string fileName){
 bool Operations::options(){
     
     std::deque<std::deque<std::string>> * menu = new std::deque<std::deque<std::string>>{};
-    *menu = {{"       MAIN MENU       ", "Add a new Book........1", "Find a Book...........2", "Show collection.......3"}}; 
+    *menu = {{"       MAIN MENU", "Add a new Book........1", "Find a Book...........2", "Show collection.......3"}}; 
     std::cout << Util::tableMaker(*menu, "blue");
     *menu = {{"Go BACK...............0", "EXIT.................00"}};
     std::cout << Util::tableMaker(*menu, "blue", false) << std::endl;

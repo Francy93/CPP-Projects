@@ -72,7 +72,7 @@ int main(int argc, char *argv[]){
     //starting the main while loop
     while(true){
         std::deque<std::deque<std::string>> * loader = new std::deque<std::deque<std::string>>{};
-        *loader={{"      DUMMY FILE LOADER       ","Enter here below the file name","Press  1  to set color ON/OFF","Otherwise enter  00  to EXIT"}};
+        *loader={{"      DUMMY FILE LOADER","Enter here below the file name","Press  1  to set color ON/OFF","Otherwise enter  00  to EXIT"}};
         std::cout << Util::tableMaker(*loader, "blue") << std::endl;
         delete loader;
 

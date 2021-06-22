@@ -358,8 +358,8 @@ class Util{
          * @param longest 
          * @return std::string 
          */
-        static std::string tableMaker(std::deque<std::deque<std::string>> &allData){ return tableMk(allData,{},0,0,"",true); }
-        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest){ return tableMk(allData,longest,0,0,"",true); }
+        static std::string tableMaker(std::deque<std::deque<std::string>> &allData){ return tableMaker(allData,{},0,0,"",true); }
+        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest){ return tableMaker(allData,longest,0,0,"",true); }
         template <typename... T> static std::string tableMaker(std::deque<std::deque<std::string>> &allData, T const & ... vals){
             std::vector<unsigned long> minMax; bool title = true; std::string color = "";
             std::function<int(double n)> num = [&](int n){ minMax.push_back(n>0?(unsigned long)n:0); return 0; };
@@ -367,7 +367,7 @@ class Util{
             std::function<int(std::string s)> stri = [&](std::string s){ color = s; return 0; };
             using unused = int[];
             (void)unused{0,( getType(vals) == 1? num(std::stod(toStr(vals))): getType(vals) == 2? cond(std::stod(toStr(vals))): getType(vals) == 3? stri(toStr(vals)):0 ,0)... };
-            return tableMk(allData,{},minMax.size()?minMax[0]:0,minMax.size()>1?minMax[1]:0,color,title);
+            return tableMaker(allData,{},minMax.size()?minMax[0]:0,minMax.size()>1?minMax[1]:0,color,title);
         }
         template <typename... T> static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest, T const & ... vals){
             std::vector<unsigned long> minMax; bool title = true; std::string color = "";
@@ -376,9 +376,9 @@ class Util{
             std::function<int(std::string s)> stri = [&](std::string s){ color = s; return 0; };
             using unused = int[];
             (void)unused{0,( getType(vals) == 1? num(std::stod(toStr(vals))): getType(vals) == 2? cond(std::stod(toStr(vals))): getType(vals) == 3? stri(toStr(vals)):0 ,0)... };
-            return tableMk(allData,longest,minMax.size()?minMax[0]:0,minMax.size()>1?minMax[1]:0,color,title);
+            return tableMaker(allData,longest,minMax.size()?minMax[0]:0,minMax.size()>1?minMax[1]:0,color,title);
         }
-        static std::string tableMk(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest, unsigned long minSize, unsigned long maxSize, std::string colors, bool title){
+        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest, unsigned long minSize, unsigned long maxSize, std::string colors, bool title){
             // style parameters
             const std::string columnDelim   = "|";              // columns delimiter
             const char rowDelim             = '-';              // rows delimiter
