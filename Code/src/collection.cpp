@@ -160,7 +160,7 @@ void Collection::addNewBook(){
         const std::string choice = Util::cinln();
 
         if(i > 1){
-            if(!Util::isNumber(choice)){
+            if(!Util::isNumber(choice) || (i > 2 && Util::sTod(choice) < 1)){
                 Util::println("\r\nInput has to be a valid numeric! Try again.","yellow");
                 --i;
             }else bookData.push_back(choice);

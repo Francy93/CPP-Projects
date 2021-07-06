@@ -36,9 +36,8 @@ void Collection::quicksort(std::deque<Books*>& arr, long long l, long long r, un
 
             if (i <= j) {
                 Books** tmp = new Books*(arr[i]);
-                arr[i] = arr[j];
-                arr[j] = *tmp;
-                i++, j--;
+                arr[i++] = arr[j];
+                arr[j--] = *tmp;
                 delete tmp; //deleting the temp pointer pointing to another pinter (pointer of ponter **)
             }
         }

@@ -52,7 +52,7 @@ class Util{
          * 
          * @param args 
          */
-        static void printLn(std::vector<std::string> args){            
+        static void println(std::vector<std::string> args){            
             std::string start = "", end = "";
 
             if(args.size() > 1){
@@ -86,7 +86,7 @@ class Util{
             using unused = int[];
             std::vector<std::string> args;
             (void)unused { 0, (args.push_back(toStr(vals)), 0)... };
-            printLn(args);
+            println(args);
         }
 
 

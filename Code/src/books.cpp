@@ -11,7 +11,7 @@
  * @param q 
  */
 Books::Books(std::string t, std::string a, std::string i, std::string q) : title(t), author(a), isbn(i) {
-    qty = stoul(q);
+    qty = (unsigned long) Util::sTod(q);
     titleSplitter();
 }
 

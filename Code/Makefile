@@ -166,8 +166,6 @@ TARGET_OUTPUT	:=	$(call FIXPATH,$(TARGET_DIR)/$(TARGET))
 #############################
 
 
-STD = $(subst p,+,$(SRCEXT))
-
 # define the compiler to use
 ifeq  ($(subst auto,,$(CCX)),)
 	ifeq ($(SRCEXT),c)
@@ -194,7 +192,7 @@ endif
 # define the lang support version
 ifeq ($(subst auto,,$(COMPILER_SUPPORT)),)
 	ifeq ($(STD),c)
-		COMPILER_SUPPORT := 99
+		COMPILER_SUPPORT := 17
 	else ifeq ($(STD),c++)
 		COMPILER_SUPPORT := 17
 	else
@@ -267,7 +265,7 @@ endif
 
 
 # define any compile-time flags
-CXXFLAGS	:= -std=$(STD)$(COMPILER_SUPPORT) $(OPT) -Wall $(CCXFLAGS) $(CWARNS) $(DEBUG)
+CXXFLAGS	:= $(if $(STD),-std=$(STD)$(COMPILER_SUPPORT),) $(OPT) -Wall $(CCXFLAGS) $(CWARNS) $(DEBUG)
 
 
 
