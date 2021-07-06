@@ -358,8 +358,8 @@ class Util{
          * @param longest (facultative)
          * @param minSize (facultative)
          * @param maxSize (facultative)
-         * @param colors  (facultative)
-         * @param title   (facultative)
+         * @param colors - (facultative)
+         * @param title -- (facultative)
          * @return std::string 
          */
         template <typename... T> static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest, T const & ... vals){
