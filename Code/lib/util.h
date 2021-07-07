@@ -371,7 +371,6 @@ class Util{
             (void)unused{0,( getType(vals) == 1? num(std::stod(toStr(vals))): getType(vals) == 2? cond(std::stod(toStr(vals))): getType(vals) == 3? stri(toStr(vals)):0 ,0)... };
             return tableMaker(allData,longest,minMax.size()?minMax[0]:0,minMax.size()>1?minMax[1]:0,color,title);
         }
-        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest){ return tableMaker(allData,longest,0,0,"",true); }
         template <typename... T> static std::string tableMaker(std::deque<std::deque<std::string>> &allData, T const & ... vals){
             std::vector<unsigned long> minMax; bool title = true; std::string color = "";
             std::function<int(double n)> num = [&](int n){ minMax.push_back(n>0?(unsigned long)n:0); return 0; };
@@ -381,6 +380,7 @@ class Util{
             (void)unused{0,( getType(vals) == 1? num(std::stod(toStr(vals))): getType(vals) == 2? cond(std::stod(toStr(vals))): getType(vals) == 3? stri(toStr(vals)):0 ,0)... };
             return tableMaker(allData,{},minMax.size()?minMax[0]:0,minMax.size()>1?minMax[1]:0,color,title);
         }
+        static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest){ return tableMaker(allData,longest,0,0,"",true); }
         static std::string tableMaker(std::deque<std::deque<std::string>> &allData){ return tableMaker(allData,{},0,0,"",true); }
         static std::string tableMaker(std::deque<std::deque<std::string>> &allData, std::vector<unsigned long> longest, unsigned long minSize, unsigned long maxSize, std::string colors, bool title){
             // style parameters
