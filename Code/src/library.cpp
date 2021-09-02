@@ -87,7 +87,7 @@ int main(int argc, char *argv[]){
             else if(ope.reader(fileName)){
                 Util::println("File: \"", fileName, "\" successfully loaded!\r\n", "green");
                 Util::println("\r\nBefore starting! Would you like to sort data so as to experience faster performances?", "yellow");
-                const long long nav = Util::navChoice({"Yes, get faster! (Memory usage)", "No, go normal speed (CPU usage)"}, 40);
+                const long long nav = Util::navChoice({"Yes, get faster!    (RAM consumption)", "No, go normal speed (CPU consumption)"}, 40);
 
                 if(nav == 2){ if(!ope.options()) break; }
                 else if(nav == 1){ ope.sortDataInMemory(); if(!ope.options()) break; }
