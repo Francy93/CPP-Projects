@@ -67,10 +67,14 @@ DISP_INFO			:=	false
 #############################
 
 
+# literal whitespace
+s := $\ $\#
 # literal backslash
-\ = \\#
+\ := \\#
+# literal comma
+; := ,
 
-# defining directories
+# OS compatibility
 ifeq ($(OS),Windows_NT)
 	OS_EXE		:=	.exe
 	INCL_DIRS	:=	$(INCLUDE_DIR)
@@ -123,18 +127,18 @@ endif
 
 
 # project language detector ('$s ' stands for literal space)
-SRCEXT0		:=	$(if $(subst auto,,$(SRC_EXT)),$(subst $s ,,$(SRC_EXT)),$(firstword $(patsubst .%,%,$(filter .%,$(suffix\
+SRCEXT0		:=	$(if $(subst auto,,$(SRC_EXT)),$(subst $s,,$(SRC_EXT)),$(firstword $(patsubst .%,%,$(filter .%,$(suffix\
 					$(filter %.cpp %.c,$(shell $(SRCEXT_FIND))))))))
 # final attempt to get the extension
 SRCEXT		:=	$(if $(SRCEXT0),$(SRCEXT0),$(firstword $(patsubst .%,%,$(filter .%,$(suffix\
 					$(filter %.cpp %.c,$(wildcard $(SRC_DIR)/*.*)))))))
 
 # automatically generate target name by using the main file name
-TARGET_N0	:=	$(subst $s ,,$(if $(subst auto,,$(TARGET_NAME)),$(subst $s ,_,$(TARGET_NAME)),\
+TARGET_N0	:=	$(subst $s,,$(if $(subst auto,,$(TARGET_NAME)),$(subst $s,_,$(TARGET_NAME)),\
 							$(basename $(notdir $(shell $(SRCEXT_FIND))))))
 # final attempt to get the name				
 FILES_NAME	:=	$(basename $(notdir $(wildcard $(SRC_DIR)/*.$(SRCEXT))))
-TARGET_N	:=	$(subst $s ,,$(if $(TARGET_N0),$(TARGET_N0),$(if $(filter 1,$(words $(FILES_NAME))),$(FILES_NAME),)))
+TARGET_N	:=	$(subst $s,,$(if $(TARGET_N0),$(TARGET_N0),$(if $(filter 1,$(words $(FILES_NAME))),$(FILES_NAME),)))
 
 # setting target name and extension
 TARGET		:=	$(if $(TARGET_N),$(TARGET_N),a)$(OS_EXE)
@@ -174,9 +178,6 @@ ifeq  ($(subst auto,,$(CCX)),)
 	else ifeq ($(SRCEXT),cpp)
 		CCX := g++
 		STD := c++
-	else
-		CCX :=
-		STD :=
 	endif
 endif
 
@@ -192,11 +193,10 @@ endif
 # define the lang support version
 ifeq ($(subst auto,,$(COMPILER_SUPPORT)),)
 	ifeq ($(STD),c)
-		COMPILER_SUPPORT := 17
+		COMPILER_SUPPORT := 11
 	else ifeq ($(STD),c++)
 		COMPILER_SUPPORT := 17
-	else
-		COMPILER_SUPPORT :=
+		
 	endif
 endif
 
@@ -210,7 +210,7 @@ endif
 
 
 # The next warnings are neither valid nor needed for C++
-CWARNSC = \
+CWARNSC := \
 	-Wdeclaration-after-statement \
 	-Wmissing-prototypes \
 	-Wnested-externs \
@@ -218,12 +218,12 @@ CWARNSC = \
 	-Wc++-compat \
 	-Wold-style-definition
 # Warnings for gcc, not valid for clang
-CWARNGCC = \
+CWARNGCC := \
 	-Wlogical-op \
 	-Wno-aggressive-loop-optimizations
 
 # Warnings valid for both C and C++
-CWARNSCPP = \
+CWARNSCPP := \
 	-Wfatal-errors \
 	-Wextra \
 	-Wshadow \
@@ -235,7 +235,7 @@ CWARNSCPP = \
 	-Wdouble-promotion
 # the next warnings might be useful sometimes,
 # but usually they generate too much noise
-CWARNSCPP_STRICT = \
+CWARNSCPP_STRICT := \
 	-Werror \
 	-pedantic \
 	-Wconversion  \
@@ -276,6 +276,9 @@ CXXFLAGS	:= $(if $(STD),-std=$(STD)$(COMPILER_SUPPORT),) $(OPT) -Wall $(CCXFLAGS
 #############################
 
 
+# equals operator
+EQUALS = $(if $(subst $(words $1),,$(words $2)),,$(if $(subst $1,,$2),,$(if $(subst $2,,$1),,true)))
+
 # chose text style
 COLOR = $(if $(filter red,$2),$(E_START)[1;31m$(subst ",,$1)$(E_END),$(if \
 			$(filter green,$2),$(E_START)[1;32m$(subst ",,$1)$(E_END),$(if \
@@ -308,7 +311,7 @@ MESSAGE_0.0	:=	$(PRINTLN) $(call COLOR,Executing 'all' complete!,green)
 MESSAGE_0.1	:=	$(PRINTLN) $(call COLOR,Executing 'all' complete by using '-Ofast' optimizer flag!,yellow)
 MESSAGE_0.2	:=	$(PRINTLN) $(call COLOR,Executing 'all' failed!,red)
 MESSAGE_0.3	=	$(PRINTLN) $(call COLOR,Executable,green) "'$(TARGET_OUTPUT)'" $(call COLOR,is already up to date!,green)
-MESSAGE_0.4	:=	$(PRINTLN) $(call COLOR,Language detection failed! Please  fill manually the Makefile 'SRC_EXT' variable,red)
+MESSAGE_0.4	:=	$(PRINTLN) $(call COLOR,Language detection failed! Please$; fill manually the Makefile 'SRC_EXT' variable,red)
 # header messages
 MESSAGE_1.0	:=	$(PRINTLN) $(call COLOR,Removing files..,blue)
 MESSAGE_1.1	:=	$(PRINTLN) $(call COLOR,Removing directories..,blue)
@@ -347,7 +350,7 @@ all: --directories
 		,$(MESSAGE_1.3) && $(MAKE) $(-W) $(TARGET_OUTPUT) && \
 			( $(NL)$(BR) $(MESSAGE_0.0) )\
 		|| $(MAKE) $(-S) exp_handler || \
-			( $(if $(filter-out true,$(OPTIMIZER)), $(NL)$(BR) $(MESSAGE_0.2) $(BR),) $(EXIT1) ))\
+			( $(if $(call EQUALS,true,$(OPTIMIZER)),, $(NL)$(BR) $(MESSAGE_0.2) $(BR)) $(EXIT1) ))\
 	,$(MESSAGE_0.4) $(BR))
 	
 
