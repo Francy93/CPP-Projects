@@ -15,7 +15,7 @@
 SRC_EXT				:=	auto
 # define the compiler to use (e.g: gcc, c++, ...)
 CCX					:=	auto
-# define the compiler support version (e.g: 98, 99, 11, 14, 17, 2a, ...)
+# define the compiler support version (e.g: 98, 99, 03, 11, 14, 17, 2a, ...)
 COMPILER_SUPPORT	:=	auto
 # to compile and optimize code (if set to false, the exceptions handler will not start, set to 'true' to get optimizer -Ofast,\
 	'auto' to handle it automatically or any optimizer else like: -O0, -O1, -O2, -O3, ...)
@@ -114,8 +114,13 @@ else
 	RM 			:=	rm -f
 	RMDIR		:=	$(RM)r
 	MD			:=	mkdir -p
-	E_START		:=	"\e
-	E_END		:=	\e[0m"
+	ifeq ($(findstring Darwin, $(shell echo $$(uname))),Darwin)
+		E_START		:=	"\033
+		E_END		:=	\033[0m"
+	else
+		E_START		:=	"\e
+		E_END		:=	\e[0m"
+	endif
 	BR			:=	;
 	NL			:=	echo
 	EXITSTATUS	:=	$$?
@@ -342,7 +347,8 @@ MESSAGE_3.4	:=	$(PRINTLN) Exceptions handler failed! $(call COLOR,❌,red)
 
 
 # makes build directory, updates your objects, builds your executable
-all: --directories
+all:
+	@$(MAKE) $(-W) directories
 	@$(NL)$(BR)
 	@$(if $(SRCEXT),\
 		$(if $(if $(shell $(MAKE) $(-S) -q $(TARGET_OUTPUT) || echo 1),,true),\
@@ -395,7 +401,7 @@ exp_handler:
 	,$(EXIT1) $(BR))
 
 # Make the Directories
---directories:
+directories:
 	$(if $(if $(wildcard $(OBJECT_DIR)/),,void)$(if $(wildcard $(TARGET_DIR)/),,void), @$(NL)$(BR) $(MESSAGE_1.2),)
 	$(if $(wildcard $(OBJECT_DIR)/),,@\
 		$(if $(AT),,$(NL)$(BR))\
@@ -458,6 +464,10 @@ help:
 		(e.g: " $(call COLOR,make,yellow)" run?'My Arguments' OR " $(call COLOR,make,yellow)" run?MyArguments)"
 	@$(PRINTLN) $(call COLOR,make,yellow) "debug  - builds/updates everything displaying more detailed messages"
 	@$(NL)$(BR)
+
+ifeq ($(findstring Darwin, $(shell echo $$(uname))),Darwin)
+	@$(PRINTLN) "Current OS:$s"$(call COLOR,$(if $(call EQUALS,Linux,$(shell echo $$(uname))),Linux,Windows),magenta)
+endif
 
 # Non-File Targets
 .PHONY: all clean remake run run? run?% debug help
