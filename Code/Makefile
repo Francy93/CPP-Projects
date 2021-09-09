@@ -15,7 +15,7 @@
 SRC_EXT				:=	auto
 # define the compiler to use (e.g: gcc, c++, ...)
 CCX					:=	auto
-# define the compiler support version (e.g: 98, 99, 11, 14, 17, 2a, ...)
+# define the compiler support version (e.g: 98, 99, 03, 11, 14, 17, 2a, ...)
 COMPILER_SUPPORT	:=	auto
 # to compile and optimize code (if set to false, the exceptions handler will not start, set to 'true' to get optimizer -Ofast,\
 	'auto' to handle it automatically or any optimizer else like: -O0, -O1, -O2, -O3, ...)
