@@ -114,8 +114,8 @@ else
 	RM 			:=	rm -f
 	RMDIR		:=	$(RM)r
 	MD			:=	mkdir -p
-	E_START		:=	"\e
-	E_END		:=	\e[0m"
+	E_START		:=	"\033
+	E_END		:=	\033[0m"
 	BR			:=	;
 	NL			:=	echo
 	EXITSTATUS	:=	$$?
@@ -310,7 +310,7 @@ AT			=	$(if $(filter true,$(DISP_INFO)),,@)
 MESSAGE_0.0	:=	$(PRINTLN) $(call COLOR,Executing 'all' complete!,green)
 MESSAGE_0.1	:=	$(PRINTLN) $(call COLOR,Executing 'all' complete by using '-Ofast' optimizer flag!,yellow)
 MESSAGE_0.2	:=	$(PRINTLN) $(call COLOR,Executing 'all' failed!,red)
-MESSAGE_0.3	=	$(PRINTLN) $(call COLOR,Executable,green) "'$(TARGET_OUTPUT)'" $(call COLOR,is already up to date!,green)
+MESSAGE_0.3	=	$(PRINTLN) $(call COLOR,Executable,green)" '$(TARGET_OUTPUT)' "$(call COLOR,is already up to date!,green)
 MESSAGE_0.4	:=	$(PRINTLN) $(call COLOR,Language detection failed! Please$; fill manually the Makefile 'SRC_EXT' variable,red)
 # header messages
 MESSAGE_1.0	:=	$(PRINTLN) $(call COLOR,Removing files..,blue)
@@ -318,19 +318,19 @@ MESSAGE_1.1	:=	$(PRINTLN) $(call COLOR,Removing directories..,blue)
 MESSAGE_1.2	:=	$(PRINTLN) $(call COLOR,Making directories..,blue)
 MESSAGE_1.3	:=	$(PRINTLN) $(call COLOR,Compilator..,blue)
 MESSAGE_1.4	:=	$(PRINTLN) $(call COLOR,Assembler..,blue)
-MESSAGE_1.5	:=	$(PRINTLN) $(call COLOR,Warning!,magenta) Attempt to handle the exception by enabling the "'-Ofast'" optimizer flag..
+MESSAGE_1.5	:=	$(PRINTLN) $(call COLOR,Warning!,magenta)" Attempt to handle the exception by enabling the '-Ofast' optimizer flag.."
 # body messages
-MESSAGE_2.0	:=	echo Creating dir:
-MESSAGE_2.1	=	echo Compiling object file: $@
-MESSAGE_2.2	=	echo Assembling compiled objects into: $@
-MESSAGE_2.3	=	echo Running the executable: $(TARGET_OUTPUT)
-MESSAGE_2.4	:=	echo Removing:
+MESSAGE_2.0	:=	echo "Creating dir:"
+MESSAGE_2.1	=	echo "Compiling object file: $@"
+MESSAGE_2.2	=	echo "Assembling compiled objects into: $@"
+MESSAGE_2.3	=	echo "Running the executable: $(TARGET_OUTPUT)"
+MESSAGE_2.4	:=	echo "Removing:"
 # footer messages
-MESSAGE_3.0	:=	$(PRINTLN) Cleanup complete! $(call COLOR,👍,green)
-MESSAGE_3.1	:=	$(PRINTLN) Nothing to be deleted! $(call COLOR,⚠️,yellow)
-MESSAGE_3.2	:=	$(PRINTLN) Remake complete! $(call COLOR,✔️,green)
-MESSAGE_3.3	:=	$(PRINTLN) Executing 'run: all' complete! $(call COLOR,✔️,green)
-MESSAGE_3.4	:=	$(PRINTLN) Exceptions handler failed! $(call COLOR,❌,red)
+MESSAGE_3.0	:=	$(PRINTLN) "Cleanup complete! "$(call COLOR,👍,green)
+MESSAGE_3.1	:=	$(PRINTLN) "Nothing to be deleted! "$(call COLOR,⚠️,yellow)
+MESSAGE_3.2	:=	$(PRINTLN) "Remake complete! "$(call COLOR,✔️,green)
+MESSAGE_3.3	:=	$(PRINTLN) "Executing 'run: all' complete! "$(call COLOR,✔️,green)
+MESSAGE_3.4	:=	$(PRINTLN) "Exceptions handler failed! "$(call COLOR,❌,red)
 
 
 
@@ -342,7 +342,8 @@ MESSAGE_3.4	:=	$(PRINTLN) Exceptions handler failed! $(call COLOR,❌,red)
 
 
 # makes build directory, updates your objects, builds your executable
-all: --directories
+all:
+	@$(MAKE) $(-W) directories
 	@$(NL)$(BR)
 	@$(if $(SRCEXT),\
 		$(if $(if $(shell $(MAKE) $(-S) -q $(TARGET_OUTPUT) || echo 1),,true),\
@@ -395,7 +396,7 @@ exp_handler:
 	,$(EXIT1) $(BR))
 
 # Make the Directories
---directories:
+directories:
 	$(if $(if $(wildcard $(OBJECT_DIR)/),,void)$(if $(wildcard $(TARGET_DIR)/),,void), @$(NL)$(BR) $(MESSAGE_1.2),)
 	$(if $(wildcard $(OBJECT_DIR)/),,@\
 		$(if $(AT),,$(NL)$(BR))\
@@ -450,13 +451,13 @@ debug:
 # Help is intended to provide the user a minimum of guide-lines
 help:
 	@$(NL)$(BR)
-	@$(PRINTLN) $(call COLOR,make,yellow) "       - builds/updates everything, is ready to run with $(TARGET_OUTPUT) after completion"
-	@$(PRINTLN) $(call COLOR,make,yellow) "clean  - removes object file folder and executable"
-	@$(PRINTLN) $(call COLOR,make,yellow) "remake - remake consist of cleaning and compiling all"
-	@$(PRINTLN) $(call COLOR,make,yellow) "run    - builds/updates everything, runs immediately"
-	@$(PRINTLN) $(call COLOR,make,yellow) "run?.. - unlike 'run', it allows passing arguments to the executable\
-		(e.g: " $(call COLOR,make,yellow)" run?'My Arguments' OR " $(call COLOR,make,yellow)" run?MyArguments)"
-	@$(PRINTLN) $(call COLOR,make,yellow) "debug  - builds/updates everything displaying more detailed messages"
+	@$(PRINTLN) $(call COLOR,make,yellow)"        - builds/updates everything, is ready to run with $(TARGET_OUTPUT) after completion"
+	@$(PRINTLN) $(call COLOR,make,yellow)" clean  - removes object file folder and executable"
+	@$(PRINTLN) $(call COLOR,make,yellow)" remake - remake consist of cleaning and compiling all"
+	@$(PRINTLN) $(call COLOR,make,yellow)" run    - builds/updates everything, runs immediately"
+	@$(PRINTLN) $(call COLOR,make,yellow)" run?.. - unlike 'run', it allows passing arguments to the executable "\
+		"(e.g:" $(call COLOR,make,yellow)" run?'My Arguments' OR "$(call COLOR,make,yellow)" run?MyArguments)"
+	@$(PRINTLN) $(call COLOR,make,yellow)" debug  - builds/updates everything displaying more detailed messages"
 	@$(NL)$(BR)
 
 # Non-File Targets
