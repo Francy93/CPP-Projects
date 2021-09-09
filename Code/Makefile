@@ -343,7 +343,7 @@ MESSAGE_3.4	:=	$(PRINTLN) "Exceptions handler failed! "$(call COLOR,❌,red)
 
 # makes build directory, updates your objects, builds your executable
 all:
-	@$(MAKE) $(-W) directories
+	@$(MAKE) $(-S) directories
 	@$(NL)$(BR)
 	@$(if $(SRCEXT),\
 		$(if $(if $(shell $(MAKE) $(-S) -q $(TARGET_OUTPUT) || echo 1),,true),\
