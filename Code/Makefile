@@ -68,7 +68,7 @@ DISP_INFO			:=	false
 
 
 # get Operative System name
-OS			:=	$(if $(OS),$(OS),$(if $(call EQUALS,$(shell echo $$(uname)),Darwin),Mac_OS,$(shell echo $$(uname))))
+OS			:=	$(if $(OS),$(OS),$(if $(findstring Darwin,$(shell echo $$(uname))),Mac_OS,$(shell echo $$(uname))))
 # get cpu architecture info
 PROCESSOR_ARCHITECTURE	:=	$(if $(PROCESSOR_ARCHITECTURE),$(PROCESSOR_ARCHITECTURE),$(shell echo $$(uname -p)))
 # get environment info
@@ -490,7 +490,7 @@ help:
 		$"(e.g:$" $(call COLOR,make,yellow)$" run?'My Arguments' OR $"$(call COLOR,make,yellow)$" run?MyArguments)$"
 	@$(PRINTLN) $(call COLOR,make,yellow)$" debug  - builds/updates everything displaying more detailed messages$"
 	@$(NL)$(BR) $(MESSAGE_1.7)
-	@$(PRINTLN) $"Operative System:	$"$(call COLOR,$(if $(OS)$(PROCESSOR_ARCHITECTURE),$(OS) ($(PROCESSOR_ARCHITECTURE)),Unknown),$(if $(OS) ($(PROCESSOR_ARCHITECTURE)),green,red))
+	@$(PRINTLN) $"Operative System:	$"$(call COLOR,$(if $(OS)$(PROCESSOR_ARCHITECTURE),$(OS) ($(PROCESSOR_ARCHITECTURE)),Unknown),$(if $(OS)$(PROCESSOR_ARCHITECTURE),green,red))
 	@$(PRINTLN) $"Terminal:		$"$(call COLOR,$(if $(TERMINAL),$(TERMINAL),Unknown),$(if $(TERMINAL),green,red))
 	@$(PRINTLN) $"Main src file name:	$"$(call COLOR,$(if $(TARGET_N),$(TARGET_N),Unknown),$(if $(TARGET_N),green,red))
 	@$(PRINTLN) $"Detected Language:	$"$(call COLOR,$(if $(SRCEXT),$(SRCEXT),Unknown),$(if $(SRCEXT),green,red))
