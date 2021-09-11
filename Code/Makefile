@@ -441,11 +441,11 @@ clean:
 	@$(if $(wildcard $(TARGET_OUTPUT) $(OBJECTS) $(DEPS))$(wildcard $(call DIRSEP,$(OBJECT_DIR)))$(wildcard $(call DIRSEP,$(TARGET_DIR))),\
 		$(if $(wildcard $(TARGET_OUTPUT) $(OBJECTS) $(DEPS)),\
 			$(MESSAGE_1.0) $(BR)\
-			$(MESSAGE_2.4) executables:	$(call FIXPATH,$(TARGET_OUTPUT)) $(BR)\
+			$(MESSAGE_2.4)$" executables:	$"$(call FIXPATH,$(TARGET_OUTPUT)) $(BR)\
 			$(call RECIPE_DEBUG, $(RM) $(TARGET_OUTPUT) $(BR))\
-			$(MESSAGE_2.4) objects:	$(call FIXPATH,$(OBJECTS)) $(BR)\
+			$(MESSAGE_2.4)$" objects:	$"$(call FIXPATH,$(OBJECTS)) $(BR)\
 			$(call RECIPE_DEBUG, $(RM) $(call FIXPATH,$(OBJECTS)) $(BR)) \
-			$(MESSAGE_2.4) dependencies:	$(call FIXPATH,$(DEPS)) $(BR)\
+			$(MESSAGE_2.4)$" dependencies:	$"$(call FIXPATH,$(DEPS)) $(BR)\
 			$(call RECIPE_DEBUG, $(RM) $(call FIXPATH,$(DEPS)) $(BR)),)\
 		$(if $(wildcard $(call DIRSEP,$(OBJECT_DIR)))$(wildcard $(call DIRSEP,$(TARGET_DIR))),\
 			$(NL)$(BR) $(MESSAGE_1.1) $(BR)\
