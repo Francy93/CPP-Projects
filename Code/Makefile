@@ -483,7 +483,7 @@ help:
 	$(if $(findstring MinGW,$(TERMINAL)),@echo,)
 	@$(NL)$(BR) $(NL)$(BR) $(MESSAGE_1.6) $(BR) $(NL)$(BR)
 	@$(PRINTLN) $(call COLOR,make,yellow)$"        - builds/updates everything, is ready to run with $(TARGET_OUTPUT) after completion$"
-	@$(PRINTLN) $(call COLOR,make,yellow)$" clean  - removes object file folder and executable$"
+	@$(PRINTLN) $(call COLOR,make,yellow)$" clean  - removes object, file, folder and executable$"
 	@$(PRINTLN) $(call COLOR,make,yellow)$" remake - remake consist of cleaning and compiling all$"
 	@$(PRINTLN) $(call COLOR,make,yellow)$" run    - builds/updates everything, runs immediately$"
 	@$(PRINTLN) $(call COLOR,make,yellow)$" run?.. - unlike 'run', it allows passing arguments to the executable $"\
