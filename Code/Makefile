@@ -53,6 +53,8 @@ LIBRARY_DIR			:=	lib
 
 # display complete info (this is automatically set to true when "make debug" is called)
 DISP_INFO			:=	false
+# compiling at a faster speed by using Parallel Execution / multiple cores compiling (e.g: false, auto, min, mid, max)
+SPEEDUP				:=	auto
 
 
 
@@ -109,10 +111,12 @@ ifeq ($(OS),Windows_NT)
 		BR			:=	;
 		NL			:=	echo
 		EXITSTATUS	:=	$$?
+		NPROCS		:=	$(shell grep -c 'processor' /proc/cpuinfo)
 		MAIN_MATCH	:=	"^(\s)*(unsigned\s+)?(void|bool|short|int|long|long\s+long|double|char)\s+main\s*\((\s|\S)*\)\s*\{?"
-		SRCEXT_FIND	=	egrep -E --include=\*.$(if $(SRCEXT),$(SRCEXT),*) -rnwl $(SRC_DIR) -e $(MAIN_MATCH)
+		SRCEXT_FIND	=	egrep -E --include=\*.$(if $(SRCEXT),$(SRCEXT),*) -rnwl $(SRC_DIR) -e $(MAIN_MATCH) 2> /dev/null
 		EXIT1		=	$(if $(filter true,$(DISP_INFO)),exit 1,exit 1 &> /dev/null)
 		FIXPATH		=	$1
+		MATH		=	$(shell echo $$(( $1 )))
 	else
 		RM			:=	DEL /F/Q
 		RMDIR		:=	RMDIR /Q/S
@@ -122,10 +126,12 @@ ifeq ($(OS),Windows_NT)
 		BR			:=	&
 		NL			:=	type nul | more /e /p
 		EXITSTATUS	:=	%errorlevel%
+		NPROCS		:=	$(lastword $(strip $(shell WMIC CPU Get NumberOfLogicalProcessors)))
 		MAIN_MATCH	:=	"^[ ]*[unsigned ]*[ ]*[void bool char short int long long long double][ ][ ]*main[ ]*(.*)[ ]*{*"
 		SRCEXT_FIND	=	findstr /s /i /m /r /c:$(MAIN_MATCH) $(call DIRSEP,$(SRC_DIR))*.$(if $(SRCEXT),$(SRCEXT),*) 2>nul
 		EXIT1		=	$(if $(filter true,$(DISP_INFO)),exit 1,exit 1 >nul 2>&1)
 		FIXPATH		=	$(subst /,$\,$1)
+		MATH		=	$(shell echo on | set /a $1)
 	endif
 else
 	RM 			:=	rm -f
@@ -136,10 +142,12 @@ else
 	BR			:=	;
 	NL			:=	echo
 	EXITSTATUS	:=	$$?
+	NPROCS		:=	$(if $(findstring Mac_OS,$(OS)),$(shell sysctl hw.ncpu  | grep -o '[0-9]\+'),$(shell grep -c 'processor' /proc/cpuinfo))
 	MAIN_MATCH	:=	"^(\s)*(unsigned\s+)?(void|bool|short|int|long|long\s+long|double|char)\s+main\s*\((\s|\S)*\)\s*\{?"
-	SRCEXT_FIND	=	egrep -E --include=\*.$(if $(SRCEXT),$(SRCEXT),*) -rnwl $(SRC_DIR) -e $(MAIN_MATCH)
+	SRCEXT_FIND	=	egrep -E --include=\*.$(if $(SRCEXT),$(SRCEXT),*) -rnwl $(SRC_DIR) -e $(MAIN_MATCH) 2> /dev/null
 	EXIT1		=	$(if $(filter true,$(DISP_INFO)),exit 1,exit 1 &> /dev/null)
 	FIXPATH		=	$1
+	MATH		=	$(shell echo $$(( $1 )))
 endif
 
 
@@ -183,6 +191,31 @@ TARGET_OUTPUT	:=	$(call FIXPATH,$(call DIRSEP,$(TARGET_DIR))$(TARGET))
 
 
 #############################
+########## UTILITY ##########
+#############################
+
+
+# equals operator
+EQUALS = $(if $(subst $(words $1),,$(words $2)),,$(if $(subst $1,,$2),,$(if $(subst $2,,$1),,$(if $1,$1,true))))
+
+# chose text style
+COLOR = $(if $(filter red,$2),$(E_START)[1;31m$(subst ",,$1)$(E_END),$(if \
+			$(filter green,$2),$(E_START)[1;32m$(subst ",,$1)$(E_END),$(if \
+				$(filter yellow,$2),$(E_START)[1;33m$(subst ",,$1)$(E_END),$(if \
+					$(filter blue,$2),$(E_START)[1;34m$(subst ",,$1)$(E_END),$(if \
+						$(filter magenta,$2),$(E_START)[1;35m$(subst ",,$1)$(E_END),$(if \
+							$(filter cyan,$2),$(E_START)[1;36m$(subst ",,$1)$(E_END),$1))))))
+# enable echo output styling
+PRINTLN := echo$(if $(ESC_SEQ), $(ESC_SEQ),)
+
+# recipe debug
+RECIPE_DEBUG = $(if $(AT),,echo $1) $1
+
+
+
+
+
+#############################
 ##### COMPILER SETTINGS #####
 #############################
 
@@ -216,6 +249,13 @@ ifeq ($(subst auto,,$(COMPILER_SUPPORT)),)
 		
 	endif
 endif
+
+# makefile multi cores flag
+JOBS	:=	$(if $(call EQUALS,auto,$(strip $(SPEEDUP))),--jobs,$(if \
+				$(call EQUALS,min,$(strip $(SPEEDUP))),--jobs 1,$(if \
+					$(call EQUALS,mid,$(strip $(SPEEDUP))),--jobs $(call MATH,$(NPROCS)/2),$(if \
+						$(call EQUALS,max,$(strip $(SPEEDUP))),--jobs $(NPROCS),$(if \
+							$(findstring -j,$(SPEEDUP))$(findstring --jobs,$(SPEEDUP)),$(SPEEDUP),)))))
 
 
 
@@ -289,31 +329,6 @@ CXXFLAGS	:= $(if $(STD),-std=$(STD)$(COMPILER_SUPPORT),) $(OPT) -Wall $(CCXFLAGS
 
 
 #############################
-########## UTILITY ##########
-#############################
-
-
-# equals operator
-EQUALS = $(if $(subst $(words $1),,$(words $2)),,$(if $(subst $1,,$2),,$(if $(subst $2,,$1),,$(if $1,$1,true))))
-
-# chose text style
-COLOR = $(if $(filter red,$2),$(E_START)[1;31m$(subst ",,$1)$(E_END),$(if \
-			$(filter green,$2),$(E_START)[1;32m$(subst ",,$1)$(E_END),$(if \
-				$(filter yellow,$2),$(E_START)[1;33m$(subst ",,$1)$(E_END),$(if \
-					$(filter blue,$2),$(E_START)[1;34m$(subst ",,$1)$(E_END),$(if \
-						$(filter magenta,$2),$(E_START)[1;35m$(subst ",,$1)$(E_END),$(if \
-							$(filter cyan,$2),$(E_START)[1;36m$(subst ",,$1)$(E_END),$1))))))
-# enable echo output styling
-PRINTLN := echo$(if $(ESC_SEQ), $(ESC_SEQ),)
-
-# recipe debug
-RECIPE_DEBUG = $(if $(AT),,echo $1) $1
-
-
-
-
-
-#############################
 ######### MESSAGES ##########
 #############################
 
@@ -371,7 +386,7 @@ all:
 			$(if $(SRCEXT),\
 				$(if $(if $(shell $(MAKE) $(-S) -q $(TARGET_OUTPUT) || echo 1),,true),\
 					$(MESSAGE_0.3) $(BR) \
-				,$(MESSAGE_1.3) && $(MAKE) $(-W) $(TARGET_OUTPUT) && \
+				,$(MESSAGE_1.3) && $(MAKE) $(JOBS) $(-W) $(TARGET_OUTPUT) && \
 					( $(NL)$(BR) $(MESSAGE_0.0) )\
 				|| $(MAKE) $(-S) exp_handler || \
 					( $(if $(call EQUALS,true,$(OPTIMIZER)),, $(NL)$(BR) $(MESSAGE_0.2) $(BR)) $(EXIT1) ))\
