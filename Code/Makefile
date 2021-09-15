@@ -83,8 +83,7 @@ s 			:=	$\ $\#
 # literal comma
 ; 			:=	,
 #literal double quotess
-"			:=	"
-"			:=	$(if $(findstring MinGW,$(TERMINAL)),,$")
+"			:=	$(if $(findstring MinGW,$(TERMINAL)),,")
 
 # directories separator
 DIRSEP		=	$(if $1,$1/,)
@@ -113,7 +112,7 @@ ifeq ($(OS),Windows_NT)
 		EXITSTATUS	:=	$$?
 		NPROCS		:=	$(shell grep -c 'processor' /proc/cpuinfo)
 		MAIN_MATCH	:=	"^(\s)*(unsigned\s+)?(void|bool|short|int|long|long\s+long|double|char)\s+main\s*\((\s|\S)*\)\s*\{?"
-		SRCEXT_FIND	=	egrep -E --include=\*.$(if $(SRCEXT),$(SRCEXT),*) -rnwl $(SRC_DIR) -e $(MAIN_MATCH) 2> /dev/null
+		SRCEXT_FIND	=	egrep -E --include=\*.$(if $(SRCEXT),$(SRCEXT),*) -rnwl $(if $(strip $(SRC_DIR)),$(SRC_DIR),.) -e $(MAIN_MATCH) 2> /dev/null
 		EXIT1		=	$(if $(filter true,$(DISP_INFO)),exit 1,exit 1 &> /dev/null)
 		FIXPATH		=	$1
 		MATH		=	$(shell echo $$(( $1 )))
@@ -144,18 +143,18 @@ else
 	EXITSTATUS	:=	$$?
 	NPROCS		:=	$(if $(findstring Mac_OS,$(OS)),$(shell sysctl hw.ncpu  | grep -o '[0-9]\+'),$(shell grep -c 'processor' /proc/cpuinfo))
 	MAIN_MATCH	:=	"^(\s)*(unsigned\s+)?(void|bool|short|int|long|long\s+long|double|char)\s+main\s*\((\s|\S)*\)\s*\{?"
-	SRCEXT_FIND	=	egrep -E --include=\*.$(if $(SRCEXT),$(SRCEXT),*) -rnwl $(SRC_DIR) -e $(MAIN_MATCH) 2> /dev/null
+	SRCEXT_FIND	=	egrep -E --include=\*.$(if $(SRCEXT),$(SRCEXT),*) -rnwl $(if $(strip $(SRC_DIR)),$(SRC_DIR),.) -e $(MAIN_MATCH) 2> /dev/null
 	EXIT1		=	$(if $(filter true,$(DISP_INFO)),exit 1,exit 1 &> /dev/null)
 	FIXPATH		=	$1
 	MATH		=	$(shell echo $$(( $1 )))
 endif
 
 
-# project language detector ('$s ' stands for literal space)
-SRCEXT0		:=	$(if $(subst auto,,$(SRC_EXT)),$(subst $s,,$(SRC_EXT)),$(firstword $(patsubst .%,%,$(filter .%,$(suffix\
+# project language detector ('$s' stands for literal space)
+SRCEXT0		:=	$(if $(subst auto,,$(SRC_EXT)),$(subst $s,,$(SRC_EXT)),$(firstword $(patsubst .%,%,$(filter .%,$(suffix \
 					$(filter %.cpp %.c,$(shell $(SRCEXT_FIND))))))))
 # final attempt to get the extension
-SRCEXT		:=	$(if $(SRCEXT0),$(SRCEXT0),$(firstword $(patsubst .%,%,$(filter .%,$(suffix\
+SRCEXT		:=	$(if $(SRCEXT0),$(SRCEXT0),$(firstword $(patsubst .%,%,$(filter .%,$(suffix \
 					$(filter %.cpp %.c,$(wildcard $(call DIRSEP,$(SRC_DIR))*.*)))))))
 
 # automatically generate target name by using the main file name
@@ -196,20 +195,20 @@ TARGET_OUTPUT	:=	$(call FIXPATH,$(call DIRSEP,$(TARGET_DIR))$(TARGET))
 
 
 # equals operator
-EQUALS = $(if $(subst $(words $1),,$(words $2)),,$(if $(subst $1,,$2),,$(if $(subst $2,,$1),,$(if $1,$1,true))))
+EQUALS	=	$(if $(subst $(words $1),,$(words $2)),,$(if $(subst $1,,$2),,$(if $(subst $2,,$1),,$(if $1,$1,true))))
 
 # chose text style
-COLOR = $(if $(filter red,$2),$(E_START)[1;31m$(subst ",,$1)$(E_END),$(if \
-			$(filter green,$2),$(E_START)[1;32m$(subst ",,$1)$(E_END),$(if \
-				$(filter yellow,$2),$(E_START)[1;33m$(subst ",,$1)$(E_END),$(if \
-					$(filter blue,$2),$(E_START)[1;34m$(subst ",,$1)$(E_END),$(if \
-						$(filter magenta,$2),$(E_START)[1;35m$(subst ",,$1)$(E_END),$(if \
-							$(filter cyan,$2),$(E_START)[1;36m$(subst ",,$1)$(E_END),$1))))))
+COLOR 	=	$(if $(filter red,$2),$(E_START)[1;31m$(subst ",,$1)$(E_END),$(if \
+				$(filter green,$2),$(E_START)[1;32m$(subst ",,$1)$(E_END),$(if \
+					$(filter yellow,$2),$(E_START)[1;33m$(subst ",,$1)$(E_END),$(if \
+						$(filter blue,$2),$(E_START)[1;34m$(subst ",,$1)$(E_END),$(if \
+							$(filter magenta,$2),$(E_START)[1;35m$(subst ",,$1)$(E_END),$(if \
+								$(filter cyan,$2),$(E_START)[1;36m$(subst ",,$1)$(E_END),$1))))))
 # enable echo output styling
-PRINTLN := echo$(if $(ESC_SEQ), $(ESC_SEQ),)
+PRINTLN	:=	echo$(if $(ESC_SEQ), $(ESC_SEQ),)
 
 # recipe debug
-RECIPE_DEBUG = $(if $(AT),,echo $1) $1
+RECIPE_DEBUG	=	$(if $(AT),,echo $1) $1
 
 
 
