@@ -1,7 +1,7 @@
 #	INSTRUCTIONS:
 # 'make'        build executable file 'main'
 # 'make run'    build and run executable file
-# 'make run?..  unlike 'run', it allows passing arguments to the executable (e.g: make run?MyArgs OR make run?'My Args')
+# 'make run?..  unlike 'run', it allows passing arguments to the executable (e.g: make run?arg1 OR make run?'arg1 arg2')
 # 'make clean'  removes every .o and executable files
 # 'make remake' execute a make clean and subsequently compile all
 # 'make help'   show brief guide-lines about this makefile usage
@@ -165,18 +165,16 @@ TO_LOWER	=	$(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F
 TO_UPPER	=	$(subst a,A,$(subst b,B,$(subst c,C,$(subst d,D,$(subst e,E,$(subst f,F,$(subst g,G,$(subst h,H,$(subst i,I,$(subst j,J,$(subst k,K,$(subst l,L,$(subst m,M,$(subst n,N,$(subst o,O,$(subst p,P,$(subst q,Q,$(subst r,R,$(subst s,S,$(subst t,T,$(subst u,U,$(subst v,V,$(subst w,W,$(subst x,X,$(subst y,Y,$(subst z,Z,$1))))))))))))))))))))))))))
 # determine if the value entered is an integer
 IS_INT		=	$(if $(subst 0,,$(subst 1,,$(subst 2,,$(subst 3,,$(subst 4,,$(subst 5,,$(subst 6,,$(subst 7,,$(subst 8,,$(subst 9,,$(patsubst -%,%,$1))))))))))),,$1)
-# and operator
-AND			=	$(if $(if $1,$(if $2,true,),),true,)
 # not operator
 NOT			=	$(if $1,,true)
-# greater than
+# greater than (e.g: $(call GT,4,3))
 GT			=	$(if $(filter -%,$(call MATH,$2-$1)),$(subst -,,$(call MATH,$2-$1)),)
-# less than
+# less than (e.g: $(call LT,3,4))
 LT			=	$(if $(filter -%,$(call MATH,$1-$2)),$(subst -,,$(call MATH,$1-$2)),)
 # equals operator (strings)
 EQS			=	$(if $(subst $(words $1),,$(words $2)),,$(if $(subst $1,,$2),,$(if $(subst $2,,$1),,$(if $1,$1,true))))
 # equals too (numbers)
-EQN			=	$(if $(if $(call AND,$(call IS_INT,$1),$(call IS_INT,$2)),$(call EQS,0,$(strip $(call MATH,$1-$2))),),$(call MATH,$1),)
+EQN			=	$(if $(if $(and $(call IS_INT,$1),$(call IS_INT,$2)),$(call EQS,0,$(strip $(call MATH,$1-$2))),),$(call MATH,$1),)
 
 # directories separator
 DIRSEP		=	$(if $1,$1/,)
@@ -185,7 +183,18 @@ EXISTS		=	$(patsubst %/,%,$(wildcard $1))
 # determines whether a value entered belongs to a directory or not
 IS_DIR		=	$(if $(subst /,,$(patsubst %/,/,$(wildcard $1/))),,$(patsubst %/,%,$(wildcard $1)))
 # determines whether a value entered belongs to a file or not
-IS_FILE		=	$(if $(call AND,$(call EXISTS,$1),$(call NOT,$(call IS_DIR,$1))),$1,)
+IS_FILE		=	$(if $(and $(call EXISTS,$1),$(call NOT,$(call IS_DIR,$1))),$1,)
+
+# generates a list of numbers or given a argument
+LISTGEN		=	$(if $(call EQS,0,$1)$(call NOT,$(call IS_INT,$1)),,$(call LISTGEN,$(call MATH,$1-1),$2)$(if $(call EQS,$1,1),, )$(if $2,$2,$1))
+# list inverter
+REVERSE		=	$(if $(eval i :=$(call MATH,$i+1))$($i),$($0),$(eval i :=$(if $(call GT,$i,1),$(call MATH,$i-1)))$(if \
+					$(call GT,$i,1),$(foreach j,$(call LISTGEN,$i),$($(call MATH,$i-$j+1))),$(foreach \
+						j,$(call LISTGEN,$(words $1)),$(word $(call MATH,$(words $1)-$j+1),$1)))$(eval i :=0))
+# removes the first element of a list
+REST		=	$(if $(eval i :=$(call MATH,$i+1))$($i),$($0),$(eval i :=$(if $(call GT,$i,1),$(call MATH,$i-1)))$(patsubst $s%,%,$(if \
+					$(call GT,$i,1),$(foreach j,$(call LISTGEN,$i),$(if $(call GT,$j,1),$($j))),$(foreach \
+						j,$(call LISTGEN,$(words $1)),$(if $(call GT,$j,1),$(word $j,$1)))))$(eval i :=0))
 
 
 
@@ -455,45 +464,45 @@ $(call DIRSEP,$(OBJECT_DIR))%.o: $(call DIRSEP,$(SRC_DIR))%.$(SRCEXT)
 
 # recursive exceptions handler
 exp_handler:
-	@$(if $(if $(subst auto,,$(OPTIMIZER)),,true),\
+	@$(if $(call EQS,auto,$(OPTIMIZER)),\
 		$(NL)$(BR) $(MESSAGE_1.5) $(BR) $(NL)$(BR) \
-		$(MAKE) OPTIMIZER=true &&\
+		$(MAKE) OPTIMIZER=true && \
 			$(MESSAGE_0.1) $(BR) $(NL) \
 		|| ( $(NL)$(BR) $(MESSAGE_3.4) $(BR) $(EXIT1) $(BR) )\
 	,$(EXIT1) $(BR))
 
 # Make the Directories
 directories:
-	$(if $(if $(wildcard $(call DIRSEP,$(OBJECT_DIR))),,void)$(if $(wildcard $(call DIRSEP,$(TARGET_DIR))),,void),\
-		$(if $(OBJECT_DIR)$(TARGET_DIR),@$(NL)$(BR) $(MESSAGE_1.2),),)
-	$(if $(OBJECT_DIR),\
-		$(if $(wildcard $(call DIRSEP,$(OBJECT_DIR))),,@\
-			$(if $(AT),,$(NL)$(BR))\
-			$(MESSAGE_2.0) $(OBJECT_DIR) $(BR)\
-			$(call RECIPE_DEBUG, $(MD) $(OBJECT_DIR) $(BR))),)
-	$(if $(TARGET_DIR),\
-		$(if $(wildcard $(call DIRSEP,$(TARGET_DIR))),,@\
-			$(if $(AT),,$(NL)$(BR))\
-			$(MESSAGE_2.0) $(TARGET_DIR) $(BR)\
-			$(call RECIPE_DEBUG, $(MD) $(TARGET_DIR) $(BR))),)
+	@$(if $(and $(OBJECT_DIR),$(call NOT,$(call IS_DIR,$(OBJECT_DIR))))$(and $(TARGET_DIR),$(call NOT,$(call IS_DIR,$(TARGET_DIR)))),\
+		$(if $(OBJECT_DIR)$(TARGET_DIR),$(NL)$(BR) $(MESSAGE_1.2) $(BR),) \
+		$(if $(OBJECT_DIR),\
+			$(if $(wildcard $(call DIRSEP,$(OBJECT_DIR))),,\
+				$(if $(AT),,$(NL)$(BR)) \
+				$(MESSAGE_2.0) $(OBJECT_DIR) $(BR) \
+				$(call RECIPE_DEBUG, $(MD) $(OBJECT_DIR) $(BR))),) \
+		$(if $(TARGET_DIR),\
+			$(if $(wildcard $(call DIRSEP,$(TARGET_DIR))),,\
+				$(if $(AT),,$(NL)$(BR)) \
+				$(MESSAGE_2.0) $(TARGET_DIR) $(BR) \
+				$(call RECIPE_DEBUG, $(MD) $(TARGET_DIR) $(BR))),),)
 
 # Clean removes all the object and executable files
 clean:
 	@$(NL)$(BR)
-	@$(if $(wildcard $(TARGET_OUTPUT) $(OBJECTS) $(DEPS))$(wildcard $(call DIRSEP,$(OBJECT_DIR)))$(wildcard $(call DIRSEP,$(TARGET_DIR))),\
+	@$(if $(wildcard $(TARGET_OUTPUT) $(OBJECTS) $(DEPS))$(call IS_DIR,$(OBJECT_DIR))$(call IS_DIR,$(TARGET_DIR)),\
 		$(if $(wildcard $(TARGET_OUTPUT) $(OBJECTS) $(DEPS)),\
-			$(MESSAGE_1.0) $(BR)\
-			$(MESSAGE_2.4)$" executables:	$"$(call FIXPATH,$(TARGET_OUTPUT)) $(BR)\
-			$(call RECIPE_DEBUG, $(RM) $(TARGET_OUTPUT) $(BR))\
-			$(MESSAGE_2.4)$" objects:	$"$(call FIXPATH,$(OBJECTS)) $(BR)\
+			$(MESSAGE_1.0) $(BR) \
+			$(MESSAGE_2.4)$" executables:	$"$(call FIXPATH,$(TARGET_OUTPUT)) $(BR) \
+			$(call RECIPE_DEBUG, $(RM) $(TARGET_OUTPUT) $(BR)) \
+			$(MESSAGE_2.4)$" objects:	$"$(call FIXPATH,$(OBJECTS)) $(BR) \
 			$(call RECIPE_DEBUG, $(RM) $(call FIXPATH,$(OBJECTS)) $(BR)) \
-			$(MESSAGE_2.4)$" dependencies:	$"$(call FIXPATH,$(DEPS)) $(BR)\
-			$(call RECIPE_DEBUG, $(RM) $(call FIXPATH,$(DEPS)) $(BR)),)\
-		$(if $(wildcard $(call DIRSEP,$(OBJECT_DIR)))$(wildcard $(call DIRSEP,$(TARGET_DIR))),\
-			$(NL)$(BR) $(MESSAGE_1.1) $(BR)\
-			$(MESSAGE_2.4): $(OBJECT_DIR) $(TARGET_DIR) $(BR)\
-			$(call RECIPE_DEBUG, $(RMDIR) $(OBJECT_DIR) $(TARGET_DIR) $(BR)),)\
-		$(NL)$(BR) $(MESSAGE_3.0) $(BR)\
+			$(MESSAGE_2.4)$" dependencies:	$"$(call FIXPATH,$(DEPS)) $(BR) \
+			$(call RECIPE_DEBUG, $(RM) $(call FIXPATH,$(DEPS)) $(BR)),) \
+		$(if $(call IS_DIR,$(OBJECT_DIR))$(call IS_DIR,$(TARGET_DIR)),\
+			$(NL)$(BR) $(MESSAGE_1.1) $(BR) \
+			$(MESSAGE_2.4): $(OBJECT_DIR) $(TARGET_DIR) $(BR) \
+			$(call RECIPE_DEBUG, $(RMDIR) $(OBJECT_DIR) $(TARGET_DIR) $(BR)),) \
+		$(NL)$(BR) $(MESSAGE_3.0) $(BR) \
 	,$(MESSAGE_3.1) $(BR))
 
 # Remake does clean and compile all
@@ -529,7 +538,7 @@ help:
 	@$(PRINTLN) $(call COLOR,make,yellow)$" remake - remake consist of cleaning and compiling all$"
 	@$(PRINTLN) $(call COLOR,make,yellow)$" run    - builds/updates everything, runs immediately$"
 	@$(PRINTLN) $(call COLOR,make,yellow)$" run?.. - unlike 'run', it allows passing arguments to the executable $"\
-		$"(e.g:$" $(call COLOR,make,yellow)$" run?'My Arguments' OR $"$(call COLOR,make,yellow)$" run?MyArguments)$"
+		$"(e.g:$" $(call COLOR,make,yellow)$" run?arg1 OR $"$(call COLOR,make,yellow)$" run?'arg1 arg2')$"
 	@$(PRINTLN) $(call COLOR,make,yellow)$" debug  - builds/updates everything displaying more detailed messages$"
 	@$(NL)$(BR) $(MESSAGE_1.7)
 	@$(PRINTLN) $"Operative System:	$"$(call COLOR,$(if $(OS)$(PROCESSOR_ARCHITECTURE),$(OS) ($(PROCESSOR_ARCHITECTURE)),$"Unknown$"),$(if $(OS)$(PROCESSOR_ARCHITECTURE),green,red))
