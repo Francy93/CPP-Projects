@@ -188,13 +188,13 @@ IS_FILE		=	$(if $(and $(call EXISTS,$1),$(call NOT,$(call IS_DIR,$1))),$1,)
 # generates a list of numbers or given a argument
 LISTGEN		=	$(if $(call EQS,0,$1)$(call NOT,$(call IS_INT,$1)),,$(call LISTGEN,$(call MATH,$1-1),$2)$(if $(call EQS,$1,1),, )$(if $2,$2,$1))
 # list inverter
-REVERSE		=	$(if $(eval i :=$(call MATH,$i+1))$($i),$($0),$(eval i :=$(if $(call GT,$i,1),$(call MATH,$i-1)))$(if \
+REVERSE		=	$(if $(eval i := $(call MATH,$i+1))$($i),$($0),$(eval i := $(if $(call GT,$i,1),$(call MATH,$i-1)))$(if \
 					$(call GT,$i,1),$(foreach j,$(call LISTGEN,$i),$($(call MATH,$i-$j+1))),$(foreach \
-						j,$(call LISTGEN,$(words $1)),$(word $(call MATH,$(words $1)-$j+1),$1)))$(eval i :=0))
+						j,$(call LISTGEN,$(words $1)),$(word $(call MATH,$(words $1)-$j+1),$1)))$(eval i := ))
 # removes the first element of a list
-REST		=	$(if $(eval i :=$(call MATH,$i+1))$($i),$($0),$(eval i :=$(if $(call GT,$i,1),$(call MATH,$i-1)))$(patsubst $s%,%,$(if \
+REST		=	$(if $(eval i := $(call MATH,$i+1))$($i),$($0),$(eval i := $(if $(call GT,$i,1),$(call MATH,$i-1)))$(patsubst $s%,%,$(if \
 					$(call GT,$i,1),$(foreach j,$(call LISTGEN,$i),$(if $(call GT,$j,1),$($j))),$(foreach \
-						j,$(call LISTGEN,$(words $1)),$(if $(call GT,$j,1),$(word $j,$1)))))$(eval i :=0))
+						j,$(call LISTGEN,$(words $1)),$(if $(call GT,$j,1),$(word $j,$1)))))$(eval i := ))
 
 
 
