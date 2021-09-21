@@ -185,7 +185,7 @@ IS_DIR		=	$(if $(subst /,,$(patsubst %/,/,$(wildcard $1/))),,$(patsubst %/,%,$(w
 # determines whether a value entered belongs to a file or not
 IS_FILE		=	$(if $(and $(call EXISTS,$1),$(call NOT,$(call IS_DIR,$1))),$1,)
 
-# generates a list of numbers or given a argument
+# generates a list of numbers or a given argument
 LISTGEN		=	$(if $(call EQS,0,$1)$(call NOT,$(call IS_INT,$1)),,$(call LISTGEN,$(call MATH,$1-1),$2)$(if $(call EQS,$1,1),, )$(if $2,$2,$1))
 # list inverter
 REVERSE		=	$(if $(eval i := $(call MATH,$i+1))$($i),$($0),$(eval i := $(if $(call GT,$i,1),$(call MATH,$i-1)))$(if \
@@ -207,7 +207,7 @@ REST		=	$(if $(eval i := $(call MATH,$i+1))$($i),$($0),$(eval i := $(if $(call G
 
 # directories
 TARGET_DIR	:=	$(subst $s,_,$(strip $(TARGET_DIR)))
-OBJECT_DIR	:=	$(subst $s,_,$(strip $(TARGET_DIR)))
+OBJECT_DIR	:=	$(subst $s,_,$(strip $(OBJECT_DIR)))
 SRC_DIR		:=	$(subst $s,_,$(strip $(call IS_DIR,$(SOURCE_DIR))))
 INCL_DIRS	:=	$(subst $s,_,$(strip $(call IS_DIR,$(INCLUDE_DIR))))
 LIB_DIRS	:=	$(subst $s,_,$(strip $(call IS_DIR,$(LIBRARY_DIR))))
@@ -475,16 +475,14 @@ exp_handler:
 directories:
 	@$(if $(and $(OBJECT_DIR),$(call NOT,$(call IS_DIR,$(OBJECT_DIR))))$(and $(TARGET_DIR),$(call NOT,$(call IS_DIR,$(TARGET_DIR)))),\
 		$(if $(OBJECT_DIR)$(TARGET_DIR),$(NL)$(BR) $(MESSAGE_1.2) $(BR),) \
-		$(if $(OBJECT_DIR),\
-			$(if $(wildcard $(call DIRSEP,$(OBJECT_DIR))),,\
+		$(if $(and $(OBJECT_DIR),$(call NOT,$(call IS_DIR,$(OBJECT_DIR)))),\
 				$(if $(AT),,$(NL)$(BR)) \
 				$(MESSAGE_2.0) $(OBJECT_DIR) $(BR) \
-				$(call RECIPE_DEBUG, $(MD) $(OBJECT_DIR) $(BR))),) \
-		$(if $(TARGET_DIR),\
-			$(if $(wildcard $(call DIRSEP,$(TARGET_DIR))),,\
+				$(call RECIPE_DEBUG, $(MD) $(OBJECT_DIR) $(BR))) \
+		$(if $(and $(TARGET_DIR),$(call NOT,$(call IS_DIR,$(TARGET_DIR)))),\
 				$(if $(AT),,$(NL)$(BR)) \
 				$(MESSAGE_2.0) $(TARGET_DIR) $(BR) \
-				$(call RECIPE_DEBUG, $(MD) $(TARGET_DIR) $(BR))),),)
+				$(call RECIPE_DEBUG, $(MD) $(TARGET_DIR) $(BR))))
 
 # Clean removes all the object and executable files
 clean:
