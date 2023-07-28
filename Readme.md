@@ -2,11 +2,11 @@
 
 Welcome to the **CPP-Projects** repository! This repository contains two projects developed during the Computer Science second-year course, focusing on Software Engineering and Management using C++. Let's explore these projects in detail:
 
-## Project 1: [Music-Shop]()
+## Project 1: [Music-Shop](https://github.com/Francy93/CPP-Projects/tree/master/Music-Shop)
 
 The first project involves creating management software for a music shop using C++. It includes algorithms for logistic management and utilizes the catch.hpp library for unit testing. The software streamlines the operations of the music shop and ensures efficient inventory management.
 
-## Project 2: [Library-System]()
+## Project 2: [Library-System](https://github.com/Francy93/CPP-Projects/tree/master/Library-System)
 
 The second project centers around creating management software for a library using C++. It incorporates algorithms and data structures to optimize book title searches, making it quick and efficient for library patrons. Additionally, the project includes detailed reports presenting the analysis of data structures and algorithms implemented.
 
